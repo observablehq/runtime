@@ -1,0 +1,7 @@
+{
+  "name": "d3-express",
+  "version": "0.0.0",
+  "description": "The d3.express runtime.",
+  "author": "Mike Bostock",
+  "license": "ISC"
+}
