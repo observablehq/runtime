@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<div id="foo"></div>
-<div id="bar"></div>
+<style>
+
+@import url(style.css);
+
+</style>
+<div class="result" id="foo"></div>
+<div class="result" id="bar"></div>
 <script src="/build/d3-express.js"></script>
 <script>
 
@@ -9,8 +13,12 @@ var runtime = d3.runtime({color: "red"});
 
 var module = runtime.module();
 
-module.variable(document.querySelector("#bar")).define("color", [], () => "This shouldn’t be visible.");
+module.variable(document.querySelector("#bar")).define("color", [], function() {
+  throw new Error("this shouldn’t happen");
+});
 
-module.variable(document.querySelector("#foo")).define(null, ["color"], color => `color = ${color}`);
+module.variable(document.querySelector("#foo")).define(null, ["color"], function(color) {
+  return "color = " + color;
+});
 
 </script>
