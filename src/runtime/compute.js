@@ -101,7 +101,7 @@ function variable_recompute(variable, generator) {
       variable._valuePrior = value;
       variable._value = next;
       variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
-      variable._runtime.compute();
+      variable._runtime._compute();
       if (variable._node) variable_displayValue(variable, value); // TODO Cleaner?
       requestAnimationFrame(poll);
       return value;
@@ -109,7 +109,7 @@ function variable_recompute(variable, generator) {
       variable._valuePrior = undefined;
       variable._value = next;
       variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
-      variable._runtime.compute();
+      variable._runtime._compute();
       if (variable._node) variable_displayError(variable, error); // TODO Cleaner?
       throw error;
     });

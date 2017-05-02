@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<div id="foo"></div>
+<div id="bar"></div>
+<script src="/build/d3-express.js"></script>
+<script>
+
+var runtime = d3.runtime();
+
+var foo = runtime.variable("/", document.querySelector("#foo")).define("foo", [], function*() {
+  while (true) {
+    yield Date.now();
+  }
+});
+
+var bar = runtime.variable("/", document.querySelector("#bar")).define("bar", [foo], (foo) => {
+  return new Date(foo);
+});
+
+</script>
