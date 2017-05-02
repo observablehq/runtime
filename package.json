@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "description": "The d3.express runtime.",
   "author": {
-    "name": "Mike Bostock",
-    "url": "https://bost.ocks.org/mike"
+    "name": "Data-Driven Documents, Inc."
   },
   "license": "ISC",
   "main": "build/d3-express.js",
@@ -24,7 +23,7 @@
   "devDependencies": {
     "eslint": "^3.19.0",
     "nodemon": "^1.11.0",
-    "package-preamble": "0.0.2",
+    "package-preamble": "0.1.0",
     "rollup": "^0.41.6",
     "tape": "^4.6.3",
     "uglify-js": "^2.8.22"
