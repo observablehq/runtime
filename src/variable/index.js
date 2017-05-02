@@ -1,5 +1,6 @@
 import variable_define from "./define";
 import variable_delete from "./delete";
+import variable_import from "./import";
 
 export default function Variable(module, node) {
   this._runtime = module._runtime;
@@ -10,7 +11,7 @@ export default function Variable(module, node) {
   this._outputs = new Set;
   this._indegree = 0; // The number of computing inputs.
   this._outdegree = node == null ? 0 : 1; // The number of visible outputs.
-  // TODO this._exdegree = 0; // The number of defining variables (an import or a view).
+  this._imports = undefined;
   this._definition = undefined;
   this._valuePrior = undefined; // TODO Rename to the “resolved” value?
   this._value = undefined;
@@ -18,10 +19,8 @@ export default function Variable(module, node) {
   this._duplicate = false;
   this._duplicates = undefined;
   this._node = node;
-  // TODO this._imports
-  // TODO this._timeout
-  // TODO this._height
 }
 
 Variable.prototype.define = variable_define;
 Variable.prototype.delete = variable_delete;
+Variable.prototype.import = variable_import;

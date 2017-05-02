@@ -13,7 +13,7 @@ module0.variable().define("foo", [], () => 42);
 
 var module1 = runtime.module();
 
-// TODO module1.variable().import(module0, /* imported variables */ ["foo"], /* injected variables */ []);
+module1.variable().import(module0, ["foo"]);
 
 module1.variable(document.querySelector("#foo")).define(null, ["foo"], foo => foo * 2);
 

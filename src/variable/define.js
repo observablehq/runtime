@@ -4,18 +4,26 @@ import variable_detach from "./detach";
 import variable_duplicate from "./duplicate";
 import Variable from "./index";
 import variable_outdegree from "./outdegree";
-// TODO import variable_release from "./release";
+
+function import_delete(variable) {
+  variable.delete();
+}
 
 export default function(name, inputs, definition) {
+  variable_define.call(this, name, inputs.map(module_resolve, this._module), definition);
+  this._runtime._compute();
+  return this;
+}
+
+export function variable_define(name, inputs, definition) {
   var scope = this._module._scope,
       updates = this._runtime._updates;
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
-  // TODO if (this._imports) this._imports.forEach(variable_release, this), this._imports = null;
+  if (this._imports) this._imports.forEach(import_delete), this._imports = undefined;
   this._inputs.forEach(variable_detach, this);
   this._inputs.forEach(variable_outdegree);
-  inputs = inputs.map(module_resolve, this._module);
   inputs.forEach(variable_attach, this);
   inputs.forEach(variable_outdegree);
   this._inputs = inputs;
@@ -94,6 +102,4 @@ export default function(name, inputs, definition) {
   }
 
   updates.add(this);
-  this._runtime._compute();
-  return this;
 }
