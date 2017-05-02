@@ -15,8 +15,8 @@ var module1 = runtime.module();
 
 module1.variable().import(module0, ["foo"]);
 
-module1.variable(document.querySelector("#foo")).define(null, ["foo"], foo => foo * 2);
+module1.variable(document.querySelector("#foo")).define(null, ["foo"], foo => `foo = ${foo}`);
 
-module1.variable(document.querySelector("#bar")).define("bar", ["foo"], foo => foo * 2);
+module1.variable(document.querySelector("#bar")).define("bar", ["foo"], foo => `bar = ${foo * 2}`);
 
 </script>

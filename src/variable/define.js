@@ -1,5 +1,6 @@
 import module_resolve from "../module/resolve";
 import variable_attach from "./attach";
+import variable_builtin from "./builtin";
 import variable_detach from "./detach";
 import variable_duplicate from "./duplicate";
 import Variable from "./index";
@@ -18,6 +19,9 @@ export default function(name, inputs, definition) {
 export function variable_define(name, inputs, definition) {
   var scope = this._module._scope,
       updates = this._runtime._updates;
+
+  // Disallow variables to override builtins.
+  if (this._runtime._scope.has(name)) definition = variable_builtin(name), name = null;
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
