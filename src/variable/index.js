@@ -1,9 +1,9 @@
 import variable_define from "./define";
 import variable_delete from "./delete";
 
-export default function Variable(runtime, moduleId, node) {
-  this._runtime = runtime;
-  this._moduleId = moduleId; // TODO Should moduleId be part of the name?
+export default function Variable(module, node) {
+  this._runtime = module._runtime;
+  this._module = module;
   this._id = -1; // TODO Better indication of undefined variables?
   this._name = null;
   this._inputs = [];

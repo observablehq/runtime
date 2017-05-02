@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<div id="foo"></div>
+<div id="bar"></div>
+<script src="/build/d3-express.js"></script>
+<script>
+
+var runtime = d3.runtime();
+
+var module0 = runtime.module();
+
+module0.variable().define("foo", [], () => 42);
+
+var module1 = runtime.module();
+
+// TODO module1.variable().import(module0, /* imported variables */ ["foo"], /* injected variables */ []);
+
+module1.variable(document.querySelector("#foo")).define(null, ["foo"], foo => foo * 2);
+
+module1.variable(document.querySelector("#bar")).define("bar", ["foo"], foo => foo * 2);
+
+</script>
