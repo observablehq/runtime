@@ -17,6 +17,10 @@ var bar = runtime.variable("/", document.querySelector("#bar")).define("bar", [f
   });
 });
 
-runtime.compute();
+setTimeout(() => {
+  foo.define("foo", [], () => {
+    return 42;
+  });
+}, 750);
 
 </script>

@@ -92,5 +92,6 @@ export default function(name, inputs, definition) {
   }
 
   updates.add(this);
+  this._runtime._compute();
   return this;
 }

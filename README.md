@@ -1,0 +1,3 @@
+```
+nodemon -x npm start
+```
