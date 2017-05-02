@@ -2,6 +2,28 @@
   "name": "d3-express",
   "version": "0.0.0",
   "description": "The d3.express runtime.",
-  "author": "Mike Bostock",
-  "license": "ISC"
+  "author": {
+    "name": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike"
+  },
+  "license": "ISC",
+  "main": "build/d3-express.js",
+  "module": "src/index",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/d3/d3-express.git"
+  },
+  "scripts": {
+    "pretest": "rm -rf build && mkdir build && rollup --banner \"$(preamble)\" -f umd -n d3 -o build/d3-express.js -- src/index.js",
+    "test": "tape 'test/**/*-test.js' && eslint index.js src",
+    "prepublish": "npm run test && uglifyjs --preamble \"$(preamble)\" build/d3-express.js -c -m -o build/d3-express.min.js",
+    "postpublish": "git push && git push --tags && zip -j build/d3-express.zip -- LICENSE README.md build/d3-express.js build/d3-express.min.js"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "package-preamble": "0.0.2",
+    "rollup": "^0.41.6",
+    "tape": "^4.6.3",
+    "uglify-js": "^2.8.22"
+  }
 }
