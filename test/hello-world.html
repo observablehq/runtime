@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<style>
+
+@import url(style.css);
+
+</style>
+<p>This is foo:
 <div id="foo"></div>
+<p>And this is bar:
 <div id="bar"></div>
 <script src="/build/d3-express.js"></script>
 <script>
@@ -19,7 +25,7 @@ var bar = module.variable(document.querySelector("#bar")).define("bar", ["foo"],
 
 setTimeout(() => {
   foo.define("foo", [], () => {
-    return 42;
+    return [1, 2, 3, 4, 5];
   });
 }, 750);
 

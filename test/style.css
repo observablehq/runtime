@@ -1,0 +1,91 @@
+body {
+  margin: auto;
+  padding: 20px;
+  max-width: 960px;
+  font: 16px/24px Georgia, serif;
+}
+
+.result {
+  margin: 20px -20px;
+  padding: 0 17px;
+  border-left: solid 3px #ccc;
+  /*transition: border-left-color 250ms linear;*/
+}
+
+/*.result--changed {
+  border-left-color: #000;
+}*/
+
+.result--inspector,
+.result--error,
+.type--text {
+  font: 16px/24px Menlo, monospace;
+  white-space: pre;
+}
+
+pre,
+code,
+tt {
+  font: 16px/24px Menlo, monospace;
+}
+
+.type--expanded,
+.type--collapsed,
+.type--function,
+.type--string:before,
+.type--string:after,
+.color--gray {
+  color: #636363;
+}
+
+.type--collapsed,
+.result--inspector a {
+  cursor: pointer;
+}
+
+.type--field {
+  text-indent: -1em;
+  margin-left: 1em;
+}
+
+.type--index,
+.color--blue {
+  color: #3182bd;
+}
+
+.color--pink {
+  color: #e377c2;
+}
+
+.color--orange {
+  color: #e6550d;
+}
+
+.type--null,
+.type--undefined,
+.type--number,
+.type--date,
+.type--boolean,
+.color--green {
+  color: #31a354;
+}
+
+.type--key,
+.type--string,
+.color--purple {
+  color: #756bb1;
+}
+
+.type--string:before,
+.type--string:after {
+  content: "\"";
+}
+
+.result--error,
+.color--red {
+  color: #de2d26;
+}
+
+.result--error {
+  border-left-color: #de2d26;
+}
