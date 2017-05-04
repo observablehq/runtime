@@ -1,5 +1,7 @@
 # d3-express
 
+…
+
 ## Installing
 
 If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported:
@@ -42,5 +44,97 @@ var runtime = d3.runtime();
 …
 
 <a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>module</i>, <i>imports</i>)
+
+…
+
+### Standard Library
+
+#### DOM
+
+<a href="#DOM_canvas" name="DOM_canvas">#</a> DOM.<b>canvas</b>()
+
+…
+
+<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>()
+
+…
+
+<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>()
+
+…
+
+<a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>()
+
+…
+
+<a href="#DOM_pre" name="DOM_pre">#</a> DOM.<b>pre</b>()
+
+…
+
+<a href="#DOM_range" name="DOM_range">#</a> DOM.<b>range</b>()
+
+…
+
+<a href="#DOM_select" name="DOM_select">#</a> DOM.<b>select</b>()
+
+…
+
+<a href="#DOM_svg" name="DOM_svg">#</a> DOM.<b>svg</b>()
+
+…
+
+<a href="#DOM_text" name="DOM_text">#</a> DOM.<b>text</b>()
+
+…
+
+#### Files
+
+<a href="#Files_buffer" name="Files_buffer">#</a> Files.<b>buffer</b>(<i>file</i>)
+
+…
+
+<a href="#Files_text" name="Files_text">#</a> Files.<b>text</b>(<i>file</i>)
+
+…
+
+<a href="#Files_url" name="Files_url">#</a> Files.<b>url</b>(<i>file</i>)
+
+…
+
+#### Generators
+
+<a href="#Generators_filter" name="Generators_filter">#</a> Generators.<b>filter</b>(<i>iterator</i>, <i>test</i>)
+
+…
+
+<a href="#Generators_input" name="Generators_input">#</a> Generators.<b>input</b>(<i>input</i>)
+
+…
+
+<a href="#Generators_map" name="Generators_map">#</a> Generators.<b>map</b>(<i>iterator</i>, <i>transform</i>)
+
+…
+
+<a href="#Generators_range" name="Generators_range">#</a> Generators.<b>range</b>([<i>start</i>, ]<i>stop</i>[, <i>step</i>])
+
+…
+
+<a href="#Generators_valueAt" name="Generators_valueAt">#</a> Generators.<b>valueAt</b>(<i>iterator</i>, <i>index</i>)
+
+…
+
+#### Promises
+
+<a href="#Promises_delay" name="Promises_delay">#</a> Promises.<b>delay</b>(<i>duration</i>[, <i>value</i>])
+
+…
+
+<a href="#Promises_when" name="Promises_when">#</a> Promises.<b>when</b>(<i>date</i>[, <i>value</i>])
+
+…
+
+#### require
+
+<a href="#require" name="require">#</a> <b>require</b>(<i>name</i>)
 
 …
