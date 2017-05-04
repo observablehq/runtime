@@ -15,16 +15,17 @@
   "scripts": {
     "pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\" -f umd -n d3 -o build/d3-express.js -- src/index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src",
-    "prepublish": "npm run test && uglifyjs --preamble \"$(preamble)\" build/d3-express.js -c -m -o build/d3-express.min.js",
+    "prepublish": "npm run test && (head -n7 build/d3-express.js && tail -n+7 build/d3-express.js | sed '$d' | babili && tail -n1 build/d3-express.js) > build/d3-express.min.js",
     "postpublish": "git push && git push --tags && zip -j build/d3-express.zip -- LICENSE README.md build/d3-express.js build/d3-express.min.js"
   },
   "devDependencies": {
+    "babili": "0.0.12",
+    "d3-require": "^0.1.0",
     "d3-time-format": "^2.0.5",
     "eslint": "^3.19.0",
     "package-preamble": "0.1.0",
     "rollup": "^0.41.6",
     "rollup-plugin-node-resolve": "^3.0.0",
-    "tape": "^4.6.3",
-    "uglify-js": "^2.8.22"
+    "tape": "^4.6.3"
   }
 }
