@@ -47,9 +47,17 @@ var runtime = d3.runtime();
 
 …
 
-### Standard Library
+## Standard Library
 
-#### DOM
+By default, [d3.runtime](#runtime) provides the following standard builtins:
+
+* [DOM](#dom) - generate Document Object Model elements.
+* [Files](#files) - read files.
+* [Generators](#generators) - utilities for generators and iterators.
+* [Promises](#promises) - utilities for promises.
+* [require](#require) - load third-party libraries.
+
+### DOM
 
 <a href="#DOM_canvas" name="DOM_canvas">#</a> DOM.<b>canvas</b>()
 
@@ -87,7 +95,7 @@ var runtime = d3.runtime();
 
 …
 
-#### Files
+### Files
 
 <a href="#Files_buffer" name="Files_buffer">#</a> Files.<b>buffer</b>(<i>file</i>)
 
@@ -101,7 +109,7 @@ var runtime = d3.runtime();
 
 …
 
-#### Generators
+### Generators
 
 <a href="#Generators_filter" name="Generators_filter">#</a> Generators.<b>filter</b>(<i>iterator</i>, <i>test</i>)
 
@@ -123,7 +131,7 @@ var runtime = d3.runtime();
 
 …
 
-#### Promises
+### Promises
 
 <a href="#Promises_delay" name="Promises_delay">#</a> Promises.<b>delay</b>(<i>duration</i>[, <i>value</i>])
 
@@ -133,7 +141,7 @@ var runtime = d3.runtime();
 
 …
 
-#### require
+### require
 
 <a href="#require" name="require">#</a> <b>require</b>(<i>name</i>)
 
