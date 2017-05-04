@@ -51,8 +51,8 @@ var runtime = d3.runtime();
 
 By default, [d3.runtime](#runtime) provides the following standard builtins:
 
-* [DOM](#dom) - generate Document Object Model elements.
-* [Files](#files) - read files.
+* [DOM](#dom) - create HTML and SVG elements.
+* [Files](#files) - read local files into memory.
 * [Generators](#generators) - utilities for generators and iterators.
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
