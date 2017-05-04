@@ -26,6 +26,6 @@
     "rollup": "^0.41.6",
     "rollup-plugin-node-resolve": "^3.0.0",
     "tape": "^4.6.3",
-    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony"
+    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony-v2.8.22"
   }
 }
