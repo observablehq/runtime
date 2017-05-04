@@ -1,8 +1,10 @@
 import constant from "../constant";
+import stdlib from "../stdlib/index";
 import runtime_compute from "./compute";
 import runtime_module from "./module";
 
 export default function(builtins) {
+  if (builtins == null) builtins = stdlib;
   return new Runtime(builtins);
 }
 

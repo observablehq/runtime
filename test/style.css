@@ -7,14 +7,16 @@ body {
 
 .result {
   margin: 20px -20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 0 17px;
   border-left: solid 3px #ccc;
-  /*transition: border-left-color 250ms linear;*/
+  transition: border-left-color 250ms linear;
 }
 
-/*.result--changed {
+.result--changed {
   border-left-color: #000;
-}*/
+}
 
 .result--inspector,
 .result--error,
@@ -88,4 +90,18 @@ tt {
 
 .result--error {
   border-left-color: #de2d26;
+}
+
+.result input {
+  min-width: 320px;
+}
+
+.result input[type=range] {
+  position: relative;
+  top: 3px;
+}
+
+.result canvas {
+  position: relative;
+  top: 1px;
 }
