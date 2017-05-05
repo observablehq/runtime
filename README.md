@@ -49,7 +49,7 @@ Returns a new [variable](#variables) for this [module](#modules).
 
 If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
-A variable with no associated *element* is only computed if any transitive output of the variable has an *element*. In other words, variables are only computed on an as-needed basis to be displayed in the document. This is particularly useful when a document defines multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
+A variable with no associated *element* is only computed if any transitive output of the variable has an *element*. In other words, variables are computed on an as-needed basis to be displayed. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
 ### Variables
 
