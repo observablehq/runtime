@@ -23,7 +23,7 @@ A runtime is responsible for evaluating [variables](#variables) in topological o
 
 <a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
 
-Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtin variables are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
+Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
 
 ```js
 var module = d3.runtime({color: "red"}).module();
@@ -33,7 +33,7 @@ module.variable().define(null, ["color"], color => {
 });
 ```
 
-Builtins must be constant values; unlike [normal variables](#variable_define), they cannot be defined as functions. However, a builtin may be defined as a promise, in which case any referencing variables will only be evaluated when the promise is resolved. Defined variables may not override builtins. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
+Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
