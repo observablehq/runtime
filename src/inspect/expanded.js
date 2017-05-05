@@ -11,7 +11,7 @@ export default function inspectExpanded(object) {
   var a = span.appendChild(document.createElement("a"));
   a.textContent = "▾" + (array ? "Array(" + object.length + ") [" : object.constructor.name + " {");
   a.addEventListener("mouseup", function clicked(event) {
-    event.stopImmediatePropagation();
+    event.stopPropagation();
     var spanNew = inspectCollapsed(object);
     span.parentNode.replaceChild(spanNew, span);
     // TODO inspect_resized(spanNew);
@@ -33,7 +33,7 @@ export default function inspectExpanded(object) {
     a.style.display = "block";
     a.appendChild(document.createTextNode("  … " + (n - i) + " more"));
     a.addEventListener("mouseup", function clicked(event) {
-      event.stopImmediatePropagation();
+      event.stopPropagation();
       for (var j = Math.min(i + 20, n); i < j; ++i) {
         var item = span.insertBefore(document.createElement("div"), span.lastChild.previousSibling),
             key = keys[i], spanKey = item.appendChild(document.createElement("span"));

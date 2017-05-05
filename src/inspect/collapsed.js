@@ -10,7 +10,7 @@ export default function inspectCollapsed(object, shallow) {
     span.appendChild(document.createTextNode(array ? "Array(" + object.length + ")" : object.constructor.name));
     span.className = "type--shallow";
     span.addEventListener("mouseup", function clicked(event) {
-      event.stopImmediatePropagation();
+      event.stopPropagation();
       var spanNew = inspectCollapsed(object);
       span.parentNode.replaceChild(spanNew, span);
       // TODO inspect_resized(spanNew);
@@ -38,7 +38,7 @@ export default function inspectCollapsed(object, shallow) {
   span.appendChild(document.createTextNode(array ? "]" : "}"));
 
   span.addEventListener("mouseup", function clicked(event) {
-    event.stopImmediatePropagation();
+    event.stopPropagation();
     var spanNew = inspectExpanded(object);
     span.parentNode.replaceChild(spanNew, span);
     // TODO inspect_resized(spanNew);
