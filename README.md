@@ -413,3 +413,5 @@ require("d3-array@1.1").then(d3 => {
   console.log(d3.range(100));
 });
 ```
+
+See [d3-require](https://github.com/d3/d3-require) for more information.
