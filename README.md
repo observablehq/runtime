@@ -21,7 +21,7 @@ var runtime = d3.runtime();
 
 <a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
 
-…
+Returns a new runtime with the specified *builtins*, which is an object. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
