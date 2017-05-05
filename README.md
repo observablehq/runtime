@@ -388,6 +388,28 @@ return image;
 
 ### require
 
-<a href="#require" name="require">#</a> <b>require</b>(<i>name</i>)
+<a href="#require" name="require">#</a> <b>require</b>(<i>names…</i>)
 
-…
+Returns a promise of the [asynchronous module definition](https://github.com/amdjs/amdjs-api/blob/master/AMD.md) (AMD) with the specified *names*, loaded from [unpkg](https://unpkg.com/). Each module *name* can be a package (or scoped package) name optionally followed by the at sign (`@`) and a semver range. For example, to load [d3-array](https://github.com/d3/d3-array):
+
+```js
+require("d3-array").then(d3 => {
+  console.log(d3.range(100));
+});
+```
+
+Or, to load [d3-array](https://github.com/d3/d3-array) and [d3-color](https://github.com/d3/d3-color) and merge them into a single object:
+
+```js
+require("d3-array", "d3-color").then(d3 => {
+  console.log(d3.range(360).map(h => d3.hsl(h, 1, 0.5)));
+});
+```
+
+Or, to load [d3-array](https://github.com/d3/d3-array) 1.1.x:
+
+```js
+require("d3-array@1.1").then(d3 => {
+  console.log(d3.range(100));
+});
+```
