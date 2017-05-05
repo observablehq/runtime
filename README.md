@@ -47,6 +47,8 @@ A module is a namespace for [variables](#variables); within a module, variables 
 
 Returns a new [variable](#variables) for this [module](#modules). If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
+A variable with no associated *element* is only computed if any transitive output of the variable has an *element*. In other words, variables are only computed on an as-needed basis to be displayed in the document. This is particularly useful when a document defines multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
+
 ### Variables
 
 A variable defines a piece of state in a reactive program. Variables are often named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
