@@ -2,6 +2,7 @@ import inspect from "../inspect/index";
 
 export default function displayValue(variable, value) {
   var node = variable._node;
+  if (!node) return;
   if (!(value instanceof Node) || (value.parentNode && value.parentNode !== node)) {
     node.className = "result result--inspector";
     value = inspect(value, false, node.firstChild // TODO Do this better.
@@ -18,8 +19,8 @@ export default function displayValue(variable, value) {
       node.appendChild(value);
     }
   }
-  variable._node.classList.add("result--changed");
+  node.classList.add("result--changed");
   if (variable._timeout) clearTimeout(variable._timeout);
-  variable._timeout = setTimeout(function() { variable._node.classList.remove("result--changed"); }, 250);
+  variable._timeout = setTimeout(function() { node.classList.remove("result--changed"); }, 250);
   // TODO variable_resize(variable);
 }

@@ -1,5 +1,7 @@
 export default function displayError(variable, error) {
-  variable._node.className = "result result--error";
-  variable._node.textContent = error + ""; // TODO Pretty stack trace.
+  var node = variable._node;
+  if (!node) return;
+  node.className = "result result--error";
+  node.textContent = error + ""; // TODO Pretty stack trace.
   // TODO variable_resize(variable);
 }

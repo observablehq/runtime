@@ -48,7 +48,7 @@ function runtime_compute() {
     var error = new ReferenceError("circular definition");
     variable._valuePrior = undefined;
     (variable._value = Promise.reject(error)).catch(noop);
-    if (variable._node) variable_displayError(variable, error); // TODO Cleaner?
+    variable_displayError(variable, error);
   });
 
   function postqueue(variable) {
@@ -78,11 +78,11 @@ function variable_compute(variable) {
     return value;
   }).then(function(value) {
     variable._valuePrior = value;
-    if (variable._node) variable_displayValue(variable, value); // TODO Cleaner?
+    variable_displayValue(variable, value);
     return value;
   }, function(error) {
     variable._valuePrior = undefined;
-    if (variable._node) variable_displayError(variable, error); // TODO Cleaner?
+    variable_displayError(variable, error);
     throw error;
   });
 }
@@ -102,7 +102,7 @@ function variable_recompute(variable, generator) {
       variable._value = next;
       variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
       variable._runtime._compute();
-      if (variable._node) variable_displayValue(variable, value); // TODO Cleaner?
+      variable_displayValue(variable, value);
       requestAnimationFrame(poll);
       return value;
     }, function(error) {
@@ -110,7 +110,7 @@ function variable_recompute(variable, generator) {
       variable._value = next;
       variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
       variable._runtime._compute();
-      if (variable._node) variable_displayError(variable, error); // TODO Cleaner?
+      variable_displayError(variable, error);
       throw error;
     });
   });
