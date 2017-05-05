@@ -1,4 +1,5 @@
 import inspect from "../inspect/index";
+import dispatchUpdate from "./dispatchUpdate";
 
 export default function displayValue(variable, value) {
   var node = variable._node;
@@ -19,8 +20,5 @@ export default function displayValue(variable, value) {
       node.appendChild(value);
     }
   }
-  node.classList.add("result--changed");
-  if (variable._timeout) clearTimeout(variable._timeout);
-  variable._timeout = setTimeout(function() { node.classList.remove("result--changed"); }, 250);
-  // TODO variable_resize(variable);
+  dispatchUpdate(node);
 }

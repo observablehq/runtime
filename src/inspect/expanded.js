@@ -1,3 +1,4 @@
+import dispatchUpdate from "../variable/dispatchUpdate";
 import inspectCollapsed from "./collapsed";
 import inspect from "./index";
 
@@ -14,7 +15,7 @@ export default function inspectExpanded(object) {
     event.stopPropagation();
     var spanNew = inspectCollapsed(object);
     span.parentNode.replaceChild(spanNew, span);
-    // TODO inspect_resized(spanNew);
+    dispatchUpdate(spanNew);
   });
 
   for (var i = 0, j = Math.min(20, n); i < j; ++i) {
@@ -48,7 +49,7 @@ export default function inspectExpanded(object) {
       } else {
         span.removeChild(span.lastChild.previousSibling);
       }
-      // TODO inspect_resized(span);
+      dispatchUpdate(span);
     });
   }
 

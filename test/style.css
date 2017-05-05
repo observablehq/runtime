@@ -11,11 +11,6 @@ body {
   text-overflow: ellipsis;
   padding: 0 17px;
   border-left: solid 3px #ccc;
-  transition: border-left-color 250ms linear;
-}
-
-.result--changed {
-  border-left-color: #000;
 }
 
 .result--inspector,

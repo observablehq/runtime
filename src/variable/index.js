@@ -20,7 +20,6 @@ export default function Variable(module, node) {
   this._duplicate = false;
   this._duplicates = undefined;
   this._node = node;
-  this._timeout = undefined;
 }
 
 Variable.prototype.define = variable_define;
