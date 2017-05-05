@@ -19,7 +19,7 @@ var runtime = d3.runtime();
 
 ### Runtimes
 
-A runtime is responsible for evaluating [variables](#variables) in topological order whenever their input values change.
+A runtime is responsible for evaluating [variables](#variables) in topological order whenever their input values change. A runtime typically has one or more [modules](#modules) to scope variables. Collectively, these variables represent a reactive program managed by the runtime.
 
 <a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
 
