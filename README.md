@@ -101,11 +101,42 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
-…
+Deletes this variable’s current definition and name, if any. Any other variables in this module that reference this variable as an input will now throw a ReferenceError. If exactly one other variable also defined this variable’s name, such that that variable throws a ReferenceError due to a duplicate definition, that variable’s original definition is restored.
 
 <a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>module</i>, <i>imports</i>)
 
-…
+Redefines this variable to import the variables in the specified *imports* array from the specified *module* into this variable’s module. For example, consider the module *a* which defines the variable `foo`:
+
+```js
+var runtime = d3.runtime();
+
+var a = runtime.module();
+
+a.variable().define("foo", [], () => 42);
+```
+
+To import `foo` into module *b* and define a derived variable `bar`:
+
+```js
+var b = runtime.module();
+
+b.variable().import(a, ["foo"]);
+
+b.variable().define("bar", ["foo"], foo => foo * 2);
+```
+
+Each element in the *imports* array may be either a string or an object with the following properties:
+
+* `member` - the name of the variable to import from the remote module
+* `alias` the name of the variable to define in the local module
+
+If a string is specified, or if the *import*.alias property is null or undefined, the alias name and member name are the same. For example, to import `foo` into module *c* under the alias `baz`:
+
+```js
+var c = runtime.module();
+
+c.variable().import(a, [{member: "foo", alias: "baz"}]);
+```
 
 ## Standard Library
 
