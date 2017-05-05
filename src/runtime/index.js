@@ -1,4 +1,3 @@
-import constant from "../constant";
 import stdlib from "../stdlib/index";
 import runtime_compute from "./compute";
 import runtime_module from "./module";
@@ -16,7 +15,9 @@ function Runtime(builtins) {
   if (builtins) for (var key in builtins) {
     var variable = module.variable();
     variable._id = null; // TODO Cleaner?
-    variable.define(key, [], constant(builtins[key]));
+    variable._outdegree = NaN; // Prevent recomputation. TODO Cleaner?
+    variable._value = Promise.resolve(builtins[key]);
+    module._scope.set(key, variable);
   }
 }
 
