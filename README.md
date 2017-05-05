@@ -53,7 +53,7 @@ A variable with no associated *element* is only computed if any transitive outpu
 
 ### Variables
 
-A variable defines a piece of state in a reactive program. Variables are often named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
+A variable defines a piece of state in a reactive program. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
