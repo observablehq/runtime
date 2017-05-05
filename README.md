@@ -1,6 +1,6 @@
 # d3-express
 
-…
+The reactive runtime for [d3.express](https://d3.express) documents.
 
 ## Installing
 
@@ -134,7 +134,7 @@ Each element in the *specifiers* array may be either a string or an object with 
 * `member` - the name of the variable to import from the remote module
 * `alias` the name of the variable to define in the local module
 
-If a string is specified, or if the *import*.alias property is null or undefined, the alias name and member name are the same. For example, to import `foo` into module *c* under the alias `baz`:
+If a string is specified, or if the *specifier*.alias property is null or undefined, the alias name and member name are the same. For example, to import `foo` into module *c* under the alias `baz`:
 
 ```js
 var c = runtime.module();
