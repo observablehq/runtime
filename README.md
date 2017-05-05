@@ -23,7 +23,7 @@ A runtime is responsible for evaluating [variables](#variables) in topological o
 
 <a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
 
-Returns a new reactive [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtin variables are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
+Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtin variables are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
 
 ```js
 var module = d3.runtime({color: "red"}).module();
@@ -53,7 +53,7 @@ A variable with no associated *element* is only computed if any transitive outpu
 
 ### Variables
 
-A variable defines a piece of state in a reactive program. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
+A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
