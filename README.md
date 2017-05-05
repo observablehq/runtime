@@ -51,17 +51,17 @@ Returns a new [variable](#variables) for this [module](#modules). The variable i
 
 If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
-A variable with no associated *element* is only computed if any transitive output of the variable has an *element*. In other words, variables are computed on an as-needed basis to be displayed. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
+A variable without an associated *element* is only computed if any transitive output of the variable has an *element*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
 ### Variables
 
-A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
+A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
-Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported variables](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation.
+Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation.
 
-The *definition* function may return a promise; derived variables will only be computed when the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, when the promise is resolved. When the *definition* is invoked, the value of `this` is the variable’s previous value, or undefined if this is the first time the variable is being computed under its current definition. In other words, the previous value is preserved only when input values change; it is *not* preserved if the variable is explicitly redefined.
+The *definition* function may return a promise; derived variables will be computed after the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, after the promise is resolved. When the *definition* is invoked, the value of `this` is the variable’s previous value, or undefined if this is the first time the variable is being computed under its current definition. Thus, the previous value is preserved only when input values change; it is *not* preserved if the variable is explicitly redefined.
 
 For example, consider the following module that starts with a single undefined variable, *a*:
 
@@ -73,7 +73,7 @@ var module = runtime.module();
 var a = module.variable();
 ```
 
-To define *a* with the name `foo` and the constant value 42:
+To define variable *a* with the name `foo` and the constant value 42:
 
 ```js
 a.define("foo", [], () => 42);
@@ -107,9 +107,9 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
 
-<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>module</i>, <i>imports</i>)
+<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>module</i>, <i>specifiers</i>)
 
-Redefines this variable to import the variables in the specified *imports* array from the specified *module* into this variable’s module. For example, consider the module *a* which defines the variable `foo`:
+Redefines this variable to import variables from the specified *module* into this variable’s module according to the *specifiers* array. For example, consider the module *a* which defines a variable named `foo`:
 
 ```js
 var runtime = d3.runtime();
@@ -119,7 +119,7 @@ var a = runtime.module();
 a.variable().define("foo", [], () => 42);
 ```
 
-To import `foo` into module *b* and define a derived variable `bar`:
+To import `foo` into module *b* and define a derived variable named `bar`:
 
 ```js
 var b = runtime.module();
@@ -129,7 +129,7 @@ b.variable().import(a, ["foo"]);
 b.variable().define("bar", ["foo"], foo => foo * 2);
 ```
 
-Each element in the *imports* array may be either a string or an object with the following properties:
+Each element in the *specifiers* array may be either a string or an object with the following properties:
 
 * `member` - the name of the variable to import from the remote module
 * `alias` the name of the variable to define in the local module
