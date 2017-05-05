@@ -33,7 +33,7 @@ module.variable().define(null, ["color"], color => {
 });
 ```
 
-Defined variables may not override builtins. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
+Builtins must be constant values; unlike [normal variables](#variable_define), they cannot be defined as functions. However, a builtin may be defined as a promise, in which case any referencing variables will only be evaluated when the promise is resolved. Defined variables may not override builtins. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
