@@ -59,7 +59,7 @@ A variable defines a piece of state in a reactive program, akin to a cell in a s
 
 Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported variables](#variable_import)) in this variable’s module. The *definition* function may return a promise; derived variables will only be computed when the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, when the promise is resolved.
 
-For example, consider the following module that starts with a single undefined variable, `a`:
+For example, consider the following module that starts with a single undefined variable, *a*:
 
 ```js
 var runtime = d3.runtime();
@@ -69,21 +69,21 @@ var module = runtime.module();
 var a = module.variable();
 ```
 
-To define `a` with the name `foo` and the constant value 42:
+To define *a* with the name `foo` and the constant value 42:
 
 ```js
 a.define("foo", [], () => 42);
 ```
 
-To define an anonymous variable `b` that takes `foo` as input:
+To define an anonymous variable *b* that takes `foo` as input:
 
 ```js
 var b = module.variable().define(null, ["foo"], foo => foo * 2);
 ```
 
-Note that the JavaScript symbols in the above example code (`a` and `b`) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted.
+Note that the JavaScript symbols in the above example code (*a* and *b*) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted.
 
-If more than one variable has the same *name* at the same time, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables `a` and `b` will throw a ReferenceError:
+If more than one variable has the same *name* at the same time, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables *a* and *b* will throw a ReferenceError:
 
 ```js
 var module = d3.runtime().module();
@@ -91,13 +91,13 @@ var a = module.variable().define("foo", [], () => 1);
 var b = module.variable().define("foo", [], () => 2);
 ```
 
-If `a` or `b` is redefined to have a different name, both `a` and `b` will subsequently resolve to their desired values:
+If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
 
 ```js
 b.define("bar", [], () => 2);
 ```
 
-Likewise deleting `a` or `b` would allow the other variable to resolve to its desired value.
+Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
