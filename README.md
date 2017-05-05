@@ -148,13 +148,17 @@ c.variable().import(a, [{member: "foo", alias: "baz"}]);
 
 ## Standard Library
 
-By default, [d3.runtime](#runtime) provides the following standard builtins:
+<a href="#runtimeLibrary" name="runtimeLibrary">#</a> d3.<b>runtimeLibrary</b>
+
+The standard library object, defining the following properties:
 
 * [DOM](#dom) - create HTML and SVG elements.
 * [Files](#files) - read local files into memory.
 * [Generators](#generators) - utilities for generators and iterators.
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
+
+By default, [d3.runtime](#runtime) uses this standard library for builtins.
 
 ### DOM
 
