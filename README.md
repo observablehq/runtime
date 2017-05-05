@@ -17,11 +17,13 @@ var runtime = d3.runtime();
 
 ## API Reference
 
-### Runtime
+### Runtimes
+
+A runtime is responsible for evaluating [variables](#variables) in topological order whenever their input values change.
 
 <a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
 
-Returns a new reactive [runtime](#runtime). If a *builtins* object is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtin variables are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
+Returns a new reactive [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtin variables are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. For example, to define the builtin `color`:
 
 ```js
 var module = d3.runtime({color: "red"}).module();
@@ -35,19 +37,61 @@ Defined variables may not override builtins. If *builtins* is not specified, the
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
-Returns a new [module]
+Returns a new [module](#modules) for this [runtime](#runtimes).
 
-### Module
+### Modules
+
+A module is a namespace for [variables](#variables); within a module, variables should have unique names.
 
 <a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>element</i>])
 
-…
+Returns a new [variable](#variables) for this [module](#modules). If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
-### Variable
+### Variables
+
+A variable defines a piece of state in a reactive program. Variables are often named to allow the definition of derived variables: variables whose value is computed from other variables’ values.
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
-…
+Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. For example, consider the following module that starts with a single undefined variable, `a`:
+
+```js
+var runtime = d3.runtime();
+
+var module = runtime.module();
+
+var a = module.variable();
+```
+
+To define `a` with the name `foo` and the constant value 42:
+
+```js
+a.define("foo", [], () => 42);
+```
+
+To define an anonymous variable `b` that takes `foo` as input:
+
+```js
+var b = module.variable().define(null, ["foo"], foo => foo * 2);
+```
+
+Note that the JavaScript symbols in the above example code (`a` and `b`) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted.
+
+If more than one variable has the same *name* at the same time, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables `a` and `b` will throw a ReferenceError:
+
+```js
+var module = d3.runtime().module();
+var a = module.variable().define("foo", [], () => 1);
+var b = module.variable().define("foo", [], () => 2);
+```
+
+If `a` or `b` is redefined to have a different name, both `a` and `b` will subsequently resolve to their desired values:
+
+```js
+b.define("bar", [], () => 2);
+```
+
+Likewise deleting `a` or `b` would allow the other variable to resolve to its desired value.
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
