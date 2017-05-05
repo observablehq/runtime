@@ -1,14 +1,11 @@
 import module_resolve from "../module/resolve";
 import variable_attach from "./attach";
 import variable_builtin from "./builtin";
+import {variable_delete} from "./delete";
 import variable_detach from "./detach";
 import variable_duplicate from "./duplicate";
 import Variable from "./index";
 import variable_outdegree from "./outdegree";
-
-function import_delete(variable) {
-  variable.delete();
-}
 
 export default function(name, inputs, definition) {
   variable_define.call(this, name, inputs.map(module_resolve, this._module), definition);
@@ -25,7 +22,7 @@ export function variable_define(name, inputs, definition) {
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
-  if (this._imports) this._imports.forEach(import_delete), this._imports = undefined;
+  if (this._imports) this._imports.forEach(variable_delete), this._imports = undefined;
   this._inputs.forEach(variable_detach, this);
   this._inputs.forEach(variable_outdegree);
   inputs.forEach(variable_attach, this);
