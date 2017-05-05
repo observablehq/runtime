@@ -121,74 +121,166 @@ By default, [d3.runtime](#runtime) provides the following standard builtins:
 
 <a href="#DOM_canvas" name="DOM_canvas">#</a> DOM.<b>canvas</b>(<i>width</i>, <i>height</i>)
 
-…
+Returns a new canvas element with the specified *width* and *height*. For example, this:
 
 ```js
-DOM.canvas(960, 500)
+var canvas = DOM.canvas(960, 500);
+```
+
+Is equivalent to:
+
+```js
+var canvas = document.createElement("canvas");
+canvas.width = 960;
+canvas.height = 500;
 ```
 
 <a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
-…
+Returns a new element with the specified *name*. For example, this:
 
 ```js
-DOM.element("h1")
+var h1 = DOM.element("h1");
 ```
 
-<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>(<i>strings</i>)
+Equivalent to:
 
-…
+```js
+var h1 = document.createElement("h1");
+```
+
+If a *uri* is specified, uses [*document*.createElementNS](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS) instead of [*document*.createElement](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement). For example, this:
+
+```js
+var svg = DOM.element("http://www.w3.org/2000/svg", "svg");
+```
+
+Is equivalent to this:
+
+```js
+var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+```
+
+See also [DOM.svg](#DOM_svg). If *options* is specified, they will be passed along to *document*.createElement or *document*.createElementNS to define a custom element.
+
+<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>(<i>strings</i>, <i>values…</i>)
+
+Returns the HTML element or node represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create an H1 element whose text content is “Hello, world!”:
 
 ```js
 DOM.html`<h1>Hello, world!</h1>`
 ```
 
-<a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>(<i>type</i>)
-
-…
+If the resulting HTML fragment is not a single HTML element or node, is it wrapped in a DIV element. For example, this expression:
 
 ```js
-DOM.input("file")
+DOM.html`Hello, <b>world</b>!`
 ```
 
-<a href="#DOM_pre" name="DOM_pre">#</a> DOM.<b>pre</b>(<i>strings</i>)
-
-…
+Is equivalent to this expression:
 
 ```js
-DOM.pre`This is pre-formatted text.`
+DOM.html`<div>Hello, <b>world</b>!</div>`
 ```
 
-<a href="#DOM_range" name="DOM_range">#</a> DOM.<b>range</b>([<i>min</i>, ]<i>max</i>[, <i>step</i>])
+<a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>([<i>type</i>])
 
-…
+Returns a new input element with the specified *type*. For example, this:
 
 ```js
-DOM.range(-180, 180, 1)
+var input = DOM.input("file");
+```
+
+Is equivalent to:
+
+```js
+var input = document.createElement("input");
+input.type = "file";
+```
+
+If *type* is not specified or null, the `text` input type is used.
+
+<a href="#DOM_pre" name="DOM_pre">#</a> DOM.<b>pre</b>(<i>strings</i>, <i>values…</i>)
+
+Returns a pre element for the text represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create a pre element whose text content is “Hello, world!”:
+
+```js
+var pre = DOM.pre`Hello, world!`;
+```
+
+This is equivalent to:
+
+```js
+var pre = document.createElement("pre");
+pre.textContent = "Hello, world!";
+```
+
+<a href="#DOM_range" name="DOM_range">#</a> DOM.<b>range</b>(\[<i>min</i>, \]\[<i>max</i>\]\[, <i>step</i>\])
+
+Returns a new input element of type `range`. If *max* is specified, sets the maximum value of the range to the specified number; if *max* is not specified or null, sets the maximum value of the range to 1. If *min* is specified, sets the minimum value of the range to the specified number; if *min* is not specified or null, sets the minimum value of the range to 0. If *step* is specified, sets the step value of the range to the specified number; if *step* is not specified or null, sets the step value of the range to `any`. For example, this:
+
+```js
+var input = DOM.range(-180, 180, 1);
+```
+
+Is equivalent to this:
+
+```js
+var input = document.createElement("input");
+input.min = -180;
+input.max = 180;
+input.step = 1;
+input.type = "range";
 ```
 
 <a href="#DOM_select" name="DOM_select">#</a> DOM.<b>select</b>(<i>values</i>)
 
-…
+Returns a new select element with an option for each of the strings in the specified *values* array. For example, this:
 
 ```js
-DOM.select(["red", "green", "blue"])
+var select = DOM.select(["red", "green", "blue"]);
+```
+
+Is equivalent to:
+
+```js
+var select = document.createElement("select");
+var optionRed = select.appendChild(document.createElement("option"));
+optionRed.value = optionRed.textContent = "red";
+var optionGreen = select.appendChild(document.createElement("option"));
+optionGreen.value = optionGreen.textContent = "green";
+var optionBlue = select.appendChild(document.createElement("option"));
+optionBlue.value = optionBlue.textContent = "blue";
 ```
 
 <a href="#DOM_svg" name="DOM_svg">#</a> DOM.<b>svg</b>(<i>width</i>, <i>height</i>)
 
-…
+Returns a new SVG element with the specified *width* and *height*. For example, this:
 
 ```js
-DOM.svg(960, 500)
+var svg = DOM.svg(960, 500);
+```
+
+Is equivalent to this:
+
+```js
+var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");;
+svg.setAttribute("width", 960);
+svg.setAttribute("height", 500);
 ```
 
 <a href="#DOM_text" name="DOM_text">#</a> DOM.<b>text</b>(<i>string</i>)
 
-…
+Returns a new text content with the specified *string* value. For example, this:
 
 ```js
-DOM.text("Hello, world!")
+var text = DOM.text("Hello, world!");
+```
+
+Is equivalent to this:
+
+```js
+var text = document.createTextNode("Hello, world!");
 ```
 
 ### Files
