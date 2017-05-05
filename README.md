@@ -103,6 +103,10 @@ b.define("bar", [], () => 2);
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
+<a href="#variable_defineView" name="variable_defineView">#</a> <i>variable</i>.<b>defineView</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
+
+…
+
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.

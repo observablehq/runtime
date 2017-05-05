@@ -1,4 +1,5 @@
 import variable_define from "./define";
+import variable_defineView from "./defineView";
 import variable_delete from "./delete";
 import variable_import from "./import";
 
@@ -23,5 +24,6 @@ export default function Variable(module, node) {
 }
 
 Variable.prototype.define = variable_define;
+Variable.prototype.defineView = variable_defineView;
 Variable.prototype.delete = variable_delete;
 Variable.prototype.import = variable_import;
