@@ -43,11 +43,11 @@ Returns a new [module](#modules) for this [runtime](#runtimes).
 
 ### Modules
 
-A module is a namespace for [variables](#variables); within a module, variables should typically have unique names.
+A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
 <a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>element</i>])
 
-Returns a new [variable](#variables) for this [module](#modules).
+Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
 If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
