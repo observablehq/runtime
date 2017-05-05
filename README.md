@@ -57,7 +57,9 @@ A variable defines a piece of state in a reactive program. Variables may be name
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
-Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. For example, consider the following module that starts with a single undefined variable, `a`:
+Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The *definition* function may return a promise; derived variables will only be computed when the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, when the promise is resolved.
+
+For example, consider the following module that starts with a single undefined variable, `a`:
 
 ```js
 var runtime = d3.runtime();
