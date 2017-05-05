@@ -328,15 +328,31 @@ var hello = document.createTextNode("Hello, world!");
 
 <a href="#Files_buffer" name="Files_buffer">#</a> Files.<b>buffer</b>(<i>file</i>)
 
-…
+Reads the specified *file*, returning a promise of the ArrayBuffer yielded by [*fileReader*.readAsArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsArrayBuffer). This is useful for reading binary files, such as shapefiles and ZIP archives.
 
 <a href="#Files_text" name="Files_text">#</a> Files.<b>text</b>(<i>file</i>)
 
-…
+Reads the specified *file*, returning a promise of the string yielded by [*fileReader*.readAsText](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText). This is useful for reading text files, such as plain text, CSV, Markdown and HTML.
 
 <a href="#Files_url" name="Files_url">#</a> Files.<b>url</b>(<i>file</i>)
 
-…
+Reads the specified *file*, returning a promise of the data URL yielded by [*fileReader*.readAsDataURL](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL). This is useful for reading a file into memory, represented as a data URL. For example, to display a local file as an image:
+
+```js
+Files.url(file).then(url => {
+  var image = new Image;
+  image.src = url;
+  return image;
+})
+```
+
+However, note that it may be more efficient to use the synchronous [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) method instead, such as:
+
+```js
+var image = new Image;
+image.src = URL.createObjectURL(file);
+return image;
+```
 
 ### Generators
 
