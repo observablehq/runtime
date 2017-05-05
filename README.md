@@ -59,41 +59,77 @@ By default, [d3.runtime](#runtime) provides the following standard builtins:
 
 ### DOM
 
-<a href="#DOM_canvas" name="DOM_canvas">#</a> DOM.<b>canvas</b>()
+<a href="#DOM_canvas" name="DOM_canvas">#</a> DOM.<b>canvas</b>(<i>width</i>, <i>height</i>)
 
 …
 
-<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>()
+```js
+DOM.canvas(960, 500)
+```
+
+<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
 …
 
-<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>()
+```js
+DOM.element("h1")
+```
+
+<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>(<i>strings</i>)
 
 …
 
-<a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>()
+```js
+DOM.html`<h1>Hello, world!</h1>`
+```
+
+<a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>(<i>type</i>)
 
 …
 
-<a href="#DOM_pre" name="DOM_pre">#</a> DOM.<b>pre</b>()
+```js
+DOM.input("file")
+```
+
+<a href="#DOM_pre" name="DOM_pre">#</a> DOM.<b>pre</b>(<i>strings</i>)
 
 …
 
-<a href="#DOM_range" name="DOM_range">#</a> DOM.<b>range</b>()
+```js
+DOM.pre`This is pre-formatted text.`
+```
+
+<a href="#DOM_range" name="DOM_range">#</a> DOM.<b>range</b>([<i>min</i>, ]<i>max</i>[, <i>step</i>])
 
 …
 
-<a href="#DOM_select" name="DOM_select">#</a> DOM.<b>select</b>()
+```js
+DOM.range(-180, 180, 1)
+```
+
+<a href="#DOM_select" name="DOM_select">#</a> DOM.<b>select</b>(<i>values</i>)
 
 …
 
-<a href="#DOM_svg" name="DOM_svg">#</a> DOM.<b>svg</b>()
+```js
+DOM.select(["red", "green", "blue"])
+```
+
+<a href="#DOM_svg" name="DOM_svg">#</a> DOM.<b>svg</b>(<i>width</i>, <i>height</i>)
 
 …
 
-<a href="#DOM_text" name="DOM_text">#</a> DOM.<b>text</b>()
+```js
+DOM.svg(960, 500)
+```
+
+<a href="#DOM_text" name="DOM_text">#</a> DOM.<b>text</b>(<i>string</i>)
 
 …
+
+```js
+DOM.text("Hello, world!")
+```
 
 ### Files
 
