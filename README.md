@@ -28,11 +28,15 @@ Returns a new [runtime](#runtimes). If a *builtins* object is specified, each pr
 For example, to define the builtin `color`:
 
 ```js
-var module = d3.runtime({color: "red"}).module();
+var runtime = d3.runtime({color: "red"});
+```
 
-module.variable().define(null, ["color"], color => {
-  console.log(`Hello, ${color}.`); // "Hello, red."
-});
+To refer to the `color` builtin from a variable:
+
+```js
+var module = runtime.module();
+
+module.variable(document.querySelector("#output")).define(["color"], color => `Hello, ${color}.`);
 ```
 
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
