@@ -127,36 +127,36 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 
 <a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
 
-Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider the module *a* which defines a variable named `foo`:
+Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
 ```js
 var runtime = d3.runtime();
 
-var a = runtime.module();
+var module0 = runtime.module();
 
-a.variable("#a").define("foo", 42);
+module0.variable("#a").define("foo", 42);
 ```
 
-To import `foo` into module *b*:
+To import `foo` into another module:
 
 ```js
-var b = runtime.module();
+var module1 = runtime.module();
 
-b.variable("#b").import("foo", a);
+module1.variable().import("foo", a);
 ```
 
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-b.variable("#b").define(["foo"], foo => `The value of foo is ${foo}.`);
+module1.variable("#c").define(["foo"], foo => `The value of foo is ${foo}.`);
 ```
 
-To import `foo` into module *c* under the alias `bar`:
+To import `foo` into another module under the alias `bar`:
 
 ```js
-var c = runtime.module();
+var module2 = runtime.module();
 
-c.variable("#c").import("foo", "bar", a);
+module2.variable().import("foo", "bar", a);
 ```
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
