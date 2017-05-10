@@ -16,7 +16,7 @@ We welcome contributions and questions. Please get in touch!
 
 If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported.
 
-For example, here is a simple reactive document to say hello:
+For example, here is a simple document to say hello:
 
 ```html
 <!DOCTYPE html>
