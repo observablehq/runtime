@@ -22,6 +22,8 @@ For example, here is a simple document that says “Hello, world!”:
 <!DOCTYPE html>
 <style>@import url(https://unpkg.com/d3-express@0/style.css);</style>
 <body class="d3--body">
+<p>What is your name?
+<div id="name"></div>
 <div id="hello"></div>
 <script src="https://unpkg.com/d3-express@0"></script>
 <script>
@@ -29,7 +31,9 @@ For example, here is a simple document that says “Hello, world!”:
 var runtime = d3.runtime(),
     module = runtime.module();
 
-module.variable("#hello").define("Hello, world!");
+module.variable("#name").define("viewof name", ["DOM"], DOM => DOM.input());
+module.variable().define("name", ["Generators", "viewof name"], (Generators, view) => Generators.input(view));
+module.variable("#hello").define(["name"], name => `Hello, ${name || "anonymous"}!`);
 
 </script>
 ```
