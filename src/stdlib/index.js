@@ -1,4 +1,4 @@
-import require from "d3-require";
+import {require} from "d3-require";
 import DOM from "./dom/index";
 import Files from "./files/index";
 import Generators from "./generators/index";

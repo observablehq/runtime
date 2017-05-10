@@ -19,7 +19,7 @@
     "postpublish": "git push && git push --tags && zip -j build/d3-express.zip -- LICENSE README.md build/d3-express.js build/d3-express.min.js"
   },
   "devDependencies": {
-    "d3-require": "^0.3.0",
+    "d3-require": "^0.4.0",
     "d3-time-format": "^2.0.5",
     "eslint": "^3.19.0",
     "package-preamble": "0.1.0",

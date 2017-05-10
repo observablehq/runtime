@@ -13,11 +13,11 @@ var runtime = d3.runtime({color: "red"});
 
 var module = runtime.module();
 
-module.variable(document.querySelector("#bar")).define("color", [], function() {
+module.variable(document.querySelector("#foo")).define("color", [], function() {
   throw new Error("this shouldn’t happen");
 });
 
-module.variable(document.querySelector("#foo")).define(null, ["color"], function(color) {
+module.variable(document.querySelector("#bar")).define(null, ["color"], function(color) {
   return "color = " + color;
 });
 

@@ -59,6 +59,10 @@ A variable defines a piece of state in a reactive program, akin to a cell in a s
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
+TODO Allow *name* to be optional?
+<br>TODO Allow *inputs* to be optional?
+<br>TODO Allow *definition* to be specified as a constant rather than a function?
+
 Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation.
 
 The *definition* function may return a promise; derived variables will be computed after the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, after the promise is resolved. When the *definition* is invoked, the value of `this` is the variable’s previous value, or undefined if this is the first time the variable is being computed under its current definition. Thus, the previous value is preserved only when input values change; it is *not* preserved if the variable is explicitly redefined.
@@ -103,17 +107,9 @@ b.define("bar", [], () => 2);
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
-<a href="#variable_defineView" name="variable_defineView">#</a> <i>variable</i>.<b>defineView</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
+<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
 
-…
-
-<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
-
-Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
-
-<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>module</i>, <i>specifiers</i>)
-
-Redefines this variable to import variables from the specified *module* into this variable’s module according to the *specifiers* array. For example, consider the module *a* which defines a variable named `foo`:
+Redefines this variable to import the value of the variable with the specified *name* from the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider the module *a* which defines a variable named `foo`:
 
 ```js
 var runtime = d3.runtime();
@@ -123,28 +119,31 @@ var a = runtime.module();
 a.variable().define("foo", [], () => 42);
 ```
 
-To import `foo` into module *b* and define a derived variable named `bar`:
+To import `foo` into module *b*:
 
 ```js
 var b = runtime.module();
 
-b.variable().import(a, ["foo"]);
-
-b.variable().define("bar", ["foo"], foo => foo * 2);
+b.variable().import("foo", a);
 ```
 
-Each element in the *specifiers* array may be either a string or an object with the following properties:
+Now the variable `foo` is available to other variables in module *b*:
 
-* `member` - the name of the variable to import from the remote module
-* `alias` the name of the variable to define in the local module
+```js
+b.variable().define(null, ["foo"], foo => `The value of foo is ${foo}.`);
+```
 
-If a string is specified, or if the *specifier*.alias property is null or undefined, the alias name and member name are the same. For example, to import `foo` into module *c* under the alias `baz`:
+To import `foo` into module *c* under the alias `bar`:
 
 ```js
 var c = runtime.module();
 
-c.variable().import(a, [{member: "foo", alias: "baz"}]);
+c.variable().import("foo", "bar", a);
 ```
+
+<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
+
+Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
 
 ## Standard Library
 

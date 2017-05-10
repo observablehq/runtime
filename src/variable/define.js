@@ -1,11 +1,26 @@
 import module_resolve from "../module/resolve";
-import variable_attach from "./attach";
-import variable_builtin from "./builtin";
-import {variable_delete} from "./delete";
-import variable_detach from "./detach";
-import variable_duplicate from "./duplicate";
 import Variable from "./index";
 import variable_outdegree from "./outdegree";
+
+function input_attach(input) {
+  input._outputs.add(this);
+}
+
+function input_detach(input) {
+  input._outputs.delete(this);
+}
+
+function variable_builtin(name) {
+  return function() {
+    throw new ReferenceError(name + " is a builtin");
+  };
+}
+
+function variable_duplicate(name) {
+  return function() {
+    throw new ReferenceError(name + " is defined more than once");
+  };
+}
 
 export default function(name, inputs, definition) {
   variable_define.call(this, name, inputs.map(module_resolve, this._module), definition);
@@ -22,10 +37,9 @@ export function variable_define(name, inputs, definition) {
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
-  if (this._imports) this._imports.forEach(variable_delete), this._imports = undefined;
-  this._inputs.forEach(variable_detach, this);
+  this._inputs.forEach(input_detach, this);
   this._inputs.forEach(variable_outdegree);
-  inputs.forEach(variable_attach, this);
+  inputs.forEach(input_attach, this);
   inputs.forEach(variable_outdegree);
   this._inputs = inputs;
   this._definition = definition;
