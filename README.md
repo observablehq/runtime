@@ -151,12 +151,10 @@ Now the variable `foo` is available to other variables in module *b*:
 module1.variable("#b").define(["foo"], foo => `The value of foo is ${foo}.`);
 ```
 
-To import `foo` into another module under the alias `bar`:
+To import `foo` into under the alias `bar`:
 
 ```js
-var module2 = runtime.module();
-
-module2.variable().import("foo", "bar", module0);
+module1.variable().import("foo", "bar", module0);
 ```
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
