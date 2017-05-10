@@ -119,7 +119,7 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 
 <a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
 
-Redefines this variable to import the value of the variable with the specified *name* from the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider the module *a* which defines a variable named `foo`:
+Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider the module *a* which defines a variable named `foo`:
 
 ```js
 var runtime = d3.runtime();
