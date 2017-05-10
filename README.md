@@ -1,6 +1,6 @@
 # d3-express
 
-This library implements the reactive runtime for [d3.express](https://d3.express). It lets you publish live documents you author in d3.express wherever you want: on your website, integrated into your application or interactive dashboard, etc. You can also use this library to author reactive documents manually, or to build alternative editors on top of d3.express’ reactive model. But for most uses, authoring in [d3.express](https://d3.express) will be more convenient (at least when it’s publicly available)!
+This library implements the reactive runtime for [d3.express](https://d3.express). It lets you publish dynamic and interactive documents you author in d3.express wherever you want: on your website, integrated into your application or interactive dashboard, etc. You can also use this library to author reactive documents programmatically, to build alternative editors on top of d3.express’ reactive model, or simply to better understand the reactive model of d3.express.
 
 ## Installing
 
@@ -320,7 +320,7 @@ var select = DOM.html`<select>
   <option value="red">red</option>
   <option value="green">green</option>
   <option value="blue">blue</option>
-</select>`
+</select>`;
 ```
 
 <a href="#DOM_svg" name="DOM_svg">#</a> DOM.<b>svg</b>(<i>width</i>, <i>height</i>)
