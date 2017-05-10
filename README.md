@@ -1,6 +1,6 @@
 # d3-express
 
-This library implements the reactive runtime for [d3.express](https://d3.express) documents. It lets you publish your live documents wherever you want: on your website, integrated into your application or interactive dashboard, etc.
+This library implements the reactive runtime for [d3.express](https://d3.express) documents. It lets you publish live documents you authored in d3.express wherever you want: on your website, integrated into your application or interactive dashboard, etc.
 
 You can also use this library to author reactive documents manually, or to build different editing interfaces on top of the same reactive model. But for most uses, authoring in [d3.express](https://d3.express) will be more convenient (at least when it’s publicly available)!
 
