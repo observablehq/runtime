@@ -2,6 +2,16 @@
 
 This library implements the reactive runtime for [d3.express](https://d3.express). It lets you publish dynamic and interactive documents you author in d3.express wherever you want: on your website, integrated into your application or interactive dashboard, etc. You can also use this library to author reactive documents programmatically, to build alternative editors on top of d3.express’ reactive model, or simply to better understand the reactive model of d3.express.
 
+This library also defines the [standard library](#standard-library) for d3.express:
+
+* [DOM](#dom) - create HTML and SVG elements.
+* [Files](#files) - read local files into memory.
+* [Generators](#generators) - utilities for generators and iterators.
+* [Promises](#promises) - utilities for promises.
+* [require](#require) - load third-party libraries.
+
+We welcome contributions and questions. Please get in touch!
+
 ## Installing
 
 If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported:
