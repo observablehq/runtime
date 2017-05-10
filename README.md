@@ -38,9 +38,9 @@ module.variable("#hello").define(["name"], name => `Hello, ${name || "anonymous"
 </script>
 ```
 
-The document looks like this:
+The resulting document looks like this:
 
-![hello](https://cloud.githubusercontent.com/assets/230541/25923377/12408d74-3592-11e7-9adc-eaa45e77e58a.gif)
+<img height="109" src="https://cloud.githubusercontent.com/assets/230541/25923377/12408d74-3592-11e7-9adc-eaa45e77e58a.gif">
 
 ## API Reference
 
