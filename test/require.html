@@ -8,14 +8,10 @@
 <script src="/build/d3-express.js"></script>
 <script>
 
-var module = d3.runtime().module();
+var runtime = d3.runtime(),
+    module = runtime.module();
 
-module.variable().define("d3", ["require"], function(require) {
-  return require("d3-array");
-});
-
-module.variable(document.querySelector("#foo")).define(null, ["d3"], function(d3) {
-  return d3.range(100);
-});
+module.variable().define("d3", ["require"], require => require("d3-array"));
+module.variable("#foo").define(["d3"], d3 => d3.range(100));
 
 </script>

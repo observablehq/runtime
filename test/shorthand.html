@@ -21,13 +21,15 @@ An anonymous variable with no inputs and a constant value:
 <script src="/build/d3-express.js"></script>
 <script>
 
-var module = d3.runtime().module();
-module.variable(document.querySelector("#anonymous")).define([], () => 42);
-module.variable(document.querySelector("#no-inputs")).define("foo", () => 42);
-module.variable(document.querySelector("#anonymous-no-inputs")).define(() => 42);
-module.variable(document.querySelector("#constant")).define(null, [], 42);
-module.variable(document.querySelector("#anonymous-constant")).define([], 42);
-module.variable(document.querySelector("#no-inputs-constant")).define(null, 42);
-module.variable(document.querySelector("#anonymous-no-inputs-constant")).define(42);
+var runtime = d3.runtime(),
+    module = runtime.module();
+
+module.variable("#anonymous").define([], () => 42);
+module.variable("#no-inputs").define("foo", () => 42);
+module.variable("#anonymous-no-inputs").define(() => 42);
+module.variable("#constant").define(null, [], 42);
+module.variable("#anonymous-constant").define([], 42);
+module.variable("#no-inputs-constant").define(null, 42);
+module.variable("#anonymous-no-inputs-constant").define(42);
 
 </script>

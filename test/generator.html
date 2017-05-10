@@ -11,16 +11,15 @@
 <script src="/build/d3-express.js"></script>
 <script>
 
-var module = d3.runtime().module();
+var runtime = d3.runtime(),
+    module = runtime.module();
 
-var foo = module.variable(document.querySelector("#foo")).define("foo", [], function*() {
+module.variable("#foo").define("foo", function*() {
   while (true) {
     yield Date.now();
   }
 });
 
-var bar = module.variable(document.querySelector("#bar")).define("bar", ["foo"], function(foo) {
-  return new Date(foo);
-});
+module.variable("#bar").define("bar", ["foo"], foo => new Date(foo));
 
 </script>

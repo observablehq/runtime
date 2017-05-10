@@ -36,7 +36,7 @@ To refer to the `color` builtin from a variable:
 ```js
 var module = runtime.module();
 
-module.variable(document.querySelector("#output")).define(["color"], color => `Hello, ${color}.`);
+module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
 ```
 
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
@@ -53,7 +53,7 @@ A module is a namespace for [variables](#variables); within a module, variables 
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
-If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
+If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If *element* is specified as a string, the *element* is selected from the current document using [*document*.querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector). If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
 A variable without an associated *element* is only computed if any transitive output of the variable has an *element*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
@@ -74,7 +74,7 @@ var runtime = d3.runtime();
 
 var module = runtime.module();
 
-var a = module.variable();
+var a = module.variable("#a");
 ```
 
 To define variable *a* with the name `foo` and the constant value 42:
@@ -92,7 +92,7 @@ a.define("foo", [], () => 42);
 To define an anonymous variable *b* that takes `foo` as input:
 
 ```js
-var b = module.variable();
+var b = module.variable("#b");
 
 b.define(["foo"], foo => foo * 2);
 ```
@@ -109,8 +109,8 @@ If more than one variable has the same *name* at the same time in the same modul
 
 ```js
 var module = d3.runtime().module();
-var a = module.variable().define("foo", 1);
-var b = module.variable().define("foo", 2);
+var a = module.variable("#a").define("foo", 1);
+var b = module.variable("#b").define("foo", 2);
 ```
 
 If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
@@ -130,7 +130,7 @@ var runtime = d3.runtime();
 
 var a = runtime.module();
 
-a.variable().define("foo", 42);
+a.variable("#a").define("foo", 42);
 ```
 
 To import `foo` into module *b*:
@@ -138,13 +138,13 @@ To import `foo` into module *b*:
 ```js
 var b = runtime.module();
 
-b.variable().import("foo", a);
+b.variable("#b").import("foo", a);
 ```
 
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-b.variable().define(["foo"], foo => `The value of foo is ${foo}.`);
+b.variable("#b").define(["foo"], foo => `The value of foo is ${foo}.`);
 ```
 
 To import `foo` into module *c* under the alias `bar`:
@@ -152,7 +152,7 @@ To import `foo` into module *c* under the alias `bar`:
 ```js
 var c = runtime.module();
 
-c.variable().import("foo", "bar", a);
+c.variable("#c").import("foo", "bar", a);
 ```
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()

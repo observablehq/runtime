@@ -11,14 +11,13 @@
 <script src="/build/d3-express.js"></script>
 <script>
 
-var module = d3.runtime().module();
+var runtime = d3.runtime(),
+    module = runtime.module();
 
-var foo = module.variable(document.querySelector("#foo")).define("foo", [], function() {
-  return Math.random();
-});
+var foo = module.variable("#foo").define("foo", Math.random);
 
-var bar = module.variable(document.querySelector("#bar")).define("bar", ["foo"], function(foo) {
-  return new Promise(function(resolve) {
+var bar = module.variable("#bar").define("bar", ["foo"], foo => {
+  return new Promise(resolve => {
     setTimeout(function() {
       resolve(foo);
     }, 250);
@@ -26,9 +25,7 @@ var bar = module.variable(document.querySelector("#bar")).define("bar", ["foo"],
 });
 
 setTimeout(function() {
-  foo.define("foo", [], function() {
-    return [1, 2, 3, 4, 5];
-  });
+  foo.define("foo", [1, 2, 3, 4, 5]);
 }, 750);
 
 </script>

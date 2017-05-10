@@ -9,14 +9,10 @@
 <script src="/build/d3-express.js"></script>
 <script>
 
-var module = d3.runtime().module();
+var runtime = d3.runtime(),
+    module = runtime.module();
 
-module.variable(document.querySelector("#fooview")).define("viewof foo", ["DOM"], function(DOM) {
-  return DOM.range();
-});
-
-module.variable(document.querySelector("#foo")).define("foo", ["Generators", "viewof foo"], function(Generators, input) {
-  return Generators.input(input);
-});
+module.variable("#fooview").define("viewof foo", ["DOM"], DOM => DOM.range());
+module.variable("#foo").define("foo", ["Generators", "viewof foo"], (Generators, input) => Generators.input(input));
 
 </script>
