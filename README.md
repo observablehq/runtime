@@ -39,6 +39,10 @@ var module = runtime.module();
 module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
 ```
 
+This would produce the following output:
+
+<img alt="Hello, red." src="https://raw.githubusercontent.com/mbostock/d3-express-runtime/master/img/hello.png" height="24">
+
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
