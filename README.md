@@ -142,13 +142,13 @@ To import `foo` into another module:
 ```js
 var module1 = runtime.module();
 
-module1.variable("#a").import("foo", module0);
+module1.variable().import("foo", module0);
 ```
 
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-module1.variable("#b").define(["foo"], foo => `The value of foo is ${foo}.`);
+module1.variable("#hello").define(["foo"], foo => `Hello, ${foo}.`);
 ```
 
 To import `foo` into under the alias `bar`:
