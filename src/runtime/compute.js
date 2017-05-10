@@ -62,7 +62,7 @@ function variable_compute(variable) {
     variable._generator = null;
   }
   if (variable._node) {
-    variable._node.classList.add("result--running");
+    variable._node.classList.add("d3--running");
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {

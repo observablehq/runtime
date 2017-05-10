@@ -1,31 +1,13 @@
 <!DOCTYPE html>
-<style>
-
-@import url(style.css);
-
-</style>
-<p>This is foo:
-<div class="result" id="foo"></div>
-<p>And this is bar:
-<div class="result" id="bar"></div>
+<style>@import url(/style.css);</style>
+<body class="d3--body">
+<div id="hello"></div>
 <script src="/build/d3-express.js"></script>
 <script>
 
 var runtime = d3.runtime(),
     module = runtime.module();
 
-var foo = module.variable("#foo").define("foo", Math.random);
-
-var bar = module.variable("#bar").define("bar", ["foo"], foo => {
-  return new Promise(resolve => {
-    setTimeout(function() {
-      resolve(foo);
-    }, 250);
-  });
-});
-
-setTimeout(function() {
-  foo.define("foo", [1, 2, 3, 4, 5]);
-}, 750);
+module.variable("#hello").define("Hello, world!");
 
 </script>

@@ -1,11 +1,11 @@
-body {
+.d3--body {
   margin: auto;
   padding: 20px;
   max-width: 960px;
   font: 16px/24px Georgia, serif;
 }
 
-.result {
+.d3--inspect {
   margin: 20px -20px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -13,90 +13,90 @@ body {
   border-left: solid 3px #ccc;
 }
 
-.result--inspector,
-.result--error,
-.type--text {
+.d3--inspect,
+.d3--error,
+.d3--text {
   font: 16px/24px Menlo, monospace;
   white-space: pre;
 }
 
-pre,
-code,
-tt {
+.d3 pre,
+.d3 code,
+.d3 tt {
   font: 16px/24px Menlo, monospace;
 }
 
-.type--expanded,
-.type--collapsed,
-.type--function,
-.type--string:before,
-.type--string:after,
-.color--gray {
+.d3--expanded,
+.d3--collapsed,
+.d3--function,
+.d3--string:before,
+.d3--string:after,
+.d3--gray {
   color: #636363;
 }
 
-.type--collapsed,
-.result--inspector a {
+.d3--collapsed,
+.d3--inspect a {
   cursor: pointer;
 }
 
-.type--field {
+.d3--field {
   text-indent: -1em;
   margin-left: 1em;
 }
 
-.type--index,
-.color--blue {
+.d3--index,
+.d3--blue {
   color: #3182bd;
 }
 
-.color--pink {
+.d3--pink {
   color: #e377c2;
 }
 
-.color--orange {
+.d3--orange {
   color: #e6550d;
 }
 
-.type--null,
-.type--undefined,
-.type--number,
-.type--date,
-.type--boolean,
-.color--green {
+.d3--null,
+.d3--undefined,
+.d3--number,
+.d3--date,
+.d3--boolean,
+.d3--green {
   color: #31a354;
 }
 
-.type--key,
-.type--string,
-.color--purple {
+.d3--key,
+.d3--string,
+.d3--purple {
   color: #756bb1;
 }
 
-.type--string:before,
-.type--string:after {
+.d3--string:before,
+.d3--string:after {
   content: "\"";
 }
 
-.result--error,
-.color--red {
+.d3--error,
+.d3--red {
   color: #de2d26;
 }
 
-.result--error {
+.d3--error {
   border-left-color: #de2d26;
 }
 
-.result input {
+.d3 input {
   min-width: 320px;
 }
 
-.result input[type=range] {
+.d3 input[type=range] {
   position: relative;
   top: 3px;
 }
 
-.result canvas {
+.d3 canvas {
   position: relative;
   top: 1px;
 }

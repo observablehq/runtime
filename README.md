@@ -14,13 +14,22 @@ We welcome contributions and questions. Please get in touch!
 
 ## Installing
 
-If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported:
+If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported.
+
+For example, here is a simple document that says “Hello, world!”:
 
 ```html
+<!DOCTYPE html>
+<style>@import url(https://unpkg.com/d3-express@0/style.css);</style>
+<body class="d3--body">
+<div id="hello"></div>
 <script src="https://unpkg.com/d3-express@0"></script>
 <script>
 
-var runtime = d3.runtime();
+var runtime = d3.runtime(),
+    module = runtime.module();
+
+module.variable("#hello").define("Hello, world!");
 
 </script>
 ```

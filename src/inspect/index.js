@@ -7,7 +7,7 @@ export default function inspect(value, shallow, expand) {
   switch (type) {
     case "function": {
       var span = document.createElement("span");
-      span.className = "type--" + type;
+      span.className = "d3--" + type;
       span.textContent = "Function";
       return span;
     }
@@ -22,7 +22,7 @@ export default function inspect(value, shallow, expand) {
     }
   }
   var span = document.createElement("span");
-  span.className = "type--" + type;
+  span.className = "d3--" + type;
   span.textContent = value;
   return span;
 }
