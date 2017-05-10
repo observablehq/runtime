@@ -134,7 +134,7 @@ var runtime = d3.runtime();
 
 var module0 = runtime.module();
 
-module0.variable("#a").define("foo", 42);
+module0.variable().define("foo", 42);
 ```
 
 To import `foo` into another module:
@@ -142,13 +142,13 @@ To import `foo` into another module:
 ```js
 var module1 = runtime.module();
 
-module1.variable().import("foo", a);
+module1.variable("#a").import("foo", module0);
 ```
 
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-module1.variable("#c").define(["foo"], foo => `The value of foo is ${foo}.`);
+module1.variable("#b").define(["foo"], foo => `The value of foo is ${foo}.`);
 ```
 
 To import `foo` into another module under the alias `bar`:
@@ -156,7 +156,7 @@ To import `foo` into another module under the alias `bar`:
 ```js
 var module2 = runtime.module();
 
-module2.variable().import("foo", "bar", a);
+module2.variable().import("foo", "bar", module0);
 ```
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
