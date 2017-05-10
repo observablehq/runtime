@@ -31,8 +31,13 @@ For example, here is a simple reactive document to say hello:
 var runtime = d3.runtime(),
     module = runtime.module();
 
+// This defines a vanilla text input.
 module.variable("#name").define("viewof name", ["DOM"], DOM => DOM.input());
+
+// This exposes the current value of the input.
 module.variable().define("name", ["Generators", "viewof name"], (Generators, view) => Generators.input(view));
+
+// This uses the input value to say hello.
 module.variable("#hello").define(["name"], name => `Hello, ${name || "anonymous"}!`);
 
 </script>
