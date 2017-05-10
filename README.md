@@ -151,6 +151,10 @@ Now the variable `foo` is available to other variables in module *b*:
 module1.variable("#hello").define(["foo"], foo => `Hello, ${foo}.`);
 ```
 
+This would produce the following output:
+
+> Hello, 42.
+
 To import `foo` into under the alias `bar`:
 
 ```js
