@@ -13,6 +13,6 @@ export default function(module, specifiers) {
     variable._id = null; // TODO Cleaner?
     return variable_define.call(variable, specifier.alias, [module_resolve.call(module, specifier.member)], identity);
   }, this);
-  this._runtime._compute();
+  this._module._runtime._compute();
   return this;
 }

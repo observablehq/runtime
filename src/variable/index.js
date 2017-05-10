@@ -3,7 +3,6 @@ import variable_delete from "./delete";
 import variable_import from "./import";
 
 export default function Variable(module, node) {
-  this._runtime = module._runtime;
   this._module = module;
   this._id = -1; // TODO Better indication of undefined variables?
   this._name = null;

@@ -97,21 +97,23 @@ function variable_recompute(variable, generator) {
     } catch (error) {
       next = Promise.reject(error);
     }
-    next.then(function(value) {
-      variable._valuePrior = value;
-      variable._value = next;
-      variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
-      variable._runtime._compute();
-      variable_displayValue(variable, value);
+    next.then(function(nextValue) {
+      variable_postrecompute(variable, nextValue, next);
+      variable_displayValue(variable, nextValue);
       requestAnimationFrame(poll);
-      return value;
+      return nextValue;
     }, function(error) {
-      variable._valuePrior = undefined;
-      variable._value = next;
-      variable._outputs.forEach(variable._runtime._updates.add, variable._runtime._updates); // TODO Cleaner?
-      variable._runtime._compute();
+      variable_postrecompute(variable, undefined, next);
       variable_displayError(variable, error);
       throw error;
     });
   });
+}
+
+function variable_postrecompute(variable, valuePrior, value) {
+  var runtime = variable._module._runtime;
+  variable._valuePrior = valuePrior;
+  variable._value = value;
+  variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
+  runtime._compute();
 }

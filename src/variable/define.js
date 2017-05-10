@@ -42,16 +42,15 @@ export default function(name, inputs, definition) {
     inputs == null ? [] : map.call(inputs, module_resolve, this._module),
     typeof definition === "function" ? definition : constant(definition)
   );
-  this._runtime._compute();
+  this._module._runtime._compute();
   return this;
 }
 
 export function variable_define(name, inputs, definition) {
-  var scope = this._module._scope,
-      updates = this._runtime._updates;
+  var scope = this._module._scope, runtime = this._module._runtime;
 
   // Disallow variables to override builtins.
-  if (this._runtime._scope.has(name)) definition = variable_builtin(name), name = null;
+  if (runtime._scope.has(name)) definition = variable_builtin(name), name = null;
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
@@ -64,7 +63,7 @@ export function variable_define(name, inputs, definition) {
 
   // Did the variable’s name change? Time to patch references!
   if (name == this._name && scope.get(name) === this) {
-    this._outputs.forEach(updates.add, updates);
+    this._outputs.forEach(runtime._updates.add, runtime._updates);
   } else {
     var error, found;
 
@@ -74,7 +73,7 @@ export function variable_define(name, inputs, definition) {
         error._name = this._name;
         error._outputs = this._outputs, this._outputs = new Set;
         error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = error; }, this);
-        error._outputs.forEach(updates.add, updates);
+        error._outputs.forEach(runtime._updates.add, runtime._updates);
         variable_outdegree(error);
         variable_outdegree(this);
         scope.set(this._name, error);
@@ -91,7 +90,7 @@ export function variable_define(name, inputs, definition) {
           found._definition = found._duplicate, delete found._duplicate;
           variable_outdegree(error);
           variable_outdegree(found);
-          updates.add(found);
+          runtime._updates.add(found);
           scope.set(this._name, found);
         }
       } else {
@@ -123,7 +122,7 @@ export function variable_define(name, inputs, definition) {
           error._duplicates = new Set([this, found]);
           variable_outdegree(found);
           variable_outdegree(error);
-          updates.add(found).add(error);
+          runtime._updates.add(found).add(error);
           scope.set(name, error);
         }
       } else {
@@ -134,5 +133,5 @@ export function variable_define(name, inputs, definition) {
     this._name = name;
   }
 
-  updates.add(this);
+  runtime._updates.add(this);
 }

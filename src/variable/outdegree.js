@@ -14,7 +14,7 @@ export default function variable_outdegree(variable) {
     inputs.forEach(function(input) {
       input._inputs.forEach(inputs.add, inputs);
       if (input._node) return;
-      if (input._outdegree === 0 && delta > 0) input._runtime._updates.add(input); // TODO Is this right?
+      if (input._outdegree === 0 && delta > 0) input._module._runtime._updates.add(input); // TODO Is this right?
       input._outdegree += delta;
       if (input._outdegree === 0 && delta < 0) if (input._generator) input._generator.return(), input._generator = undefined;
     });
