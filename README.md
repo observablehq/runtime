@@ -57,13 +57,9 @@ A variable without an associated *element* is only computed if any transitive ou
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
-<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
+<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>)
 
-TODO Allow *name* to be optional?
-<br>TODO Allow *inputs* to be optional?
-<br>TODO Allow *definition* to be specified as a constant rather than a function?
-
-Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation.
+Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array. If *definition* is not a function, the variable is defined to have the constant value of *definition*.
 
 The *definition* function may return a promise; derived variables will be computed after the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, after the promise is resolved. When the *definition* is invoked, the value of `this` is the variable’s previous value, or undefined if this is the first time the variable is being computed under its current definition. Thus, the previous value is preserved only when input values change; it is *not* preserved if the variable is explicitly redefined.
 
@@ -80,13 +76,27 @@ var a = module.variable();
 To define variable *a* with the name `foo` and the constant value 42:
 
 ```js
+a.define("foo", 42);
+```
+
+This is equivalent to:
+
+```js
 a.define("foo", [], () => 42);
 ```
 
 To define an anonymous variable *b* that takes `foo` as input:
 
 ```js
-var b = module.variable().define(null, ["foo"], foo => foo * 2);
+var b = module.variable();
+
+b.define(["foo"], foo => foo * 2);
+```
+
+This is equivalent to:
+
+```js
+b.define(null, ["foo"], foo => foo * 2);
 ```
 
 Note that the JavaScript symbols in the above example code (*a* and *b*) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted. Each variable corresponds to a cell in a [d3.express](https://d3.express) notebook, but the cell can be redefined to have a different name or definition.
@@ -95,14 +105,14 @@ If more than one variable has the same *name* at the same time in the same modul
 
 ```js
 var module = d3.runtime().module();
-var a = module.variable().define("foo", [], () => 1);
-var b = module.variable().define("foo", [], () => 2);
+var a = module.variable().define("foo", 1);
+var b = module.variable().define("foo", 2);
 ```
 
 If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
 
 ```js
-b.define("bar", [], () => 2);
+b.define("bar", 2);
 ```
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
@@ -116,7 +126,7 @@ var runtime = d3.runtime();
 
 var a = runtime.module();
 
-a.variable().define("foo", [], () => 42);
+a.variable().define("foo", 42);
 ```
 
 To import `foo` into module *b*:
@@ -130,7 +140,7 @@ b.variable().import("foo", a);
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-b.variable().define(null, ["foo"], foo => `The value of foo is ${foo}.`);
+b.variable().define(["foo"], foo => `The value of foo is ${foo}.`);
 ```
 
 To import `foo` into module *c* under the alias `bar`:

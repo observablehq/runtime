@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<style>
+
+@import url(style.css);
+
+</style>
+An anonymous variable:
+<div class="result" id="anonymous"></div>
+A variable with no inputs:
+<div class="result" id="no-inputs"></div>
+An anonymous variable with no inputs:
+<div class="result" id="anonymous-no-inputs"></div>
+A variable with a constant value:
+<div class="result" id="constant"></div>
+An anonymous variable with a constant value:
+<div class="result" id="anonymous-constant"></div>
+A variable with no inputs and a constant value:
+<div class="result" id="no-inputs-constant"></div>
+An anonymous variable with no inputs and a constant value:
+<div class="result" id="anonymous-no-inputs-constant"></div>
+<script src="/build/d3-express.js"></script>
+<script>
+
+var module = d3.runtime().module();
+module.variable(document.querySelector("#anonymous")).define([], () => 42);
+module.variable(document.querySelector("#no-inputs")).define("foo", () => 42);
+module.variable(document.querySelector("#anonymous-no-inputs")).define(() => 42);
+module.variable(document.querySelector("#constant")).define(null, [], 42);
+module.variable(document.querySelector("#anonymous-constant")).define([], 42);
+module.variable(document.querySelector("#no-inputs-constant")).define(null, 42);
+module.variable(document.querySelector("#anonymous-no-inputs-constant")).define(42);
+
+</script>

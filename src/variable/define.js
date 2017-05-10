@@ -1,3 +1,5 @@
+import {map} from "../array";
+import constant from "../constant";
 import module_resolve from "../module/resolve";
 import Variable from "./index";
 import variable_outdegree from "./outdegree";
@@ -23,7 +25,23 @@ function variable_duplicate(name) {
 }
 
 export default function(name, inputs, definition) {
-  variable_define.call(this, name, inputs.map(module_resolve, this._module), definition);
+  switch (arguments.length) {
+    case 1: {
+      definition = name, name = inputs = null;
+      break;
+    }
+    case 2: {
+      definition = inputs;
+      if (typeof name === "string") inputs = null;
+      else inputs = name, name = null;
+      break;
+    }
+  }
+  variable_define.call(this,
+    name == null ? null : name + "",
+    inputs == null ? [] : map.call(inputs, module_resolve, this._module),
+    typeof definition === "function" ? definition : constant(definition)
+  );
   this._runtime._compute();
   return this;
 }
