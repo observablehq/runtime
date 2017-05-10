@@ -41,7 +41,7 @@ module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
 
 This would produce the following output:
 
-<img alt="Hello, red." src="https://raw.githubusercontent.com/mbostock/d3-express-runtime/master/img/hello.png" height="24">
+<img alt="Hello, red." src="https://cloud.githubusercontent.com/assets/230541/25916790/bfb2bc88-357a-11e7-890d-58366e7308fb.png" height="24">
 
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
 
