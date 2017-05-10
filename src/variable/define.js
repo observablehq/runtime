@@ -37,13 +37,11 @@ export default function(name, inputs, definition) {
       break;
     }
   }
-  variable_define.call(this,
+  return variable_define.call(this,
     name == null ? null : name + "",
     inputs == null ? [] : map.call(inputs, module_resolve, this._module),
     typeof definition === "function" ? definition : constant(definition)
   );
-  this._module._runtime._compute();
-  return this;
 }
 
 export function variable_define(name, inputs, definition) {
@@ -134,4 +132,6 @@ export function variable_define(name, inputs, definition) {
   }
 
   runtime._updates.add(this);
+  runtime._compute();
+  return this;
 }
