@@ -25,7 +25,7 @@ A runtime is responsible for evaluating [variables](#variables) in topological o
 
 Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
 
-For example, to define the builtin `color`:
+For example, to create a runtime whose only builtin is `color`:
 
 ```js
 var runtime = d3.runtime({color: "red"});
