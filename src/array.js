@@ -1,1 +1,3 @@
-export var map = Array.prototype.map;
+var prototype = Array.prototype;
+export var map = prototype.map;
+export var forEach = prototype.forEach;

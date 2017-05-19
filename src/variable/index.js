@@ -4,7 +4,7 @@ import variable_import from "./import";
 
 export default function Variable(module, node) {
   this._module = module;
-  this._id = -1; // TODO Better indication of undefined variables?
+  this._id = null; // TODO Better indication of undefined variables?
   this._name = null;
   this._inputs = [];
   this._outputs = new Set;

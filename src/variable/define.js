@@ -68,6 +68,7 @@ export function variable_define(name, inputs, definition) {
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
         error = new Variable(this._module); // Those references are now broken!
+        error._id = -1; // TODO Better indication of undefined variables?
         error._name = this._name;
         error._outputs = this._outputs, this._outputs = new Set;
         error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = error; }, this);

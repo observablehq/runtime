@@ -93,6 +93,35 @@ If *element* is specified, the value of this variable will be displayed in the s
 
 A variable without an associated *element* is only computed if any transitive output of the variable has an *element*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
+<a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>)
+
+Returns a derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#variable_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
+
+* *specifier*.name - the name of the variable to import from *source*.
+* *specifier*.alias - the name of the variable to redefine in this module.
+
+If *specifier*.alias is not specified, it defaults to *specifier*.name. A *specifier* may also be specified as a string, in which case the string is treated as both the name and the alias.
+
+For example, consider the following module which defines two constants *a* and *b*, and a variable *c* that represents their sum:
+
+```js
+var module0 = runtime.module();
+module0.variable().define("a", 1);
+module0.variable().define("b", 2);
+module0.variable().define("c", ["a", "b"], (a, b) => a + b);
+```
+
+To derive a new module that redefines *b*:
+
+```js
+var module1 = runtime.module(),
+    module1_0 = module0.derive(["b"], module1);
+module1.variable().define("b", 3);
+module1.variable().import("c", module1_0);
+```
+
+The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
+
 ### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
