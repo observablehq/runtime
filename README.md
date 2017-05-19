@@ -100,9 +100,7 @@ Returns a derived copy of this [module](#modules), where each variable in *speci
 * *specifier*.name - the name of the variable to import from *source*.
 * *specifier*.alias - the name of the variable to redefine in this module.
 
-If *specifier*.alias is not specified, it defaults to *specifier*.name. A *specifier* may also be specified as a string, in which case the string is treated as both the name and the alias.
-
-For example, consider the following module which defines two constants *a* and *b*, and a variable *c* that represents their sum:
+If *specifier*.alias is not specified, it defaults to *specifier*.name. A *specifier* may also be specified as a string, in which case the string is treated as both the name and the alias. For example, consider the following module which defines two constants *a* and *b*, and a variable *c* that represents their sum:
 
 ```js
 var module0 = runtime.module();
