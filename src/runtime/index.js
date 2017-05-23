@@ -1,4 +1,5 @@
 import stdlib from "../stdlib/index";
+import thenable from "../thenable";
 import runtime_compute from "./compute";
 import runtime_module from "./module";
 
@@ -16,7 +17,7 @@ function Runtime(builtins) {
     var variable = module.variable();
     variable._id = null; // TODO Cleaner?
     variable._outdegree = NaN; // Prevent recomputation. TODO Cleaner?
-    variable._value = Promise.resolve(builtins[key]);
+    variable._value = thenable(builtins[key]) ? builtins[key] : Promise.resolve(builtins[key]);
     module._scope.set(key, variable);
   }
 }

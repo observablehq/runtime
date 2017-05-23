@@ -9,6 +9,8 @@ This library also defines the [standard library](#standard-library) for d3.expre
 * [Generators](#generators) - utilities for generators and iterators.
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
+* [html](#html) -
+* [md](#markdown) -
 
 We welcome contributions and questions. Please get in touch!
 
@@ -284,26 +286,6 @@ var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
 If *options* is specified, they will be passed along to *document*.createElement or *document*.createElementNS to define a custom element.
 
-<a href="#DOM_html" name="DOM_html">#</a> DOM.<b>html</b>(<i>strings</i>, <i>values…</i>)
-
-Returns the HTML element or node represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create an H1 element whose content is “Hello, world!”:
-
-```js
-var hello = DOM.html`<h1>Hello, world!</h1>`;
-```
-
-If the resulting HTML fragment is not a single HTML element or node, is it wrapped in a DIV element. For example, this expression:
-
-```js
-var hello = DOM.html`Hello, <b>world</b>!`;
-```
-
-Is equivalent to this expression:
-
-```js
-var hello = DOM.html`<div>Hello, <b>world</b>!</div>`;
-```
-
 <a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>([<i>type</i>])
 
 Returns a new input element with the specified *type*. If *type* is not specified or null, a text input is created. For example, to create a new file input:
@@ -473,6 +455,36 @@ return image;
 <a href="#Promises_when" name="Promises_when">#</a> Promises.<b>when</b>(<i>date</i>[, <i>value</i>])
 
 …
+
+### HTML
+
+<a href="#html" name="html">#</a> <b>html</b>(<i>strings</i>, <i>values…</i>)
+
+Returns the HTML element or node represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create an H1 element whose content is “Hello, world!”:
+
+```js
+var hello = html`<h1>Hello, world!</h1>`;
+```
+
+If the resulting HTML fragment is not a single HTML element or node, is it wrapped in a DIV element. For example, this expression:
+
+```js
+var hello = html`Hello, <b>world</b>!`;
+```
+
+Is equivalent to this expression:
+
+```js
+var hello = html`<div>Hello, <b>world</b>!</div>`;
+```
+
+### Markdown
+
+<a href="#md" name="md">#</a> <b>md</b>(<i>strings</i>, <i>values…</i>)
+
+```js
+var hello = md`Hello, *world*!`;
+```
 
 ### require
 
