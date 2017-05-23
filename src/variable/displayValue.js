@@ -4,13 +4,13 @@ import dispatchUpdate from "./dispatchUpdate";
 export default function displayValue(variable, value) {
   var node = variable._node;
   if (!node) return;
-  if (!(value instanceof Node) || (value.parentNode && value.parentNode !== node)) {
+  if ((value instanceof Element || value instanceof Text) && (!value.parentNode || value.parentNode === node)) {
+    node.className = "d3";
+  } else {
     node.className = "d3 d3--inspect";
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
         && node.firstChild.classList.contains("d3--expanded"));
-  } else {
-    node.className = "d3";
   }
   if (node.firstChild !== value) {
     if (node.firstChild) {
