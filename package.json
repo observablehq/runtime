@@ -1,16 +1,16 @@
 {
-  "name": "d3-express",
+  "name": "@observablehq/notebook-runtime",
   "version": "0.0.0",
-  "description": "The d3.express runtime.",
+  "description": "The Observable notebook runtime.",
   "author": {
-    "name": "Data-Driven Documents, Inc."
+    "name": "Observable, Inc."
   },
   "license": "ISC",
   "main": "build/d3-express.js",
   "module": "src/index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/d3/d3-express.git"
+    "url": "https://github.com/@observablehq/notebook-runtime.git"
   },
   "scripts": {
     "pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\" -f umd -n d3 -o build/d3-express.js -- src/index.js",
