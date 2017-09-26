@@ -1,24 +1,11 @@
-export default function*(input) {
-  var value0, value1 = valueof(input), event = eventof(input), resolve;
+import observe from "./observe";
 
-  input.addEventListener(event, inputted);
-
-  function inputted() {
-    value1 = valueof(input);
-    if (resolve == null) return;
-    resolve(value0 = value1);
-    resolve = null;
-  }
-
-  try {
-    while (true) {
-      yield value1 === value0
-          ? new Promise(_ => resolve = _)
-          : Promise.resolve(value0 = value1);
-    }
-  } finally {
-    input.removeEventListener(event, inputted);
-  }
+export default function(input) {
+  return observe(function(change) {
+    var event = eventof(input), inputted = function() { change(valueof(input)); };
+    input.addEventListener(event, inputted), inputted();
+    return function() { input.removeEventListener(event, inputted); };
+  });
 }
 
 function valueof(input) {
