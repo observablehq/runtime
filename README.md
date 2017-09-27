@@ -11,6 +11,7 @@ This library also defines the [standard library](#standard-library) for d3.expre
 * [require](#require) - load third-party libraries.
 * [html](#html) -
 * [md](#markdown) -
+* [tex](#tex) -
 
 We welcome contributions and questions. Please get in touch!
 
@@ -484,6 +485,14 @@ var hello = html`<div>Hello, <b>world</b>!</div>`;
 
 ```js
 var hello = md`Hello, *world*!`;
+```
+
+### TeX
+
+<a href="#tex" name="tex">#</a> <b>tex</b>(<i>strings</i>, <i>values…</i>)
+
+```js
+var hello = tex`E = mc^2`;
 ```
 
 ### require

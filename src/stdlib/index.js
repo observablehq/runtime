@@ -4,6 +4,7 @@ import Files from "./files/index";
 import Generators from "./generators/index";
 import html from "./html";
 import md from "./md";
+import tex from "./tex";
 import Promises from "./promises/index";
 
 export default {
@@ -13,5 +14,6 @@ export default {
   Promises: Promises,
   require: require,
   html: html,
-  md: md
+  md: md,
+  tex: tex
 };
