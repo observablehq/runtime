@@ -1,5 +1,5 @@
 import inspect from "../inspect/index";
-import dispatchUpdate from "./dispatchUpdate";
+import dispatch from "./dispatch";
 
 export default function displayValue(variable, value) {
   var node = variable._node;
@@ -20,5 +20,5 @@ export default function displayValue(variable, value) {
       node.appendChild(value);
     }
   }
-  dispatchUpdate(node);
+  dispatch(node, "update");
 }
