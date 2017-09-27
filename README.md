@@ -229,9 +229,9 @@ Deletes this variable’s current definition and name, if any. Any variable in t
 
 ## Standard Library
 
-<a href="#runtimeLibrary" name="runtimeLibrary">#</a> O.<b>runtimeLibrary</b>
+<a href="#runtimeLibrary" name="runtimeLibrary">#</a> O.<b>runtimeLibrary</b>([<i>resolve</i>])
 
-The standard library object, defining the following properties:
+Returns a new standard library object, defining the following properties:
 
 * [DOM](#dom) - create HTML and SVG elements.
 * [Files](#files) - read local files into memory.
@@ -239,7 +239,7 @@ The standard library object, defining the following properties:
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
 
-By default, [O.runtime](#runtime) uses this standard library for builtins.
+By default, [O.runtime](#runtime) uses this standard library for builtins. If *resolve* is specified, it is a function which returns the URL of the module with the specified *name*; this is used internally by [require](#require).
 
 ### DOM
 
