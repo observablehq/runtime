@@ -19,7 +19,7 @@
     "postpublish": "git push && git push --tags && zip -j build/notebook-runtime.zip -- LICENSE README.md build/notebook-runtime.js build/notebook-runtime.min.js"
   },
   "devDependencies": {
-    "d3-require": "^0.4.0",
+    "d3-require": "^0.4.5",
     "d3-time-format": "^2.0.5",
     "eslint": "^4.7.2",
     "package-preamble": "0.1.0",
