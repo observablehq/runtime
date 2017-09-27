@@ -1,4 +1,4 @@
-import {require} from "d3-require";
+import require, {resolve as resource} from "./require";
 
 var tex;
 
@@ -6,7 +6,7 @@ function katex(katex) {
   return new Promise(function(resolve, reject) {
     var link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://unpkg.com/katex/dist/katex.min.css";
+    link.href = resource("katex/dist/katex.min.css");
     link.onerror = reject;
     link.onload = function() {
       resolve(function(strings) {

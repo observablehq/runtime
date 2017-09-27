@@ -1,4 +1,4 @@
-import {require} from "d3-require";
+import require from "./require";
 
 var md;
 
