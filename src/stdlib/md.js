@@ -8,12 +8,13 @@ function marked(marked) {
     while (++i < n) string += arguments[i] + "" + strings[i];
     var root = document.createElement("div");
     root.innerHTML = marked.parse(string);
+    root.querySelectorAll("pre code").forEach(marked.highlightBlock);
     return root.childNodes.length === 1 ? root.removeChild(root.firstChild) : root;
   };
 }
 
 export default {
   then: function(resolved, rejected) {
-    return (md || (md = require("marked").then(marked))).then(resolved, rejected);
+    return (md || (md = require("marked", "highlight.js").then(marked))).then(resolved, rejected);
   }
 };
