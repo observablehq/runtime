@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <style>@import url(/style.css);</style>
-<body class="d3--body">
+<body class="O--body">
 An anonymous variable:
 <div id="anonymous"></div>
 A variable with no inputs:
@@ -15,10 +15,10 @@ A variable with no inputs and a constant value:
 <div id="no-inputs-constant"></div>
 An anonymous variable with no inputs and a constant value:
 <div id="anonymous-no-inputs-constant"></div>
-<script src="/build/d3-express.js"></script>
+<script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = d3.runtime(),
+var runtime = O.runtime(),
     module = runtime.module();
 
 module.variable("#anonymous").define([], () => 42);

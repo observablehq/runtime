@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <style>@import url(/style.css);</style>
-<body class="d3--body">
+<body class="O--body">
 <p>What is your name?
 <div id="name"></div>
 <div id="hello"></div>
-<script src="/build/d3-express.js"></script>
+<script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = d3.runtime(),
+var runtime = O.runtime(),
     module = runtime.module();
 
 module.variable("#name").define("viewof name", ["DOM"], DOM => DOM.input());

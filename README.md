@@ -1,37 +1,37 @@
-# d3-express
+# @observablehq/notebook-runtime
 
-This library implements the reactive runtime for [d3.express](https://d3.express). It lets you publish dynamic and interactive documents you author in d3.express wherever you want: on your website, integrated into your application or interactive dashboard, etc. You can also use this library to author reactive documents programmatically, to build alternative editors on top of d3.express’ reactive model, or simply to better understand the reactive model of d3.express.
+This library implements the reactive runtime for Observable notebooks. It lets you publish your interactive notebooks wherever you want: on your website, integrated into your web application or interactive dashboard, *etc.* You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand how the Observable runtime works.
 
-This library also defines the [standard library](#standard-library) for d3.express:
+This library also defines the [standard library](#standard-library) for Observable notebooks:
 
 * [DOM](#dom) - create HTML and SVG elements.
 * [Files](#files) - read local files into memory.
 * [Generators](#generators) - utilities for generators and iterators.
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
-* [html](#html) -
-* [md](#markdown) -
-* [tex](#tex) -
+* [html](#html) - render HTML.
+* [md](#markdown) - render Markdown.
+* [tex](#tex) - render TeX.
 
 We welcome contributions and questions. Please get in touch!
 
 ## Installing
 
-If you use NPM, `npm install d3-express`. Otherwise, download the [latest release](https://github.com/d3/d3-express/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/d3-express/). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `d3` global is exported.
+If you use NPM, `npm install @observablehq/notebook-runtime`. Otherwise, download the [latest release](https://github.com/observablehq/notebook-runtime/releases/latest). You can also load directly from [unpkg.com](https://unpkg.com/@observablehq/notebook-runtime). AMD, CommonJS, and vanilla environments are supported. In vanilla, a `O` global is exported.
 
 For example, here is a simple document to say hello:
 
 ```html
 <!DOCTYPE html>
-<style>@import url(https://unpkg.com/d3-express@0/style.css);</style>
-<body class="d3--body">
+<style>@import url(https://unpkg.com/@observablehq/notebook-runtime@0/style.css);</style>
+<body class="O--body">
 <p>What is your name?
 <div id="name"></div>
 <div id="hello"></div>
-<script src="https://unpkg.com/d3-express@0"></script>
+<script src="https://unpkg.com/@observablehq/notebook-runtime@0"></script>
 <script>
 
-var runtime = d3.runtime(),
+var runtime = O.runtime(),
     module = runtime.module();
 
 // This defines a vanilla text input.
@@ -56,14 +56,14 @@ The resulting document looks like this:
 
 A runtime is responsible for evaluating [variables](#variables) in topological order whenever their input values change. A runtime typically has one or more [modules](#modules) to scope variables. Collectively, these variables represent a reactive program managed by the runtime.
 
-<a href="#runtime" name="runtime">#</a> d3.<b>runtime</b>([<i>builtins</i>])
+<a href="#runtime" name="runtime">#</a> O.<b>runtime</b>([<i>builtins</i>])
 
-Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, the d3.express [standard library](#standard-library) is used.
+Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, the Observable notebook [standard library](#standard-library) is used.
 
 For example, to create a runtime whose only builtin is `color`:
 
 ```js
-var runtime = d3.runtime({color: "red"});
+var runtime = O.runtime({color: "red"});
 ```
 
 To refer to the `color` builtin from a variable:
@@ -136,7 +136,7 @@ The *definition* function may return a promise; derived variables will be comput
 For example, consider the following module that starts with a single undefined variable, *a*:
 
 ```js
-var runtime = d3.runtime();
+var runtime = O.runtime();
 
 var module = runtime.module();
 
@@ -169,12 +169,12 @@ This is equivalent to:
 b.define(null, ["foo"], foo => foo * 2);
 ```
 
-Note that the JavaScript symbols in the above example code (*a* and *b*) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted. Each variable corresponds to a cell in a [d3.express](https://d3.express) notebook, but the cell can be redefined to have a different name or definition.
+Note that the JavaScript symbols in the above example code (*a* and *b*) have no relation to the variable names (`foo` and null); variable names can change when a variable is redefined or deleted. Each variable corresponds to a cell in an Observable notebook, but the cell can be redefined to have a different name or definition.
 
 If more than one variable has the same *name* at the same time in the same module, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables *a* and *b* will throw a ReferenceError:
 
 ```js
-var module = d3.runtime().module();
+var module = O.runtime().module();
 var a = module.variable("#a").define("foo", 1);
 var b = module.variable("#b").define("foo", 2);
 ```
@@ -192,7 +192,7 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
 ```js
-var runtime = d3.runtime();
+var runtime = O.runtime();
 
 var module0 = runtime.module();
 
@@ -229,7 +229,7 @@ Deletes this variable’s current definition and name, if any. Any variable in t
 
 ## Standard Library
 
-<a href="#runtimeLibrary" name="runtimeLibrary">#</a> d3.<b>runtimeLibrary</b>
+<a href="#runtimeLibrary" name="runtimeLibrary">#</a> O.<b>runtimeLibrary</b>
 
 The standard library object, defining the following properties:
 
@@ -239,7 +239,7 @@ The standard library object, defining the following properties:
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
 
-By default, [d3.runtime](#runtime) uses this standard library for builtins.
+By default, [O.runtime](#runtime) uses this standard library for builtins.
 
 ### DOM
 

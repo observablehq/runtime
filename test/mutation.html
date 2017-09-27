@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <style>@import url(/style.css);</style>
-<body class="d3--body">
+<body class="O--body">
 <p>This is foo:
 <div class="result" id="foo"></div>
 <p>And this is bar:
 <div class="result" id="bar"></div>
-<script src="/build/d3-express.js"></script>
+<script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = d3.runtime(),
+var runtime = O.runtime(),
     module = runtime.module();
 
 var foo = module.variable("#foo").define("foo", Math.random);

@@ -17,4 +17,4 @@ export default function(require) {
       return (md || (md = require("marked", "highlight.js").then(marked))).then(resolved, rejected);
     }
   };
-};
+}

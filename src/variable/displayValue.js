@@ -5,12 +5,12 @@ export default function displayValue(variable, value) {
   var node = variable._node;
   if (!node) return;
   if ((value instanceof Element || value instanceof Text) && (!value.parentNode || value.parentNode === node)) {
-    node.className = "d3";
+    node.className = "O";
   } else {
-    node.className = "d3 d3--inspect";
+    node.className = "O O--inspect";
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
-        && node.firstChild.classList.contains("d3--expanded"));
+        && node.firstChild.classList.contains("O--expanded"));
   }
   if (node.firstChild !== value) {
     if (node.firstChild) {

@@ -33,7 +33,7 @@ export default function inspect(value, shallow, expand) {
     }
   }
   var span = document.createElement("span");
-  span.className = `d3--${type}`;
+  span.className = `O--${type}`;
   span.textContent = value;
   return span;
 }

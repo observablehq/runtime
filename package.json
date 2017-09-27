@@ -6,17 +6,17 @@
     "name": "Observable, Inc."
   },
   "license": "ISC",
-  "main": "build/d3-express.js",
+  "main": "build/notebook-runtime.js",
   "module": "src/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/@observablehq/notebook-runtime.git"
   },
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\" -f umd -n d3 -o build/d3-express.js -- src/index.js",
+    "pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\" -f umd -n O -o build/notebook-runtime.js -- src/index.js",
     "test": "tape 'test/**/*-test.js' && eslint index.js src",
-    "prepublish": "npm run test && uglifyjs --preamble \"$(preamble)\" build/d3-express.js -c -m -o build/d3-express.min.js",
-    "postpublish": "git push && git push --tags && zip -j build/d3-express.zip -- LICENSE README.md build/d3-express.js build/d3-express.min.js"
+    "prepublish": "npm run test && uglifyjs --preamble \"$(preamble)\" build/notebook-runtime.js -c -m -o build/notebook-runtime.min.js",
+    "postpublish": "git push && git push --tags && zip -j build/notebook-runtime.zip -- LICENSE README.md build/notebook-runtime.js build/notebook-runtime.min.js"
   },
   "devDependencies": {
     "d3-require": "^0.4.0",

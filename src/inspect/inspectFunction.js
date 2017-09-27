@@ -101,10 +101,10 @@ function nameAndArguments(contents) {
 // TODO Optionally show body?
 function inspectFunction(prefix, body, abbreviation) {
   var span = document.createElement("span");
-  span.className = "d3--function";
+  span.className = "O--function";
   if (prefix) {
     var spanPrefix = span.appendChild(document.createElement("span"));
-    spanPrefix.className = "d3--keyword";
+    spanPrefix.className = "O--keyword";
     spanPrefix.textContent = prefix;
     span.appendChild(document.createTextNode(" "));
   }

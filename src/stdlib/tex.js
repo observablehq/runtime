@@ -25,4 +25,4 @@ export default function(require, resource) {
       return (tex || (tex = require("katex").then(katex))).then(resolved, rejected);
     }
   };
-};
+}

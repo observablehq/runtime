@@ -17,7 +17,7 @@ export default function inspectCollapsed(object, shallow) {
 
   if (shallow) {
     span.appendChild(document.createTextNode(tag));
-    span.className = "d3--shallow";
+    span.className = "O--shallow";
     span.addEventListener("mouseup", function clicked(event) {
       event.stopPropagation();
       var spanNew = inspectCollapsed(object);
@@ -29,7 +29,7 @@ export default function inspectCollapsed(object, shallow) {
 
   var a = span.appendChild(document.createElement("a"));
   a.textContent = `▸${tag}${arrayLike ? " [" : " {"}`;
-  span.className = "d3--collapsed";
+  span.className = "O--collapsed";
 
   if (object instanceof Set) {
     var values = object.values();
@@ -55,10 +55,10 @@ export default function inspectCollapsed(object, shallow) {
       if (!arrayLike || !isArrayIndex(key)) {
         var spanKey = span.appendChild(document.createElement("span"));
         if (typeof key === "symbol") {
-          spanKey.className = "d3--symbol";
+          spanKey.className = "O--symbol";
           spanKey.textContent = formatSymbol(key);
         } else {
-          spanKey.className = "d3--key";
+          spanKey.className = "O--key";
           spanKey.textContent = key;
         }
         span.appendChild(document.createTextNode(": "));

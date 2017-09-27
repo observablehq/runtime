@@ -13,7 +13,7 @@ export default function inspectExpanded(object) {
       fields,
       n;
 
-  span.className = "d3--expanded";
+  span.className = "O--expanded";
 
   if (object instanceof Map) {
     n = object.size;
@@ -44,7 +44,7 @@ export default function inspectExpanded(object) {
 
   if (i < n) {
     var a = span.appendChild(document.createElement("a"));
-    a.className = "d3--field";
+    a.className = "O--field";
     a.style.display = "block";
     a.appendChild(document.createTextNode(`  … ${n - i} more`));
     a.addEventListener("mouseup", function clicked(event) {
@@ -69,7 +69,7 @@ export default function inspectExpanded(object) {
 function* mapFields(object) {
   for (var [key, value] of object.entries()) {
     var item = document.createElement("div");
-    item.className = "d3--field";
+    item.className = "O--field";
     item.appendChild(document.createTextNode("  "));
     item.appendChild(inspect(key));
     item.appendChild(document.createTextNode(" => "));
@@ -81,7 +81,7 @@ function* mapFields(object) {
 function* setFields(object) {
   for (var value of object.values()) {
     var item = document.createElement("div");
-    item.className = "d3--field";
+    item.className = "O--field";
     item.appendChild(document.createTextNode("  "));
     item.appendChild(inspect(value));
     yield item;
@@ -93,12 +93,12 @@ function* objectFields(object) {
   for (var key of getKeysAndSymbols(object)) {
     var item = document.createElement("div"),
         span = item.appendChild(document.createElement("span"));
-    item.className = "d3--field";
+    item.className = "O--field";
     if (typeof key === "symbol") {
-      span.className = "d3--symbol";
+      span.className = "O--symbol";
       span.textContent = `  ${formatSymbol(key)}`;
     } else {
-      span.className = `d3--${array && isArrayIndex(key) ? "index" : "key"}`;
+      span.className = `O--${array && isArrayIndex(key) ? "index" : "key"}`;
       span.textContent = `  ${key}`;
     }
     item.appendChild(document.createTextNode(": "));

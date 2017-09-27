@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <style>@import url(/style.css);</style>
-<body class="d3--body">
+<body class="O--body">
 <div id="foo"></div>
 <div id="bar"></div>
-<script src="/build/d3-express.js"></script>
+<script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = d3.runtime({color: "red"});
+var runtime = O.runtime({color: "red"});
 
 var module = runtime.module();
 module.variable("#foo").define("color", () => { throw new Error("this shouldn’t happen"); });

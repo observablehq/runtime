@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <style>@import url(/style.css);</style>
-<body class="d3--body">
+<body class="O--body">
 <div id="fooview"></div>
 <div id="foo"></div>
-<script src="/build/d3-express.js"></script>
+<script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = d3.runtime(),
+var runtime = O.runtime(),
     module = runtime.module();
 
 module.variable("#fooview").define("viewof foo", ["DOM"], DOM => DOM.range());
