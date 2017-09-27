@@ -1,6 +1,5 @@
 import dispatch from "../variable/dispatch";
 import inspectCollapsed from "./collapsed";
-import Entry from "./entry";
 import formatSymbol from "./formatSymbol";
 import getKeysAndSymbols from "./getKeysAndSymbols";
 import inspect from "./index";

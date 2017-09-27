@@ -1,5 +1,4 @@
 import dispatch from "../variable/dispatch";
-import Entry from "./entry";
 import inspectExpanded from "./expanded";
 import inspect from "./index";
 import isArrayIndex from "./isArrayIndex";
@@ -48,10 +47,6 @@ export default function inspectCollapsed(object, shallow) {
       span.appendChild(document.createTextNode(" => "));
       span.appendChild(inspect(value, true));
     }
-  } else if (object instanceof Entry) {
-    span.appendChild(inspect(object.key, true));
-    span.appendChild(document.createTextNode(" => "));
-    span.appendChild(inspect(object.value, true));
   } else {
     var keys = getKeysAndSymbols(object); // TODO Show missing entries in sparse arrays?
     for (var i = 0, j = Math.min(20, n = keys.length); i < j; ++i) {
