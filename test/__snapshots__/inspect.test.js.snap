@@ -1,0 +1,266 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`inspect 1`] = `
+<span
+  class="O--boolean"
+>
+  true
+</span>
+`;
+
+exports[`inspect 2`] = `
+<span
+  class="O--collapsed"
+>
+  <a>
+    ▸Array(1) [
+  </a>
+  <span
+    class="O--number"
+  >
+    1
+  </span>
+  ]
+</span>
+`;
+
+exports[`inspect 3`] = `
+<span
+  class="O--expanded"
+>
+  <a>
+    ▾Array(3) [
+  </a>
+  <div
+    class="O--field"
+  >
+    <span
+      class="O--index"
+    >
+        0
+    </span>
+    : 
+    <span
+      class="O--number"
+    >
+      1
+    </span>
+  </div>
+  <div
+    class="O--field"
+  >
+    <span
+      class="O--index"
+    >
+        1
+    </span>
+    : 
+    <span
+      class="O--number"
+    >
+      2
+    </span>
+  </div>
+  <div
+    class="O--field"
+  >
+    <span
+      class="O--index"
+    >
+        2
+    </span>
+    : 
+    <span
+      class="O--number"
+    >
+      3
+    </span>
+  </div>
+  ]
+</span>
+`;
+
+exports[`inspect 4`] = `
+<span
+  class="O--string"
+>
+  string
+</span>
+`;
+
+exports[`inspect 5`] = `
+<span
+  class="O--function"
+>
+  () =&gt; {}
+</span>
+`;
+
+exports[`inspect 6`] = `
+<span
+  class="O--function"
+>
+  <span
+    class="O--keyword"
+  >
+    ƒ
+  </span>
+   
+  a()
+</span>
+`;
+
+exports[`inspect 7`] = `
+<span
+  class="O--function"
+>
+  <span
+    class="O--keyword"
+  >
+    ƒ*
+  </span>
+   
+  a()
+</span>
+`;
+
+exports[`inspect 8`] = `
+<span
+  class="O--function"
+>
+  <span
+    class="O--keyword"
+  >
+    async ƒ
+  </span>
+   
+  a()
+</span>
+`;
+
+exports[`inspect 9`] = `
+<span
+  class="O--function"
+>
+  async () =&gt; {}
+</span>
+`;
+
+exports[`inspect 10`] = `
+<span
+  class="O--date"
+>
+  2000-01-01
+</span>
+`;
+
+exports[`inspect 11`] = `
+<span
+  class="O--date"
+>
+  2000-01-01T02:42:02
+</span>
+`;
+
+exports[`inspect 12`] = `
+<span
+  class="O--regexp"
+>
+  /a/g
+</span>
+`;
+
+exports[`inspect 13`] = `
+<span
+  class="O--collapsed"
+>
+  <a>
+    ▸Object {
+  </a>
+  <span
+    class="O--symbol"
+  >
+    Symbol(hi)
+  </span>
+  : 
+  <span
+    class="O--boolean"
+  >
+    true
+  </span>
+  }
+</span>
+`;
+
+exports[`inspect 14`] = `
+<span
+  class="O--shallow"
+>
+  Object
+</span>
+`;
+
+exports[`inspect 15`] = `
+<span
+  class="O--expanded"
+>
+  <a>
+    ▾Object {
+  </a>
+  <div
+    class="O--field"
+  >
+    <span
+      class="O--key"
+    >
+        a
+    </span>
+    : 
+    <span
+      class="O--number"
+    >
+      1
+    </span>
+  </div>
+  <div
+    class="O--field"
+  >
+    <span
+      class="O--key"
+    >
+        b
+    </span>
+    : 
+    <span
+      class="O--number"
+    >
+      2
+    </span>
+  </div>
+  }
+</span>
+`;
+
+exports[`inspect 16`] = `
+<span
+  class="O--symbol"
+>
+  Symbol(hi)
+</span>
+`;
+
+exports[`inspect 17`] = `
+<span
+  class="O--error"
+>
+  Error: hi
+</span>
+`;
+
+exports[`inspect 18`] = `
+<span
+  class="O--null"
+>
+  null
+</span>
+`;
