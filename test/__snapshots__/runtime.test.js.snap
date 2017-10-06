@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`builtins 1`] = `
+Array [
+  <div
+    class="O O--error"
+  >
+    ReferenceError: color is a builtin
+  </div>,
+  <div
+    class="O O--inspect"
+  >
+    <span
+      class="O--string"
+    >
+      color = red
+    </span>
+  </div>,
+]
+`;
+
+exports[`derived values 1`] = `
+<div
+  class="O O--inspect"
+>
+  <span
+    class="O--number"
+  >
+    43
+  </span>
+</div>
+`;
+
+exports[`duplicate declarations 1`] = `
+Array [
+  <div
+    class="O O--error"
+  >
+    ReferenceError: foo is defined more than once
+  </div>,
+  <two
+    class="O O--error"
+  >
+    ReferenceError: foo is defined more than once
+  </two>,
+  <three
+    class="O O--error"
+  >
+    ReferenceError: foo is defined more than once
+  </three>,
+]
+`;
