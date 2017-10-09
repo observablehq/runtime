@@ -1,5 +1,5 @@
 *.sublime-workspace
 .DS_Store
-build/
+.esm-cache/
 node_modules
 npm-debug.log

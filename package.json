@@ -1,31 +1,23 @@
 {
+  "private": true,
   "name": "@observablehq/notebook-runtime",
   "version": "0.0.0",
-  "description": "The Observable notebook runtime.",
-  "author": {
-    "name": "Observable, Inc."
-  },
   "license": "ISC",
-  "main": "build/notebook-runtime.js",
-  "module": "src/index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/@observablehq/notebook-runtime.git"
-  },
+  "main": "src/index",
   "scripts": {
-    "pretest": "rm -rf build && mkdir build && rollup -c --banner \"$(preamble)\" -f umd -n O -o build/notebook-runtime.js -- src/index.js",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src",
-    "prepare": "npm run test && uglifyjs -b beautify=false,preamble=\"'$(preamble)'\" -c -m -o build/notebook-runtime.min.js -- build/notebook-runtime.js",
-    "postpublish": "git push && git push --tags && zip -j build/notebook-runtime.zip -- LICENSE README.md build/notebook-runtime.js build/notebook-runtime.min.js"
+    "test": "tape -r @std/esm 'test/**/*-test.js'",
+    "precommit": "eslint . && npm test"
+  },
+  "@std/esm": {
+    "esm": "js",
+    "cjs": true
   },
   "devDependencies": {
+    "@std/esm": "^0.11.3",
     "d3-require": "^0.4.5",
-    "d3-time-format": "^2.0.5",
-    "eslint": "^4.7.2",
-    "package-preamble": "0.1.0",
-    "rollup": "^0.50.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "tape": "^4.6.3",
-    "uglify-es": "^3.1.2"
+    "d3-time-format": "^2.1.0",
+    "eslint": "^4.8.0",
+    "husky": "^0.14.3",
+    "tape-await": "0.0.1"
   }
 }
