@@ -12,11 +12,13 @@
     "esm": "js",
     "cjs": true
   },
-  "devDependencies": {
+  "dependencies": {
     "@std/esm": "^0.11.3",
     "d3-require": "^0.4.5",
-    "d3-time-format": "^2.1.0",
-    "eslint": "^4.8.0",
+    "d3-time-format": "^2.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.9.0",
     "husky": "^0.14.3",
     "jsdom": "^11.3.0",
     "tape-await": "0.0.1"
