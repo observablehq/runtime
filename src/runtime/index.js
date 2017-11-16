@@ -16,6 +16,7 @@ function Runtime(builtins) {
   this._scope = module._scope;
   if (builtins) for (var key in builtins) {
     var variable = module.variable();
+    variable._id = -3; // TODO Cleaner indication of builtins.
     variable._value = thenable(builtins[key]) ? builtins[key] : Promise.resolve(builtins[key]);
     module._scope.set(key, variable);
   }
