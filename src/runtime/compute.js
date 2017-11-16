@@ -17,13 +17,20 @@ function runtime_compute() {
       variable;
 
   // Compute the reachability of the transitive closure of dirty variables.
+  // Any newly-reachable variable must also be recomputed.
+  // Any no-longer-reachable variable must be terminated.
   variables = new Set(this._dirty);
   variables.forEach(function(variable) {
     variable._inputs.forEach(variables.add, variables);
     const reachable = variable_reachable(variable);
-    if (variable._reachable > reachable && variable._generator) variable._generator.return(), variable._generator = undefined;
+    if (reachable > variable._reachable) {
+      this._updates.add(variable);
+    } else if (reachable < variable._reachable && variable._generator) {
+      variable._generator.return();
+      variable._generator = undefined;
+    }
     variable._reachable = reachable;
-  });
+  }, this);
 
   // Compute the transitive closure of updating variables.
   variables = new Set(this._updates);
