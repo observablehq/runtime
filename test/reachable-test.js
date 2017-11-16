@@ -7,8 +7,8 @@ async function isCircular(variable) {
   try {
     await variable._value;
     return false;
-  } catch (err) {
-    return err.message === "circular definition";
+  } catch (error) {
+    return error.message === "circular definition";
   }
 }
 
