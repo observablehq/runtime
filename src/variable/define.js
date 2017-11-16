@@ -72,6 +72,8 @@ export function variable_define(name, inputs, definition) {
         error._outputs = this._outputs, this._outputs = new Set;
         error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = error; }, this);
         error._outputs.forEach(runtime._updates.add, runtime._updates);
+        runtime._dirty.add(error);
+        runtime._dirty.add(this);
         scope.set(this._name, error);
       } else if ((found = scope.get(this._name)) === this) { // Do no other variables reference this variable?
         scope.delete(this._name); // It’s safe to delete!
@@ -84,6 +86,8 @@ export function variable_define(name, inputs, definition) {
           found._outputs = error._outputs, error._outputs = new Set;
           found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(error)] = found; });
           found._definition = found._duplicate, delete found._duplicate;
+          runtime._dirty.add(error);
+          runtime._dirty.add(found);
           runtime._updates.add(found);
           scope.set(this._name, found);
         }
@@ -102,6 +106,8 @@ export function variable_define(name, inputs, definition) {
         } else if (found._id === -1) { // Are the variable references broken?
           this._outputs = found._outputs, found._outputs = new Set; // Now they’re fixed!
           this._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(found)] = this; }, this);
+          runtime._dirty.add(found);
+          runtime._dirty.add(this);
           scope.set(name, this);
         } else { // Does another variable define this name?
           found._duplicate = found._definition, this._duplicate = definition; // Now they’re duplicates.
@@ -112,6 +118,8 @@ export function variable_define(name, inputs, definition) {
           error._outputs = found._outputs, found._outputs = new Set;
           error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(found)] = error; });
           error._duplicates = new Set([this, found]);
+          runtime._dirty.add(found);
+          runtime._dirty.add(error);
           runtime._updates.add(found).add(error);
           scope.set(name, error);
         }
