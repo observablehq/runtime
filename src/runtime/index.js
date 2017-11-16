@@ -9,14 +9,13 @@ export default function(builtins) {
 }
 
 function Runtime(builtins) {
+  this._dirty = new Set;
   this._updates = new Set;
   this._computing = null;
   var module = this.module();
   this._scope = module._scope;
   if (builtins) for (var key in builtins) {
     var variable = module.variable();
-    variable._id = null; // TODO Cleaner?
-    variable._outdegree = NaN; // Prevent recomputation. TODO Cleaner?
     variable._value = thenable(builtins[key]) ? builtins[key] : Promise.resolve(builtins[key]);
     module._scope.set(key, variable);
   }

@@ -9,7 +9,7 @@ export default function Variable(module, node) {
   this._inputs = [];
   this._outputs = new Set;
   this._indegree = 0; // The number of computing inputs.
-  this._outdegree = node == null ? 0 : 1; // The number of visible outputs.
+  this._reachable = node != null; // Is this variable transitively visible?
   this._definition = undefined;
   this._valuePrior = undefined; // TODO Rename to the “resolved” value?
   this._value = undefined;

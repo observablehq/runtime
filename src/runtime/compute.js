@@ -3,6 +3,7 @@ import noop from "../noop";
 import variable_displayError from "../variable/displayError";
 import variable_displayValue from "../variable/displayValue";
 import variable_increment from "../variable/increment";
+import variable_reachable from "../variable/reachable";
 import variable_value from "../variable/value";
 
 export default function compute() {
@@ -12,17 +13,28 @@ export default function compute() {
 
 function runtime_compute() {
   var queue = [],
-      variables = new Set(this._updates),
+      variables,
       variable;
 
-  this._computing = null;
-  this._updates.clear();
+  // Compute the reachability of the transitive closure of dirty variables.
+  variables = new Set(this._dirty);
+  variables.forEach(function(variable) {
+    variable._inputs.forEach(variables.add, variables);
+    const reachable = variable_reachable(variable);
+    if (variable._reachable > reachable && variable._generator) variable._generator.return(), variable._generator = undefined;
+    variable._reachable = reachable;
+  });
 
   // Compute the transitive closure of updating variables.
+  variables = new Set(this._updates);
   variables.forEach(function(variable) {
     variable._indegree = 0;
     variable._outputs.forEach(variables.add, variables);
   });
+
+  this._computing = null;
+  this._updates.clear();
+  this._dirty.clear();
 
   // Compute the indegree of updating variables.
   variables.forEach(function(variable) {
@@ -38,7 +50,7 @@ function runtime_compute() {
 
   // Compute the variables in topological order.
   while (variable = queue.pop()) {
-    if (variable._outdegree > 0) variable_compute(variable).catch(noop);
+    if (variable._reachable) variable_compute(variable).catch(noop);
     variable._outputs.forEach(postqueue);
     variables.delete(variable);
   }
