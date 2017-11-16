@@ -63,3 +63,32 @@ tape("variable.define does not terminate reachable generators", async test => {
   bar._generator.return();
   test.equal(returned, true);
 });
+
+tape("variable.define correctly detects reachability for unreachable cycles", async test => {
+  const document = new JSDOM(`<div id=foo></div>`).window.document;
+  const runtime = createRuntime();
+  const module = runtime.module();
+  const bar = module.variable().define("bar", ["baz"], baz => `bar-${baz}`);
+  const baz = module.variable().define("baz", ["quux"], quux => `baz-${quux}`);
+  const quux = module.variable().define("quux", ["zapp"], zapp => `quux-${zapp}`);
+  const zapp = module.variable().define("zapp", ["bar"], bar => `zaap-${bar}`);
+  await new Promise(setImmediate);
+  test.equal(bar._reachable, false);
+  test.equal(baz._reachable, false);
+  test.equal(quux._reachable, false);
+  test.equal(zapp._reachable, false);
+  const foo = module.variable(document.querySelector("#foo")).define("foo", ["bar"], bar => bar);
+  await new Promise(setImmediate);
+  test.equal(foo._reachable, true);
+  test.equal(bar._reachable, true);
+  test.equal(baz._reachable, true);
+  test.equal(quux._reachable, true);
+  test.equal(zapp._reachable, true);
+  foo.define("foo", "foo");
+  await new Promise(setImmediate);
+  test.equal(foo._reachable, true);
+  test.equal(bar._reachable, false);
+  test.equal(baz._reachable, false);
+  test.equal(quux._reachable, false);
+  test.equal(zapp._reachable, false);
+});
