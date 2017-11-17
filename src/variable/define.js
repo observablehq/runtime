@@ -117,6 +117,7 @@ export function variable_define(name, inputs, definition) {
     this._name = name;
   }
 
+  runtime._dirty.add(this);
   runtime._updates.add(this);
   runtime._compute();
   return this;

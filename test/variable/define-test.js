@@ -36,7 +36,7 @@ tape("variable.define recomputes reachability as expected", async test => {
   test.deepEqual(await valueof(foo), {value: "foo"});
 });
 
-tape.only("variable.define correctly detects reachability for unreachable cycles", async test => {
+tape("variable.define correctly detects reachability for unreachable cycles", async test => {
   let returned = false;
   const runtime = createRuntime();
   const main = runtime.module();

@@ -13,7 +13,7 @@ export default function Variable(module) {
   this._module = module;
   this._name = null;
   this._outputs = new Set;
-  this._reachable = !module._weak; // Is this variable transitively reachable?
+  this._reachable = undefined; // Is this variable transitively reachable?
   this._value = undefined;
   this._valuePrior = undefined; // TODO Rename to the “resolved” value?
 }
