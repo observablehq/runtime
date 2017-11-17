@@ -13,8 +13,7 @@
     "cjs": true
   },
   "dependencies": {
-    "@std/esm": "^0.16.0",
-    "d3-require": "^0.4.5"
+    "@std/esm": "^0.16.0"
   },
   "devDependencies": {
     "eslint": "^4.11.0",

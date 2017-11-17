@@ -178,10 +178,6 @@ cross-spawn@^5.1.0:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-d3-require@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-0.4.5.tgz#60b89ce06696f8146f1c6dcb51ef540229f7389e"
-
 debug@^3.0.1:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
