@@ -12,10 +12,10 @@ If you use NPM, `npm install @observablehq/notebook-runtime`. Otherwise, downloa
 import {runtime} from "@observablehq/notebook-runtime";
 
 const main = runtime().module();
-main.variable().define("foo", [], 42);
-main.variable().define("bar", ["foo"], foo => foo * 2);
-main.variable().define(null, ["foo"], foo => console.log(`foo = ${foo}`));
-main.variable().define(null, ["bar"], bar => console.log(`bar = ${bar}`));
+main.define("foo", [], 42);
+main.define("bar", ["foo"], foo => foo * 2);
+main.define(null, ["foo"], foo => console.log(`foo = ${foo}`));
+main.define(null, ["bar"], bar => console.log(`bar = ${bar}`));
 ```
 
 ## API Reference
@@ -38,7 +38,7 @@ To refer to the `color` builtin from a variable:
 
 ```js
 const module = runtime.module();
-module.variable().define(null, ["color"], color => `Hello, ${color}.`);
+module.define(null, ["color"], color => `Hello, ${color}.`);
 ```
 
 This would produce the following output:
@@ -76,9 +76,9 @@ If *specifier*.alias is not specified, it defaults to *specifier*.name. A *speci
 
 ```js
 const module0 = runtime.module();
-module0.variable().define("a", [], 1);
-module0.variable().define("b", [], 2);
-module0.variable().define("c", ["a", "b"], (a, b) => a + b);
+module0.define("a", [], 1);
+module0.define("b", [], 2);
+module0.define("c", ["a", "b"], (a, b) => a + b);
 ```
 
 To derive a new module that redefines *b*:
@@ -86,8 +86,8 @@ To derive a new module that redefines *b*:
 ```js
 const module1 = runtime.module();
 const module1_0 = module0.derive(["b"], module1);
-module1.variable().define("b", [], 3);
-module1.variable().import("c", module1_0);
+module1.define("b", [], 3);
+module1.import("c", module1_0);
 ```
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
@@ -129,8 +129,8 @@ If more than one variable has the same *name* at the same time in the same modul
 
 ```js
 const module = O.runtime().module();
-const a = module.variable().define("foo", [], 1);
-const b = module.variable().define("foo", [], 2);
+const a = module.define("foo", [], 1);
+const b = module.define("foo", [], 2);
 ```
 
 If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
@@ -148,20 +148,20 @@ Redefines this variable as an alias of the variable with the specified *name* in
 ```js
 const runtime = O.runtime();
 const module0 = runtime.module();
-module0.variable().define("foo", [], 42);
+module0.define("foo", [], 42);
 ```
 
 To import `foo` into another module:
 
 ```js
 const module1 = runtime.module();
-module1.variable().import("foo", module0);
+module1.import("foo", module0);
 ```
 
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-module1.variable().define(null, ["foo"], foo => console.log(`Hello, ${foo}.`));
+module1.define(null, ["foo"], foo => console.log(`Hello, ${foo}.`));
 ```
 
 This would produce the following output:
@@ -171,7 +171,7 @@ This would produce the following output:
 To import `foo` into under the alias `bar`:
 
 ```js
-module1.variable().import("foo", "bar", module0);
+module1.import("foo", "bar", module0);
 ```
 
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
