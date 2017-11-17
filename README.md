@@ -53,7 +53,7 @@ Returns a new [module](#modules) for this [runtime](#runtimes).
 
 <a href="#runtime_weakModule" name="runtime_weakModule">#</a> <i>runtime</i>.<b>weakModule</b>()
 
-Returns a new weak [module](#modules) for this [runtime](#runtimes). Variables defined in a weak module are only computed if they are referenced by variables in non-weak modules.
+Returns a new weak [module](#modules) for this [runtime](#runtimes). Variables defined in a weak module are only computed if they are imported and referenced by variables in non-weak modules.
 
 ### Modules
 
@@ -62,8 +62,6 @@ A module is a namespace for [variables](#variables); within a module, variables 
 <a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>()
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
-
-TODO Can you specify whether the variable is lazily or greedily computed? Or are modules lazy, and any variable defined on a lazy module is lazy, along with imports?
 
 <a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>)
 
