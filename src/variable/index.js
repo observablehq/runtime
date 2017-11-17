@@ -2,7 +2,7 @@ import variable_define from "./define";
 import variable_delete from "./delete";
 import variable_import from "./import";
 
-export default function Variable(module, visible) {
+export default function Variable(module) {
   this._definition = undefined;
   this._duplicate = false;
   this._duplicates = undefined;
@@ -13,10 +13,9 @@ export default function Variable(module, visible) {
   this._module = module;
   this._name = null;
   this._outputs = new Set;
-  this._reachable = visible; // Is this variable transitively visible?
+  this._reachable = !module._weak; // Is this variable transitively reachable?
   this._value = undefined;
   this._valuePrior = undefined; // TODO Rename to the “resolved” value?
-  this._visible = visible;
 }
 
 Variable.prototype.define = variable_define;

@@ -16,10 +16,10 @@ export default function(injects, injectModule) {
 }
 
 function module_copy(module, injectByAlias, injectModule, map) {
-  var copy = new Module(module._runtime);
+  var copy = new Module(module._runtime, true);
   map.set(module, copy);
   module._scope.forEach(function(source, name) {
-    var target = new Variable(copy, false), inject;
+    var target = new Variable(copy), inject;
     if (inject = injectByAlias.get(name)) {
       target.import(inject.name, inject.alias, injectModule);
     } else if (source._definition === identity) { // import!

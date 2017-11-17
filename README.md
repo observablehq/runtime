@@ -51,6 +51,10 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
+<a href="#runtime_weakModule" name="runtime_weakModule">#</a> <i>runtime</i>.<b>weakModule</b>()
+
+Returns a new weak [module](#modules) for this [runtime](#runtimes). Variables defined in a weak module are only computed if they are referenced by variables in non-weak modules.
+
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#module_import) allow variables to be referenced across modules.
