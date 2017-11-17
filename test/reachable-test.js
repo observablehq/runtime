@@ -1,19 +1,9 @@
-import {JSDOM} from "jsdom";
-import tape from "tape-await";
 import {runtime as createRuntime} from "../";
 import "./requestAnimationFrame";
+import tape from "./tape";
+import valueof from "./valueof";
 
-async function isCircular(variable) {
-  try {
-    await variable._value;
-    return false;
-  } catch (error) {
-    return error.message === "circular definition";
-  }
-}
-
-tape("variable.define recomputes reachability as expected", async test => {
-  const document = new JSDOM(`<div id=foo></div>`).window.document;
+tape("variable.define recomputes reachability as expected", {html: "<div id=foo></div>"}, async test => {
   const runtime = createRuntime();
   const module = runtime.module();
   const quux = module.variable().define("quux", 42);
@@ -33,9 +23,8 @@ tape("variable.define recomputes reachability as expected", async test => {
   test.equal(foo._reachable, true);
 });
 
-tape("variable.define terminates previously reachable generators", async test => {
+tape("variable.define terminates previously reachable generators", {html: "<div id=foo></div>"}, async test => {
   let returned = false;
-  const document = new JSDOM(`<div id=foo></div>`).window.document;
   const runtime = createRuntime();
   const module = runtime.module();
   const bar = module.variable().define("bar", function* () { try { while (true) yield 1; } finally { returned = true; }});
@@ -51,9 +40,8 @@ tape("variable.define terminates previously reachable generators", async test =>
   test.equal(returned, true);
 });
 
-tape("variable.define does not terminate reachable generators", async test => {
+tape("variable.define does not terminate reachable generators", {html: "<div id=foo></div><div id=baz></div>"}, async test => {
   let returned = false;
-  const document = new JSDOM(`<div id=foo></div><div id=baz></div>`).window.document;
   const runtime = createRuntime();
   const module = runtime.module();
   const bar = module.variable().define("bar", function* () { try { while (true) yield 1; } finally { returned = true; }});
@@ -73,9 +61,8 @@ tape("variable.define does not terminate reachable generators", async test => {
   test.equal(returned, true);
 });
 
-tape("variable.define correctly detects reachability for unreachable cycles", async test => {
+tape("variable.define correctly detects reachability for unreachable cycles", {html: "<div id=foo></div>"}, async test => {
   let returned = false;
-  const document = new JSDOM(`<div id=foo></div>`).window.document;
   const runtime = createRuntime();
   const module = runtime.module();
   const bar = module.variable().define("bar", ["baz"], baz => `bar-${baz}`);
@@ -84,34 +71,29 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   const zapp = module.variable().define("zapp", ["bar"], bar => `zaap-${bar}`);
   await new Promise(setImmediate);
   test.equal(bar._reachable, false);
-  test.equal(await isCircular(bar), true);
   test.equal(baz._reachable, false);
-  test.equal(await isCircular(baz), true);
   test.equal(quux._reachable, false);
-  test.equal(await isCircular(quux), true);
-  test.equal(!!quux._generator, false);
-  test.equal(returned, false);
   test.equal(zapp._reachable, false);
-  test.equal(await isCircular(zapp), true);
-  const foo = module.variable(document.querySelector("#foo")).define("foo", ["bar"], bar => bar);
+  test.deepEqual(await valueof(bar), {error: "circular definition"});
+  test.deepEqual(await valueof(baz), {error: "circular definition"});
+  test.deepEqual(await valueof(quux), {error: "circular definition"});
+  test.deepEqual(await valueof(zapp), {error: "circular definition"});
+  const foo = module.variable("#foo").define("foo", ["bar"], bar => bar);
   await new Promise(setImmediate);
   test.equal(foo._reachable, true);
-  test.equal(await isCircular(foo), true); // Variables that depend on cycles are themselves circular.
   test.equal(bar._reachable, true);
   test.equal(baz._reachable, true);
   test.equal(quux._reachable, true);
-  test.equal(!quux._generator, true); // Generator is never run in a circular definition.
-  test.equal(returned, false);
   test.equal(zapp._reachable, true);
+  test.deepEqual(await valueof(foo), {error: "circular definition"}); // Variables that depend on cycles are themselves circular.
   foo.define("foo", "foo");
   await new Promise(setImmediate);
   test.equal(foo._reachable, true);
-  test.equal(await isCircular(foo), false);
   test.equal(bar._reachable, false);
-  test.equal(await isCircular(bar), true);
   test.equal(baz._reachable, false);
   test.equal(quux._reachable, false);
-  test.equal(quux._generator, undefined);
-  test.equal(returned, false); // Generator is never finalized because it has never run.
   test.equal(zapp._reachable, false);
+  test.deepEqual(await valueof(foo), {value: "foo"});
+  test.deepEqual(await valueof(bar), {error: "circular definition"});
+  test.equal(returned, false); // Generator is never finalized because it has never run.
 });
