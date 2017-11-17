@@ -65,7 +65,7 @@ Returns a new [variable](#variables) for this [module](#modules). The variable i
 
 <a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>)
 
-Returns a weak, derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#module_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
+Returns a derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#module_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
 
 * *specifier*.name - the name of the variable to import from *source*.
 * *specifier*.alias - the name of the variable to redefine in this module.

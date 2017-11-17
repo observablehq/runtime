@@ -16,7 +16,7 @@ export default function(injects, injectModule) {
 }
 
 function module_copy(module, injectByAlias, injectModule, map) {
-  var copy = new Module(module._runtime, true);
+  var copy = new Module(module._runtime, module._weak);
   map.set(module, copy);
   module._scope.forEach(function(source, name) {
     var target = new Variable(copy), inject;
