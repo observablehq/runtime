@@ -19,7 +19,7 @@ function module_copy(module, injectByAlias, injectModule, map) {
   var copy = new Module(module._runtime);
   map.set(module, copy);
   module._scope.forEach(function(source, name) {
-    var target = new Variable(copy), inject;
+    var target = new Variable(copy, false), inject;
     if (inject = injectByAlias.get(name)) {
       target.import(inject.name, inject.alias, injectModule);
     } else if (source._definition === identity) { // import!

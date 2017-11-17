@@ -1,10 +1,8 @@
-import stdlib from "../stdlib/index";
 import thenable from "../thenable";
 import runtime_compute from "./compute";
 import runtime_module from "./module";
 
-export default function(builtins) {
-  if (builtins == null) builtins = stdlib();
+export default function(builtins = {}) {
   return new Runtime(builtins);
 }
 

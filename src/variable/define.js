@@ -25,19 +25,8 @@ function variable_duplicate(name) {
   };
 }
 
+// TODO Separate resolved and rejected definitions.
 export default function(name, inputs, definition) {
-  switch (arguments.length) {
-    case 1: {
-      definition = name, name = inputs = null;
-      break;
-    }
-    case 2: {
-      definition = inputs;
-      if (typeof name === "string") inputs = null;
-      else inputs = name, name = null;
-      break;
-    }
-  }
   return variable_define.call(this,
     name == null ? null : name + "",
     inputs == null ? [] : map.call(inputs, module_resolve, this._module),
@@ -45,6 +34,7 @@ export default function(name, inputs, definition) {
   );
 }
 
+// TODO Separate resolved and rejected definitions.
 export function variable_define(name, inputs, definition) {
   var scope = this._module._scope, runtime = this._module._runtime;
 
@@ -66,14 +56,13 @@ export function variable_define(name, inputs, definition) {
 
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
-        error = new Variable(this._module); // Those references are now broken!
+        error = new Variable(this._module, false); // Those references are now broken!
         error._id = -1; // TODO Better indication of undefined variables?
         error._name = this._name;
         error._outputs = this._outputs, this._outputs = new Set;
         error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = error; }, this);
         error._outputs.forEach(runtime._updates.add, runtime._updates);
-        runtime._dirty.add(error);
-        runtime._dirty.add(this);
+        runtime._dirty.add(error).add(this);
         scope.set(this._name, error);
       } else if ((found = scope.get(this._name)) === this) { // Do no other variables reference this variable?
         scope.delete(this._name); // It’s safe to delete!
@@ -86,8 +75,7 @@ export function variable_define(name, inputs, definition) {
           found._outputs = error._outputs, error._outputs = new Set;
           found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(error)] = found; });
           found._definition = found._duplicate, delete found._duplicate;
-          runtime._dirty.add(error);
-          runtime._dirty.add(found);
+          runtime._dirty.add(error).add(found);
           runtime._updates.add(found);
           scope.set(this._name, found);
         }
@@ -106,20 +94,18 @@ export function variable_define(name, inputs, definition) {
         } else if (found._id === -1) { // Are the variable references broken?
           this._outputs = found._outputs, found._outputs = new Set; // Now they’re fixed!
           this._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(found)] = this; }, this);
-          runtime._dirty.add(found);
-          runtime._dirty.add(this);
+          runtime._dirty.add(found).add(this);
           scope.set(name, this);
         } else { // Does another variable define this name?
           found._duplicate = found._definition, this._duplicate = definition; // Now they’re duplicates.
-          error = new Variable(this._module);
+          error = new Variable(this._module, false);
           error._id = -2; // TODO Better indication of duplicate variables.
           error._name = name;
           error._definition = this._definition = found._definition = variable_duplicate(name);
           error._outputs = found._outputs, found._outputs = new Set;
           error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(found)] = error; });
           error._duplicates = new Set([this, found]);
-          runtime._dirty.add(found);
-          runtime._dirty.add(error);
+          runtime._dirty.add(found).add(error);
           runtime._updates.add(found).add(error);
           scope.set(name, error);
         }

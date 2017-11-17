@@ -1,6 +1,6 @@
 import Variable from "../variable/index";
 
-export default function(node) {
-  if (typeof node === "string") node = document.querySelector(node);
-  return new Variable(this, node);
+// TODO Move the visible (greedy) flag up to the module?
+export default function(visible = true) {
+  return new Variable(this, visible);
 }

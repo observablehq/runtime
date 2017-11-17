@@ -1,7 +1,5 @@
 import generatorish from "../generatorish";
 import noop from "../noop";
-import variable_displayError from "../variable/displayError";
-import variable_displayValue from "../variable/displayValue";
 import variable_increment from "../variable/increment";
 import variable_reachable from "../variable/reachable";
 import variable_value from "../variable/value";
@@ -67,7 +65,7 @@ function runtime_compute() {
     var error = new ReferenceError("circular definition");
     variable._valuePrior = undefined;
     (variable._value = Promise.reject(error)).catch(noop);
-    variable_displayError(variable, error);
+    // TODO How to notify error? variable_displayError(variable, error);
   });
 
   function postqueue(variable) {
@@ -80,9 +78,9 @@ function variable_compute(variable) {
     variable._generator.return();
     variable._generator = null;
   }
-  if (variable._node) {
-    variable._node.classList.add("O--running");
-  }
+  // if (variable._node) {
+  //   TODO How to notify about to compute? variable._node.classList.add("O--running");
+  // }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (!variable._definition) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
@@ -97,11 +95,11 @@ function variable_compute(variable) {
     return value;
   }).then(function(value) {
     variable._valuePrior = value;
-    variable_displayValue(variable, value);
+    // TODO notify? variable_displayValue(variable, value);
     return value;
   }, function(error) {
     variable._valuePrior = undefined;
-    variable_displayError(variable, error);
+    // TODO notify? variable_displayError(variable, error);
     throw error;
   });
 }
@@ -118,12 +116,12 @@ function variable_recompute(variable, generator) {
     }
     next.then(function(nextValue) {
       variable_postrecompute(variable, nextValue, next);
-      variable_displayValue(variable, nextValue);
+      // TODO notify? variable_displayValue(variable, nextValue);
       requestAnimationFrame(poll);
       return nextValue;
     }, function(error) {
       variable_postrecompute(variable, undefined, next);
-      variable_displayError(variable, error);
+      // TODO notify? variable_displayError(variable, error);
       throw error;
     });
   });
