@@ -98,12 +98,12 @@ A convenience method for [declaring](#module_variable) and [defining](#variable_
 module.variable().define(name, inputs, definition);
 ```
 
-<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>otherModule</i>)
+<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>source</i>)
 
-A convenience method for [declaring](#module_variable) and [importing](#variable_import) a new variable. Equivalent to:
+A convenience method for [declaring](#module_variable) and [importing](#variable_import) a new variable from the specified *source* module. Equivalent to:
 
 ```js
-module.variable().import(name, alias, otherModule);
+module.variable().import(name, alias, source);
 ```
 
 ### Variables
