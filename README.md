@@ -12,7 +12,7 @@ If you use NPM, `npm install @observablehq/notebook-runtime`. Otherwise, downloa
 import {runtime} from "@observablehq/notebook-runtime";
 
 const main = runtime().module();
-main.define("foo", [], 42);
+main.define("foo", [], () => 42);
 main.define("bar", ["foo"], foo => foo * 2);
 main.define(null, ["foo"], foo => console.log(`foo = ${foo}`));
 main.define(null, ["bar"], bar => console.log(`bar = ${bar}`));
@@ -45,7 +45,7 @@ This would produce the following output:
 
 > Hello, red.
 
-Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
+Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions, as they are not computed. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
@@ -74,8 +74,8 @@ If *specifier*.alias is not specified, it defaults to *specifier*.name. A *speci
 
 ```js
 const module0 = runtime.module();
-module0.define("a", [], 1);
-module0.define("b", [], 2);
+module0.define("a", [], () => 1);
+module0.define("b", [], () => 2);
 module0.define("c", ["a", "b"], (a, b) => a + b);
 ```
 
@@ -84,7 +84,7 @@ To derive a new module that redefines *b*:
 ```js
 const module1 = runtime.module();
 const module1_0 = module0.derive(["b"], module1);
-module1.define("b", [], 3);
+module1.define("b", [], () => 3);
 module1.import("c", module1_0);
 ```
 
@@ -112,7 +112,7 @@ A variable defines a piece of state in a reactive program, akin to a cell in a s
 
 <a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
-Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#module_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array. If *definition* is not a function, the variable is defined to have the constant value of *definition*.
+Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#module_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array.
 
 The *definition* function may return a promise; derived variables will be computed after the promise resolves. The *definition* function may likewise return a generator; the runtime will pull values from the generator on every animation frame, or if the generator yielded a promise, after the promise is resolved. When the *definition* is invoked, the value of `this` is the variable’s previous value, or undefined if this is the first time the variable is being computed under its current definition. Thus, the previous value is preserved only when input values change; it is *not* preserved if the variable is explicitly redefined.
 
@@ -127,7 +127,7 @@ const a = module.variable();
 To define variable *a* with the name `foo` and the constant value 42:
 
 ```js
-a.define("foo", [], 42);
+a.define("foo", [], () => 42);
 ```
 
 To define an anonymous variable *b* that takes `foo` as input:
@@ -143,14 +143,14 @@ If more than one variable has the same *name* at the same time in the same modul
 
 ```js
 const module = O.runtime().module();
-const a = module.define("foo", [], 1);
-const b = module.define("foo", [], 2);
+const a = module.define("foo", [], () => 1);
+const b = module.define("foo", [], () => 2);
 ```
 
 If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
 
 ```js
-b.define("bar", [], 2);
+b.define("bar", [], () => 2);
 ```
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
@@ -162,7 +162,7 @@ Redefines this variable as an alias of the variable with the specified *name* in
 ```js
 const runtime = O.runtime();
 const module0 = runtime.module();
-module0.define("foo", [], 42);
+module0.define("foo", [], () => 42);
 ```
 
 To import `foo` into another module:

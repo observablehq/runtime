@@ -79,22 +79,26 @@ function variable_compute(variable) {
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
-    if (!variable._definition) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
-    var value = variable._definition.apply(valuePrior, inputs);
-    if (generatorish(value)) {
-      var generator = variable._generator = value, next = generator.next();
-      return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        variable_recompute(variable, generator);
-        return value;
-      });
-    }
-    return value;
+    if (!variable._resolver) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
+    var value = variable._resolver.apply(valuePrior, inputs);
+    return generatorish(value) ? variable_generate(variable, value) : value;
+  }, variable._rejecter && function(error) {
+    var value = variable._rejecter.call(valuePrior, error);
+    return generatorish(value) ? variable_generate(variable, value) : value;
   }).then(function(value) {
     variable._valuePrior = value;
     return value;
   }, function(error) {
     variable._valuePrior = undefined;
     throw error;
+  });
+}
+
+function variable_generate(variable, generator) {
+  var next = (variable._generator = generator).next();
+  return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
+    variable_recompute(variable, generator);
+    return value;
   });
 }
 

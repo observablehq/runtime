@@ -2,19 +2,29 @@ import {runtime as createRuntime} from "../../";
 import tape from "../tape";
 import valueof from "./valueof";
 
-tape("variable.define(name, inputs, value) can define a constant value", async test => {
+tape("variable.define(name, inputs, resolver) can define a resolved value", async test => {
   const runtime = createRuntime();
   const module = runtime.module();
-  const foo = module.variable().define("foo", [], 42);
+  const foo = module.define("foo", [], () => 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
+});
+
+tape("variable.define(name, inputs, resolver, rejected) can resolve a rejected value", async test => {
+  const runtime = createRuntime();
+  const module = runtime.module();
+  const foo = module.define("foo", [], () => { throw new Error("foo"); });
+  const bar = module.define("bar", ["foo"], () => {}, error => error.message);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {error: "foo"});
+  test.deepEqual(await valueof(bar), {value: "foo"});
 });
 
 tape("variable.define recomputes reachability as expected", async test => {
   const runtime = createRuntime();
   const main = runtime.module();
   const weak = runtime.weakModule();
-  const quux = weak.define("quux", [], 42);
+  const quux = weak.define("quux", [], () => 42);
   const baz = weak.define("baz", ["quux"], quux => `baz-${quux}`);
   const bar = weak.define("bar", ["quux"], quux => `bar-${quux}`);
   const foo = main.define("foo", ["bar", "baz", "quux"], (bar, baz, quux) => [bar, baz, quux]);
@@ -27,7 +37,7 @@ tape("variable.define recomputes reachability as expected", async test => {
   test.equal(bar._reachable, true);
   test.equal(foo._reachable, true);
   test.deepEqual(await valueof(foo), {value: ["bar-42", "baz-42", 42]});
-  foo.define("foo", [], "foo");
+  foo.define("foo", [], () => "foo");
   await new Promise(setImmediate);
   test.equal(quux._reachable, false);
   test.equal(baz._reachable, false);
@@ -67,7 +77,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   test.deepEqual(await valueof(quux), {error: "circular definition"});
   test.deepEqual(await valueof(zapp), {error: "circular definition"});
   test.deepEqual(await valueof(foo), {error: "circular definition"}); // Variables that depend on cycles are themselves circular.
-  foo.define("foo", [], "foo");
+  foo.define("foo", [], () => "foo");
   await new Promise(setImmediate);
   test.equal(foo._reachable, true);
   test.equal(bar._reachable, false);
@@ -92,7 +102,7 @@ tape("variable.define terminates previously reachable generators", async test =>
   main.import("bar", weak);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
-  foo.define("foo", [], "foo");
+  foo.define("foo", [], () => "foo");
   await new Promise(setImmediate);
   test.equal(bar._generator, undefined);
   test.deepEqual(await valueof(foo), {value: "foo"});
@@ -111,7 +121,7 @@ tape("variable.define does not terminate reachable generators", async test => {
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(baz), {value: 1});
-  foo.define("foo", [], "foo");
+  foo.define("foo", [], () => "foo");
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: "foo"});
   test.deepEqual(await valueof(baz), {value: 1});
@@ -123,8 +133,8 @@ tape("variable.define does not terminate reachable generators", async test => {
 tape("variable.define detects duplicate declarations", async test => {
   const runtime = createRuntime();
   const main = runtime.module();
-  const v1 = main.define("foo", [], 1);
-  const v2 = main.define("foo", [], 2);
+  const v1 = main.define("foo", [], () => 1);
+  const v2 = main.define("foo", [], () => 2);
   const v3 = main.define(null, ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "foo is defined more than once"});

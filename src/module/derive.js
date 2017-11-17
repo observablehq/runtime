@@ -22,13 +22,13 @@ function module_copy(module, injectByAlias, injectModule, map) {
     var target = new Variable(copy), inject;
     if (inject = injectByAlias.get(name)) {
       target.import(inject.name, inject.alias, injectModule);
-    } else if (source._definition === identity) { // import!
+    } else if (source._resolver === identity) { // import!
       var sourceInput = source._inputs[0],
           sourceModule = sourceInput._module,
           targetModule = map.get(sourceModule) || module_copy(sourceModule, none, null, map);
       target.import(sourceInput._name, name, targetModule);
     } else {
-      target.define(name, source._inputs.map(input_name), source._definition);
+      target.define(name, source._inputs.map(input_name), source._resolver);
     }
   });
   return copy;

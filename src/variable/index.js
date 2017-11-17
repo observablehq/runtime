@@ -3,7 +3,8 @@ import variable_delete from "./delete";
 import variable_import from "./import";
 
 export default function Variable(module) {
-  this._definition = undefined;
+  this._resolver = undefined;
+  this._rejecter = undefined;
   this._duplicate = false;
   this._duplicates = undefined;
   this._generator = undefined;
