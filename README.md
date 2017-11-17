@@ -90,6 +90,14 @@ module1.import("c", module1_0);
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
 
+<a href="#module_define" name="module_define">#</a> <i>module</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
+
+A convenience method for [declaring](#module_variable) and [defining](#variable_import) a new variable.
+
+<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
+
+A convenience method for [declaring](#module_variable) and [importing](#variable_import) a new variable.
+
 ### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
