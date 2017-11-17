@@ -14,7 +14,8 @@ import {runtime} from "@observablehq/notebook-runtime";
 const main = runtime().module();
 main.variable().define("foo", [], 42);
 main.variable().define("bar", ["foo"], foo => foo * 2);
-main.variable().define(null, ["bar"], bar => console.log(`bar is ${bar}`));
+main.variable().define(null, ["foo"], foo => console.log(`foo = ${foo}`));
+main.variable().define(null, ["bar"], bar => console.log(`bar = ${bar}`));
 ```
 
 ## API Reference
@@ -30,14 +31,13 @@ Returns a new [runtime](#runtimes). If a *builtins* object is specified, each pr
 For example, to create a runtime whose only builtin is `color`:
 
 ```js
-var runtime = O.runtime({color: "red"});
+const runtime = O.runtime({color: "red"});
 ```
 
 To refer to the `color` builtin from a variable:
 
 ```js
-var module = runtime.module();
-
+const module = runtime.module();
 module.variable().define(null, ["color"], color => `Hello, ${color}.`);
 ```
 
