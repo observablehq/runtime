@@ -56,7 +56,7 @@ export function variable_define(name, inputs, definition) {
 
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
-        error = new Variable(this._module, false); // Those references are now broken!
+        error = new Variable(this._module); // Those references are now broken!
         error._id = -1; // TODO Better indication of undefined variables?
         error._name = this._name;
         error._outputs = this._outputs, this._outputs = new Set;
@@ -98,7 +98,7 @@ export function variable_define(name, inputs, definition) {
           scope.set(name, this);
         } else { // Does another variable define this name?
           found._duplicate = found._definition, this._duplicate = definition; // Now they’re duplicates.
-          error = new Variable(this._module, false);
+          error = new Variable(this._module);
           error._id = -2; // TODO Better indication of duplicate variables.
           error._name = name;
           error._definition = this._definition = found._definition = variable_duplicate(name);
