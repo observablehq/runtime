@@ -2,12 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.4
+      - image: circleci/node:8.9
     steps:
       - checkout
       - run:
-          name: install-npm-wee
-          command: npm install
+          name: install
+          command: yarn --frozen-lockfile
       - run:
           name: test
-          command: npm test
+          command: yarn test
