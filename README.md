@@ -92,11 +92,19 @@ The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c
 
 <a href="#module_define" name="module_define">#</a> <i>module</i>.<b>define</b>(<i>name</i>, <i>inputs</i>, <i>definition</i>)
 
-A convenience method for [declaring](#module_variable) and [defining](#variable_import) a new variable.
+A convenience method for [declaring](#module_variable) and [defining](#variable_import) a new variable. Equivalent to:
 
-<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
+```js
+module.variable().define(name, inputs, definition);
+```
 
-A convenience method for [declaring](#module_variable) and [importing](#variable_import) a new variable.
+<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>otherModule</i>)
+
+A convenience method for [declaring](#module_variable) and [importing](#variable_import) a new variable. Equivalent to:
+
+```js
+module.variable().import(name, alias, otherModule);
+```
 
 ### Variables
 
