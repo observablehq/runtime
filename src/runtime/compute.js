@@ -1,6 +1,5 @@
 import generatorish from "../generatorish";
 import noop from "../noop";
-import variable_increment from "../variable/increment";
 import variable_reachable from "../variable/reachable";
 import variable_value from "../variable/value";
 
@@ -92,6 +91,10 @@ function variable_compute(variable) {
     variable._valuePrior = undefined;
     throw error;
   });
+}
+
+function variable_increment(variable) {
+  ++variable._indegree;
 }
 
 function variable_generate(variable, generator) {

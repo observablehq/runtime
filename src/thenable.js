@@ -1,4 +1,4 @@
-export default function(value) {
+export default function thenable(value) {
   return value
       && typeof value.then === "function";
 }

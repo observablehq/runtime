@@ -1,5 +1,15 @@
 {
   "extends": "../.eslintrc.json",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "env": {
+    "node": true
+  },
   "rules": {
     "no-unreachable": 0
   }

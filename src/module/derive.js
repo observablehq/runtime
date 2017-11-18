@@ -5,7 +5,7 @@ import Module from "./index";
 
 var none = new Map;
 
-export default function(injects, injectModule) {
+export default function module_derive(injects, injectModule) {
   var injectByAlias = new Map;
   forEach.call(injects, function(inject) {
     if (typeof inject !== "object") inject = {name: inject + ""};
