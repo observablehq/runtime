@@ -53,7 +53,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   const weak = runtime.weakModule();
   const bar = weak.define("bar", ["baz"], baz => `bar-${baz}`);
   const baz = weak.define("baz", ["quux"], quux => `baz-${quux}`);
-  const quux = weak.define("quux", ["zapp"], function* (zapp) { try { while (true) yield `quux-${zapp}`; } finally { returned = true; }});
+  const quux = weak.define("quux", ["zapp"], function*(zapp) { try { while (true) yield `quux-${zapp}`; } finally { returned = true; }});
   const zapp = weak.define("zapp", ["bar"], bar => `zaap-${bar}`);
   await new Promise(setImmediate);
   test.equal(bar._reachable, false);
@@ -97,7 +97,7 @@ tape("variable.define terminates previously reachable generators", async test =>
   const runtime = createRuntime();
   const main = runtime.module();
   const weak = runtime.weakModule();
-  const bar = weak.define("bar", [], function* () { try { while (true) yield 1; } finally { returned = true; }});
+  const bar = weak.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
   const foo = main.define("foo", ["bar"], bar => bar);
   main.import("bar", weak);
   await new Promise(setImmediate);
@@ -114,7 +114,7 @@ tape("variable.define does not terminate reachable generators", async test => {
   const runtime = createRuntime();
   const main = runtime.module();
   const weak = runtime.weakModule();
-  const bar = weak.define("bar", [], function* () { try { while (true) yield 1; } finally { returned = true; }});
+  const bar = weak.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
   const baz = main.define("baz", ["bar"], bar => bar);
   const foo = main.define("foo", ["bar"], bar => bar);
   main.import("bar", weak);
@@ -150,4 +150,54 @@ tape("variable.define does not allow a variable to mask a builtin", async test =
   main.define(null, ["color"], color => result = color);
   await new Promise(setImmediate);
   test.equal(result, "red");
+});
+
+tape("variable.define supports promises", async test => {
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const foo = main.define("foo", [], () => new Promise(resolve => setImmediate(() => resolve(42))));
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 42});
+});
+
+tape("variable.define supports generators", async test => {
+  let i = 0;
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const foo = main.define("foo", [], function*() { while (true) yield ++i; });
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 2});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 3});
+  foo._generator.return();
+});
+
+tape("variable.define supports asynchronous generators", async test => {
+  let i = 0;
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const foo = main.define("foo", [], function*() { while (true) yield Promise.resolve(++i); });
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 2});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 3});
+  foo._generator.return();
+});
+
+tape("variable.define allows a variable to be redefined", async test => {
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const foo = main.define("foo", [], () => 1);
+  const bar = main.define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: 1});
+  foo.define("foo", [], () => 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 2});
+  test.deepEqual(await valueof(bar), {value: 2});
 });

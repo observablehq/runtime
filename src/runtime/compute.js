@@ -78,7 +78,7 @@ function variable_compute(variable) {
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
-    if (!variable._resolver) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
+    if (!variable._resolver) throw new ReferenceError(variable._name + " is not defined");
     var value = variable._resolver.apply(valuePrior, inputs);
     return generatorish(value) ? variable_generate(variable, value) : value;
   }, variable._rejecter && function(error) {
