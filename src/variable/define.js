@@ -2,14 +2,14 @@ import {map} from "../array";
 import module_resolve from "../module/resolve";
 import Variable from "./index";
 
-function input_attach(input) {
-  input._module._runtime._dirty.add(input);
-  input._outputs.add(this);
+function variable_attach(variable) {
+  variable._module._runtime._dirty.add(variable);
+  variable._outputs.add(this);
 }
 
-function input_detach(input) {
-  input._module._runtime._dirty.add(input);
-  input._outputs.delete(this);
+function variable_detach(variable) {
+  variable._module._runtime._dirty.add(variable);
+  variable._outputs.delete(this);
 }
 
 function variable_builtin(name) {
@@ -43,8 +43,8 @@ export function variable_define(name, inputs, resolver, rejecter) {
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
-  this._inputs.forEach(input_detach, this);
-  inputs.forEach(input_attach, this);
+  this._inputs.forEach(variable_detach, this);
+  inputs.forEach(variable_attach, this);
   this._inputs = inputs;
   this._resolver = resolver;
   this._rejecter = rejecter;
