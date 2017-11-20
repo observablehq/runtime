@@ -3,7 +3,3 @@ export default function(x) {
     return x;
   };
 }
-
-export function constant_true() {
-  return true;
-}
