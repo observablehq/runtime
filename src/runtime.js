@@ -1,17 +1,47 @@
-import generatorish from "../generatorish";
-import noop from "../noop";
-import variable_displayError from "../variable/displayError";
-import variable_displayValue from "../variable/displayValue";
-import variable_increment from "../variable/increment";
-import variable_reachable from "../variable/reachable";
-import variable_value from "../variable/value";
+import dispatch from "./dispatch";
+import inspect from "./inspect/index";
+import generatorish from "./generatorish";
+import Module from "./module";
+import noop from "./noop";
+import stdlib from "./stdlib/index";
+import thenable from "./thenable";
 
-export default function compute() {
-  if (this._computing) return;
-  this._computing = requestAnimationFrame(runtime_compute.bind(this));
+export default function(builtins) {
+  if (builtins == null) builtins = stdlib();
+  return new Runtime(builtins);
+}
+
+function Runtime(builtins) {
+  var module = this.module();
+  Object.defineProperties(this, {
+    _dirty: {value: new Set},
+    _updates: {value: new Set},
+    _computing: {value: null, writable: true},
+    _scope: {value: module._scope}
+  });
+  if (builtins) for (var key in builtins) {
+    var variable = module.variable();
+    variable._id = -3; // TODO Cleaner indication of builtins.
+    variable._value = thenable(builtins[key]) ? builtins[key] : Promise.resolve(builtins[key]);
+    module._scope.set(key, variable);
+  }
+}
+
+Object.defineProperties(Runtime.prototype, {
+  _compute: {value: runtime_compute, writable: true, configurable: true},
+  module: {value: runtime_module, writable: true, configurable: true}
+});
+
+function runtime_module() {
+  return new Module(this);
 }
 
 function runtime_compute() {
+  if (this._computing) return;
+  this._computing = requestAnimationFrame(runtime_computeNow.bind(this));
+}
+
+function runtime_computeNow() {
   var queue = [],
       variables,
       variable;
@@ -50,14 +80,13 @@ function runtime_compute() {
 
   // Identify the root variables (those with no updating inputs).
   variables.forEach(function(variable) {
-    if (variable._indegree === 0) {
-      queue.push(variable);
-    }
+    if (!variable._reachable) variables.delete(variable);
+    else if (variable._indegree === 0) queue.push(variable);
   });
 
   // Compute the variables in topological order.
   while (variable = queue.pop()) {
-    if (variable._reachable) variable_compute(variable).catch(noop);
+    variable_compute(variable).catch(noop);
     variable._outputs.forEach(postqueue);
     variables.delete(variable);
   }
@@ -73,6 +102,14 @@ function runtime_compute() {
   function postqueue(variable) {
     --variable._indegree || queue.push(variable);
   }
+}
+
+function variable_increment(variable) {
+  ++variable._indegree;
+}
+
+function variable_value(variable) {
+  return variable._value;
 }
 
 function variable_compute(variable) {
@@ -135,4 +172,45 @@ function variable_postrecompute(variable, valuePrior, value) {
   variable._value = value;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   runtime._compute();
+}
+
+function variable_reachable(variable) {
+  if (variable._id === -3) return false; // Don’t recompute builtins.
+  if (variable._node) return true; // Directly reachable.
+  var outputs = new Set(variable._outputs);
+  for (const output of outputs) {
+    if (output._node) return true;
+    output._outputs.forEach(outputs.add, outputs);
+  }
+  return false;
+}
+
+function variable_displayError(variable, error) {
+  var node = variable._node;
+  if (!node) return;
+  node.className = "O O--error";
+  node.textContent = error + ""; // TODO Pretty stack trace.
+  dispatch(node, "update");
+}
+
+function variable_displayValue(variable, value) {
+  var node = variable._node;
+  if (!node) return;
+  if ((value instanceof Element || value instanceof Text) && (!value.parentNode || value.parentNode === node)) {
+    node.className = "O";
+  } else {
+    node.className = "O O--inspect";
+    value = inspect(value, false, node.firstChild // TODO Do this better.
+        && node.firstChild.classList
+        && node.firstChild.classList.contains("O--expanded"));
+  }
+  if (node.firstChild !== value) {
+    if (node.firstChild) {
+      while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
+      node.replaceChild(value, node.firstChild);
+    } else {
+      node.appendChild(value);
+    }
+  }
+  dispatch(node, "update");
 }

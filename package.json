@@ -6,7 +6,8 @@
   "main": "src/index",
   "scripts": {
     "test": "tape -r @std/esm 'test/**/*-test.js'",
-    "precommit": "eslint . && yarn test"
+    "precommit": "eslint . && yarn test",
+    "prepare": "rollup -c"
   },
   "@std/esm": {
     "esm": "js",
@@ -21,6 +22,8 @@
     "eslint": "^4.11.0",
     "husky": "^0.14.3",
     "jsdom": "^11.4.0",
+    "rollup": "^0.51.8",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "tape": "^4.8.0",
     "tape-await": "0.1.0"
   }

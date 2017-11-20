@@ -1,4 +1,4 @@
-import dispatch from "../variable/dispatch";
+import dispatch from "../dispatch";
 import inspectCollapsed from "./collapsed";
 import formatSymbol from "./formatSymbol";
 import getKeysAndSymbols from "./getKeysAndSymbols";

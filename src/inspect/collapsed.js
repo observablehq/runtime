@@ -1,4 +1,4 @@
-import dispatch from "../variable/dispatch";
+import dispatch from "../dispatch";
 import inspectExpanded from "./expanded";
 import inspect from "./index";
 import isArrayIndex from "./isArrayIndex";

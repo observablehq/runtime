@@ -20,6 +20,7 @@ function wrap({html = ""} = {}, run) {
   return async test => {
     const window = new JSDOM(html).window;
     const document = window.document;
+    global.requestAnimationFrame = setImmediate;
     global.window = window;
     global.document = document;
     global.Element = window.Element;
@@ -28,6 +29,7 @@ function wrap({html = ""} = {}, run) {
     try {
       await run(test);
     } finally {
+      delete global.requestAnimationFrame;
       delete global.window;
       delete global.document;
       delete global.Element;

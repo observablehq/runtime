@@ -1,16 +1,40 @@
-import {map} from "../array";
-import constant from "../constant";
-import module_resolve from "../module/resolve";
-import Variable from "./index";
+import {map} from "./array";
+import constant from "./constant";
+import identity from "./identity";
 
-function input_attach(input) {
-  input._module._runtime._dirty.add(input);
-  input._outputs.add(this);
+export default function Variable(module, node) {
+  Object.defineProperties(this, {
+    _definition: {value: undefined, writable: true},
+    _duplicate: {value: false, writable: true},
+    _duplicates: {value: undefined, writable: true},
+    _generator: {value: undefined, writable: true},
+    _id: {value: null, writable: true}, // TODO Better indication of undefined variables?
+    _indegree: {value: 0, writable: true}, // The number of computing inputs.
+    _inputs: {value: [], writable: true},
+    _module: {value: module},
+    _name: {value: null, writable: true},
+    _node: {value: node},
+    _outputs: {value: new Set, writable: true},
+    _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
+    _value: {value: undefined, writable: true},
+    _valuePrior: {value: undefined, writable: true} // TODO Rename to the “resolved” value?
+  });
 }
 
-function input_detach(input) {
-  input._module._runtime._dirty.add(input);
-  input._outputs.delete(this);
+Object.defineProperties(Variable.prototype, {
+  define: {value: variable_define, writable: true, configurable: true},
+  delete: {value: variable_delete, writable: true, configurable: true},
+  import: {value: variable_import, writable: true, configurable: true}
+});
+
+function variable_attach(variable) {
+  variable._module._runtime._dirty.add(variable);
+  variable._outputs.add(this);
+}
+
+function variable_detach(variable) {
+  variable._module._runtime._dirty.add(variable);
+  variable._outputs.delete(this);
 }
 
 function variable_builtin(name) {
@@ -25,7 +49,7 @@ function variable_duplicate(name) {
   };
 }
 
-export default function(name, inputs, definition) {
+function variable_define(name, inputs, definition) {
   switch (arguments.length) {
     case 1: {
       definition = name, name = inputs = null;
@@ -38,14 +62,14 @@ export default function(name, inputs, definition) {
       break;
     }
   }
-  return variable_define.call(this,
+  return variable_defineImpl.call(this,
     name == null ? null : name + "",
-    inputs == null ? [] : map.call(inputs, module_resolve, this._module),
+    inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
     typeof definition === "function" ? definition : constant(definition)
   );
 }
 
-export function variable_define(name, inputs, definition) {
+function variable_defineImpl(name, inputs, definition) {
   var scope = this._module._scope, runtime = this._module._runtime;
 
   // Disallow variables to override builtins.
@@ -53,8 +77,8 @@ export function variable_define(name, inputs, definition) {
 
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
-  this._inputs.forEach(input_detach, this);
-  inputs.forEach(input_attach, this);
+  this._inputs.forEach(variable_detach, this);
+  inputs.forEach(variable_attach, this);
   this._inputs = inputs;
   this._definition = definition;
 
@@ -133,5 +157,16 @@ export function variable_define(name, inputs, definition) {
 
   runtime._updates.add(this);
   runtime._compute();
+  return this;
+}
+
+function variable_import(name, alias, module) {
+  if (arguments.length < 3) module = alias, alias = name;
+  return variable_defineImpl.call(this, alias + "", [module._resolve(name + "")], identity);
+}
+
+function variable_delete() {
+  this.define(null, [], undefined);
+  this._id = -1;
   return this;
 }
