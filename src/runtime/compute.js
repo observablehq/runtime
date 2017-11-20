@@ -85,7 +85,7 @@ function variable_compute(variable) {
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
-    if (!variable._definition) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
+    if (!variable._definition) throw new ReferenceError(variable._name + " is not defined");
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
