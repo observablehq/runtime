@@ -1,6 +1,7 @@
 import {forEach} from "../array";
 import identity from "../identity";
 import Variable from "../variable/index";
+import variable_name from "../variable/name";
 import Module from "./index";
 
 var none = new Map;
@@ -28,12 +29,8 @@ function module_copy(module, injectByAlias, injectModule, map) {
           targetModule = map.get(sourceModule) || module_copy(sourceModule, none, null, map);
       target.import(sourceInput._name, name, targetModule);
     } else {
-      target.define(name, source._inputs.map(input_name), source._definition);
+      target.define(name, source._inputs.map(variable_name), source._definition);
     }
   });
   return copy;
-}
-
-function input_name(input) {
-  return input._name;
 }
