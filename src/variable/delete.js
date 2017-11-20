@@ -4,6 +4,6 @@ export function variable_delete(variable) {
 
 export default function() {
   this.define(null, [], undefined);
-  this._id = -1;
+  this._id = -1; // TODO Better indication of undefined variables?
   return this;
 }

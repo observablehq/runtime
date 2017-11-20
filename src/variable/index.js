@@ -2,21 +2,21 @@ import variable_define from "./define";
 import variable_delete from "./delete";
 import variable_import from "./import";
 
-export default function Variable(module, node) {
-  this._module = module;
-  this._id = null; // TODO Better indication of undefined variables?
-  this._name = null;
-  this._inputs = [];
-  this._outputs = new Set;
-  this._indegree = 0; // The number of computing inputs.
-  this._reachable = node != null; // Is this variable transitively visible?
-  this._definition = undefined;
-  this._valuePrior = undefined; // TODO Rename to the “resolved” value?
-  this._value = undefined;
-  this._generator = undefined;
+export default function Variable(module) {
+  this._resolver = undefined;
+  this._rejecter = undefined;
   this._duplicate = false;
   this._duplicates = undefined;
-  this._node = node;
+  this._generator = undefined;
+  this._id = null; // TODO Better indication of undefined variables?
+  this._indegree = 0; // The number of computing inputs.
+  this._inputs = [];
+  this._module = module;
+  this._name = null;
+  this._outputs = new Set;
+  this._reachable = false; // Is this variable transitively reachable?
+  this._value = undefined;
+  this._valuePrior = undefined; // TODO Rename to the “resolved” value?
 }
 
 Variable.prototype.define = variable_define;

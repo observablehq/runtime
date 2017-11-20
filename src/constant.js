@@ -1,9 +1,5 @@
-export default function(x) {
+export default function constant(x) {
   return function() {
     return x;
   };
-}
-
-export function constant_true() {
-  return true;
 }
