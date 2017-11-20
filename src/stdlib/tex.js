@@ -5,7 +5,7 @@ export default function(require, resource) {
     return new Promise(function(resolve, reject) {
       var link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = resource("katex/dist/katex.min.css");
+      link.href = resource("katex@0.8.3/dist/katex.min.css");
       link.onerror = reject;
       link.onload = function() {
         resolve(function(strings) {
@@ -22,7 +22,7 @@ export default function(require, resource) {
 
   return {
     then: function(resolved, rejected) {
-      return (tex || (tex = require("katex").then(katex))).then(resolved, rejected);
+      return (tex || (tex = require("katex@0.8.3/dist/katex.min.js").then(katex))).then(resolved, rejected);
     }
   };
 }

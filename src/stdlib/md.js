@@ -14,7 +14,7 @@ export default function(require) {
 
   return {
     then: function(resolved, rejected) {
-      return (md || (md = require("marked", "highlight.js").then(marked))).then(resolved, rejected);
+      return (md || (md = require("marked@0.3.6/marked.min.js", "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js").then(marked))).then(resolved, rejected);
     }
   };
 }
