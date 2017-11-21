@@ -5,7 +5,7 @@ import identity from "./identity";
 export default function Variable(module, node) {
   Object.defineProperties(this, {
     _definition: {value: undefined, writable: true},
-    _duplicate: {value: false, writable: true},
+    _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
     _generator: {value: undefined, writable: true},
     _id: {value: null, writable: true}, // TODO Better indication of undefined variables?
@@ -103,13 +103,13 @@ function variable_defineImpl(name, inputs, definition) {
         scope.delete(this._name); // It’s safe to delete!
       } else if (found._id === -2) { // Do other variables assign this name?
         found._duplicates.delete(this); // This variable no longer assigns this name.
-        delete this._duplicate;
+        this._duplicate = undefined;
         if (found._duplicates.size === 1) { // Is there now only one variable assigning this name?
           found = found._duplicates.keys().next().value; // Any references are now fixed!
           error = scope.get(this._name);
           found._outputs = error._outputs, error._outputs = new Set;
           found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(error)] = found; });
-          found._definition = found._duplicate, delete found._duplicate;
+          found._definition = found._duplicate, found._duplicate = undefined;
           runtime._dirty.add(error);
           runtime._dirty.add(found);
           runtime._updates.add(found);

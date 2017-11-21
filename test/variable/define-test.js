@@ -68,6 +68,34 @@ tape("variable.define(value) can define an anonymous constant", {html: "<div id=
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
+tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
+  const runtime = createRuntime();
+  const module = runtime.module();
+  const foo = module.variable("#foo");
+  const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: undefined});
+  test.deepEqual(await valueof(bar), {error: "foo is not defined"});
+  foo.define("foo", 1);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: 1});
+});
+
+tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=bar />"}, async test => {
+  const runtime = createRuntime();
+  const module = runtime.module();
+  const foo = module.variable("#foo").define("foo", 1);
+  const bar = module.variable("#bar").define("foo", 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {error: "foo is defined more than once"});
+  test.deepEqual(await valueof(bar), {error: "foo is defined more than once"});
+  bar.define("bar", 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: 2});
+});
+
 tape("variable.define recomputes reachability as expected", {html: "<div id=foo />"}, async test => {
   const runtime = createRuntime();
   const main = runtime.module();
