@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: install
-          command: yarn --frozen-lockfile
+          command: yarn --frozen-lockfile --network-concurrency 1
       - run:
           name: test
           command: yarn test
