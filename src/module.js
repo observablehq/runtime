@@ -1,6 +1,6 @@
 import {forEach} from "./array";
 import identity from "./identity";
-import Variable from "./variable";
+import Variable, {TYPE_MISSING, TYPE_NORMAL} from "./variable";
 
 var none = new Map;
 
@@ -21,18 +21,18 @@ Object.defineProperties(Module.prototype, {
 });
 
 function module_define() {
-  var v = new Variable(this);
+  var v = new Variable(TYPE_NORMAL, this);
   return v.define.apply(v, arguments);
 }
 
 function module_import() {
-  var v = new Variable(this);
+  var v = new Variable(TYPE_NORMAL, this);
   return v.import.apply(v, arguments);
 }
 
 function module_variable(node) {
   if (typeof node === "string" && !(node = document.querySelector(node))) throw new Error("node not found");
-  return new Variable(this, node);
+  return new Variable(TYPE_NORMAL, this, node);
 }
 
 function module_derive(injects, injectModule) {
@@ -49,7 +49,7 @@ function module_copy(injectByAlias, injectModule, map) {
   var copy = new Module(this._runtime);
   map.set(this, copy);
   this._scope.forEach(function(source, name) {
-    var target = new Variable(copy), inject;
+    var target = new Variable(source._type, copy), inject;
     if (inject = injectByAlias.get(name)) {
       target.import(inject.name, inject.alias, injectModule);
     } else if (source._definition === identity) { // import!
@@ -67,8 +67,7 @@ function module_copy(injectByAlias, injectModule, map) {
 function module_resolve(name) {
   var variable = this._scope.get(name) || this._runtime._scope.get(name);
   if (!variable) {
-    variable = new Variable(this);
-    variable._id = -1; // TODO Better indication of undefined variables?
+    variable = new Variable(TYPE_MISSING, this);
     variable._name = name;
     this._scope.set(name, variable);
   }
