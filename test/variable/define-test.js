@@ -218,14 +218,16 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
   test.deepEqual(await valueof(v3), {error: "foo is defined more than once"});
 });
 
-tape("variable.define does not allow a variable to mask a builtin", {html: "<div id=foo />"}, async test => {
-  let result;
+tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {
   const runtime = createRuntime({color: "red"});
   const main = runtime.module();
-  main.define("color", [], () => test.fail());
-  main.variable("#foo").define(null, ["color"], color => result = color);
+  const mask = main.define("color", "green");
+  const foo = main.variable("#foo").define(null, ["color"], color => color);
   await new Promise(setImmediate);
-  test.equal(result, "red");
+  test.deepEqual(await valueof(foo), {value: "green"});
+  mask.delete();
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: "red"});
 });
 
 tape("variable.define supports promises", {html: "<div id=foo />"}, async test => {

@@ -1,6 +1,6 @@
 import {forEach} from "./array";
 import identity from "./identity";
-import Variable, {TYPE_MISSING, TYPE_NORMAL} from "./variable";
+import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
 
 var none = new Map;
 
@@ -65,11 +65,16 @@ function module_copy(injectByAlias, injectModule, map) {
 }
 
 function module_resolve(name) {
-  var variable = this._scope.get(name) || this._runtime._scope.get(name);
-  if (!variable) {
-    variable = new Variable(TYPE_MISSING, this);
-    variable._name = name;
-    this._scope.set(name, variable);
+  var variable = this._scope.get(name);
+  if (!variable)  {
+    if (this._runtime._builtin._scope.has(name)) {
+      variable = new Variable(TYPE_IMPLICIT, this);
+      variable.import(name, this._runtime._builtin);
+    } else {
+      variable = new Variable(TYPE_IMPLICIT, this);
+      variable._name = name;
+      this._scope.set(name, variable);
+    }
   }
   return variable;
 }

@@ -3,10 +3,9 @@ import constant from "./constant";
 import identity from "./identity";
 import noop from "./noop";
 
-export var TYPE_BUILTIN = 0; // a builtin constant defined by the runtime
 export var TYPE_NORMAL = 1; // a normal variable
-export var TYPE_MISSING = 2; // error on reference to unknown variable
-export var TYPE_DUPLICATE = 3; // error on duplicate variable definition
+export var TYPE_IMPLICIT = 2; // created on reference
+export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export default function Variable(type, module, node) {
   Object.defineProperties(this, {
@@ -43,12 +42,6 @@ function variable_detach(variable) {
   variable._outputs.delete(this);
 }
 
-function variable_builtin(name) {
-  return function() {
-    throw new ReferenceError(name + " is a builtin");
-  };
-}
-
 function variable_duplicate(name) {
   return function() {
     throw new ReferenceError(name + " is defined more than once");
@@ -78,9 +71,6 @@ function variable_define(name, inputs, definition) {
 function variable_defineImpl(name, inputs, definition) {
   var scope = this._module._scope, runtime = this._module._runtime;
 
-  // Disallow variables to override builtins.
-  if (runtime._scope.has(name)) definition = variable_builtin(name), name = null;
-
   this._value = this._valuePrior = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
   this._inputs.forEach(variable_detach, this);
@@ -96,13 +86,13 @@ function variable_defineImpl(name, inputs, definition) {
 
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
-        error = new Variable(TYPE_MISSING, this._module); // Those references are now broken!
-        error._name = this._name;
-        error._outputs = this._outputs, this._outputs = new Set;
-        error._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = error; }, this);
-        error._outputs.forEach(runtime._updates.add, runtime._updates);
-        runtime._dirty.add(error).add(this);
-        scope.set(this._name, error);
+        scope.delete(this._name);
+        found = this._module._resolve(this._name);
+        found._outputs = this._outputs, this._outputs = new Set;
+        found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = found; }, this);
+        found._outputs.forEach(runtime._updates.add, runtime._updates);
+        runtime._dirty.add(found).add(this);
+        scope.set(this._name, found);
       } else if ((found = scope.get(this._name)) === this) { // Do no other variables reference this variable?
         scope.delete(this._name); // It’s safe to delete!
       } else if (found._type === TYPE_DUPLICATE) { // Do other variables assign this name?
@@ -130,7 +120,7 @@ function variable_defineImpl(name, inputs, definition) {
         if (found._type === TYPE_DUPLICATE) { // Do multiple other variables already define this name?
           this._definition = variable_duplicate(name), this._duplicate = definition;
           found._duplicates.add(this);
-        } else if (found._type === TYPE_MISSING) { // Are the variable references broken?
+        } else if (found._type === TYPE_IMPLICIT) { // Are the variable references broken?
           this._outputs = found._outputs, found._outputs = new Set; // Now they’re fixed!
           this._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(found)] = this; }, this);
           runtime._dirty.add(found).add(this);

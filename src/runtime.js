@@ -4,8 +4,7 @@ import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
 import stdlib from "./stdlib/index";
-import thenable from "./thenable";
-import Variable, {TYPE_BUILTIN} from "./variable";
+import Variable, {TYPE_IMPLICIT} from "./variable";
 
 export default function(builtins) {
   if (builtins == null) builtins = stdlib();
@@ -18,12 +17,11 @@ function Runtime(builtins) {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _scope: {value: module._scope}
+    _builtin: {value: module}
   });
-  if (builtins) for (var key in builtins) {
-    var variable = new Variable(TYPE_BUILTIN, module);
-    variable._value = thenable(builtins[key]) ? builtins[key] : Promise.resolve(builtins[key]);
-    module._scope.set(key, variable);
+  if (builtins) for (var name in builtins) {
+    var builtin = new Variable(TYPE_IMPLICIT, module);
+    builtin.define(name, [], builtins[name]);
   }
 }
 
@@ -175,7 +173,6 @@ function variable_postrecompute(variable, valuePrior, value) {
 }
 
 function variable_reachable(variable) {
-  if (variable._type === TYPE_BUILTIN) return false; // Don’t recompute.
   if (variable._node) return true; // Directly reachable.
   var outputs = new Set(variable._outputs);
   for (const output of outputs) {
