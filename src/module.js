@@ -67,13 +67,11 @@ function module_copy(injectByAlias, injectModule, map) {
 function module_resolve(name) {
   var variable = this._scope.get(name);
   if (!variable)  {
+    variable = new Variable(TYPE_IMPLICIT, this);
     if (this._runtime._builtin._scope.has(name)) {
-      variable = new Variable(TYPE_IMPLICIT, this);
       variable.import(name, this._runtime._builtin);
     } else {
-      variable = new Variable(TYPE_IMPLICIT, this);
-      variable._name = name;
-      this._scope.set(name, variable);
+      this._scope.set(variable._name = name, variable);
     }
   }
   return variable;
