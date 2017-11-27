@@ -14,6 +14,8 @@ This library also defines the [standard library](#standard-library) for Observab
 * [html](#html) - render HTML.
 * [md](#markdown) - render Markdown.
 * [tex](#tex) - render TeX.
+* [now](#now) - the current value of Date.now.
+* [width](#width) - the current page width.
 
 We welcome contributions and questions. Please get in touch!
 
@@ -443,6 +445,16 @@ return image;
 <a href="#Promises_when" name="Promises_when">#</a> Promises.<b>when</b>(<i>date</i>[, <i>value</i>])
 
 …
+
+### Live Values
+
+<a href="#now" name="now">#</a> <b>now</b>
+
+The current value of [Date.now](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now).
+
+<a href="#width" name="width">#</a> <b>width</b>
+
+The current width of cells.
 
 ### HTML
 

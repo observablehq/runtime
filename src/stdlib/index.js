@@ -5,8 +5,10 @@ import Files from "./files/index";
 import Generators from "./generators/index";
 import html from "./html";
 import md from "./md";
+import now from "./now";
 import Promises from "./promises/index";
 import tex from "./tex";
+import width from "./width";
 
 export default function(resolve) {
   var require = resolve == null ? requireDefault : requireFrom(resolve);
@@ -16,8 +18,10 @@ export default function(resolve) {
     Generators: Generators,
     Promises: Promises,
     require: constant(require),
-    html: constant(html),
+    html: html,
     md: md(require, resolve),
-    tex: tex(require, resolve)
+    tex: tex(require, resolve),
+    now: now,
+    width: width
   };
 }
