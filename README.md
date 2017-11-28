@@ -4,18 +4,7 @@
 
 This library implements the reactive runtime for Observable notebooks. It lets you publish your interactive notebooks wherever you want: on your website, integrated into your web application or interactive dashboard, *etc.* You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand how the Observable runtime works.
 
-This library also defines the [standard library](#standard-library) for Observable notebooks:
-
-* [DOM](#dom) - create HTML and SVG elements.
-* [Files](#files) - read local files into memory.
-* [Generators](#generators) - utilities for generators and iterators.
-* [Promises](#promises) - utilities for promises.
-* [require](#require) - load third-party libraries.
-* [html](#html) - render HTML.
-* [md](#markdown) - render Markdown.
-* [tex](#tex) - render TeX.
-* [now](#now) - the current value of Date.now.
-* [width](#width) - the current page width.
+This library also defines the [standard library](#standard-library) for Observable notebooks.
 
 We welcome contributions and questions. Please get in touch!
 
@@ -242,6 +231,11 @@ Returns a new standard library object, defining the following properties:
 * [Generators](#generators) - utilities for generators and iterators.
 * [Promises](#promises) - utilities for promises.
 * [require](#require) - load third-party libraries.
+* [html](#html) - render HTML.
+* [md](#markdown) - render Markdown.
+* [tex](#tex) - render TeX.
+* [now](#now) - the current value of Date.now.
+* [width](#width) - the current page width.
 
 By default, [O.runtime](#runtime) uses this standard library for builtins. If *resolve* is specified, it is a function which returns the URL of the module with the specified *name*; this is used internally by [require](#require).
 
