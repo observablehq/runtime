@@ -436,6 +436,14 @@ return image;
 
 …
 
+<a href="#Promises_never" name="Promises_never">#</a> Promises.<b>never</b>
+
+A promise that never resolves. Equivalent to `new Promise(() => {})`.
+
+<a href="#Promises_tick" name="Promises_tick">#</a> Promises.<b>tick</b>(<i>duration</i>[, <i>value</i>])
+
+Returns a promise that resolves with the specified *value* at the next integer multiple of *milliseconds* since the UNIX epoch. This is much like [Promises.delay](#Promises_delay), except it allows promises to be synchronized.
+
 <a href="#Promises_when" name="Promises_when">#</a> Promises.<b>when</b>(<i>date</i>[, <i>value</i>])
 
 …
