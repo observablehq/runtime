@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@std/esm": "^0.16.0",
-    "d3-require": "^0.4.5",
+    "d3-require": "^0.5.1",
     "d3-time-format": "^2.1.0"
   },
   "devDependencies": {
