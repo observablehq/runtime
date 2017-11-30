@@ -1,4 +1,4 @@
-import {require as requireDefault, requireFrom} from "d3-require";
+import {resolve as resolveDefault, requireFrom} from "d3-require";
 import constant from "../constant";
 import DOM from "./dom/index";
 import Files from "./files/index";
@@ -11,7 +11,8 @@ import tex from "./tex";
 import width from "./width";
 
 export default function(resolve) {
-  var require = resolve == null ? requireDefault : requireFrom(resolve);
+  if (resolve == null) resolve = resolveDefault;
+  var require = requireFrom(resolve);
   return {
     DOM: DOM,
     Files: Files,
