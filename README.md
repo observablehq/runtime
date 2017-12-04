@@ -278,6 +278,10 @@ context.scale(2, 2);
 
 To access the context’s canvas, use [*context*.canvas](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/canvas).
 
+<a href="#DOM_download" name="DOM_download">#</a> DOM.<b>download</b>(<i>object</i>\[, <i>name</i>\]\[, <i>value</i>\])
+
+Returns an anchor element containing a button which when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/en-US/docs/Web/API/File) or a [blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+
 <a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
 Returns a new element with the specified *name*. For example, to create an empty H1 element:
