@@ -257,6 +257,27 @@ canvas.width = 960;
 canvas.height = 500;
 ```
 
+<a href="#DOM_context2d" name="DOM_context2d">#</a> DOM.<b>context2d</b>(<i>width</i>, <i>height</i>[, <i>dpi</i>])
+
+Returns a new canvas context with the specified *width* and *height* and the specified device pixel ratio *dpi*. If *dpi* is not specified, it defaults to [*window*.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio); if *window*.devicePixelRatio is not defined, it defaults to one. For example, to create a 960×500 canvas:
+
+```js
+var context = DOM.context2d(960, 500);
+```
+
+If the device pixel ratio is two, this is equivalent to:
+
+```js
+var canvas = document.createElement("canvas");
+canvas.width = 1920;
+canvas.height = 1000;
+canvas.style.width = "960px";
+var context = canvas.getContext("2d");
+context.scale(2, 2);
+```
+
+To access the context’s canvas, use [*context*.canvas](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/canvas).
+
 <a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
 Returns a new element with the specified *name*. For example, to create an empty H1 element:
