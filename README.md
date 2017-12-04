@@ -360,8 +360,9 @@ This is equivalent to:
 
 ```js
 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-svg.setAttribute("width", 960);
-svg.setAttribute("height", 500);
+set.setAttribute("viewBox", "0,0,960,500")
+svg.setAttribute("width", "960");
+svg.setAttribute("height", "500");
 ```
 
 <a href="#DOM_text" name="DOM_text">#</a> DOM.<b>text</b>(<i>string</i>)
