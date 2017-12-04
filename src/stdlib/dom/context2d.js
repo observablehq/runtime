@@ -1,5 +1,5 @@
 export default function(width, height, dpi) {
-  if (dpi == null) dpi = window.devicePixelRatio || 1;
+  if (dpi == null) dpi = devicePixelRatio;
   var canvas = document.createElement("canvas");
   canvas.width = width * dpi;
   canvas.height = height * dpi;
