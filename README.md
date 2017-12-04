@@ -237,7 +237,7 @@ Returns a new standard library object, defining the following properties:
 * [now](#now) - the current value of Date.now.
 * [width](#width) - the current page width.
 
-By default, [O.runtime](#runtime) uses this standard library for builtins. If *resolve* is specified, it is a function which returns the URL of the module with the specified *name*; this is used internally by [require](#require).
+By default, [O.runtime](#runtime) uses this standard library for builtins. If *resolve* is specified, it is a function that returns the URL of the module with the specified *name*; this is used internally by [require](#require).
 
 ### DOM
 
@@ -280,7 +280,7 @@ To access the context’s canvas, use [*context*.canvas](https://developer.mozil
 
 <a href="#DOM_download" name="DOM_download">#</a> DOM.<b>download</b>(<i>object</i>\[, <i>name</i>\]\[, <i>value</i>\])
 
-Returns an anchor element containing a button which when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/en-US/docs/Web/API/File) or a [blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Returns an anchor element containing a button that when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/en-US/docs/Web/API/File) or a [blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 
 <a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
