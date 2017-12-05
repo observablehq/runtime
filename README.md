@@ -259,7 +259,7 @@ canvas.height = 500;
 
 <a href="#DOM_context2d" name="DOM_context2d">#</a> DOM.<b>context2d</b>(<i>width</i>, <i>height</i>[, <i>dpi</i>])
 
-Returns a new canvas context with the specified *width* and *height* and the specified device pixel ratio *dpi*. If *dpi* is not specified, it defaults to [*window*.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio); if *window*.devicePixelRatio is not defined, it defaults to one. For example, to create a 960×500 canvas:
+Returns a new canvas context with the specified *width* and *height* and the specified device pixel ratio *dpi*. If *dpi* is not specified, it defaults to [*window*.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio). For example, to create a 960×500 canvas:
 
 ```js
 var context = DOM.context2d(960, 500);
