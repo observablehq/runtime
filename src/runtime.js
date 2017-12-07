@@ -1,17 +1,11 @@
 import dispatch from "./dispatch";
+import {ResolutionError} from "./errors";
 import inspect from "./inspect/index";
 import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
 import stdlib from "./stdlib/index";
 import Variable, {TYPE_IMPLICIT} from "./variable";
-
-class ResolutionError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ResolutionError";
-  }
-}
 
 export default function(builtins) {
   if (builtins == null) builtins = stdlib();
