@@ -6,6 +6,13 @@ import noop from "./noop";
 import stdlib from "./stdlib/index";
 import Variable, {TYPE_IMPLICIT} from "./variable";
 
+class ResolutionError extends Error {
+  constructor(error) {
+    super(error.message);
+    this.name = "ResolutionError";
+  }
+}
+
 export default function(builtins) {
   if (builtins == null) builtins = stdlib();
   return new Runtime(builtins);
@@ -130,6 +137,8 @@ function variable_compute(variable) {
       });
     }
     return value;
+  }, function(error) {
+    throw new ResolutionError(error);
   }).then(function(value) {
     variable._valuePrior = value;
     variable_displayValue(variable, value);
