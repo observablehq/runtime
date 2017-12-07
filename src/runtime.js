@@ -107,8 +107,9 @@ function variable_increment(variable) {
   ++variable._indegree;
 }
 
-function variable_value(variable) {
-  return variable._value;
+function input_value(variable) {
+  if (!variable._definition) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
+  return variable._value.catch(function(){ throw new ResolutionError("Error in definition of " + variable._name); });
 }
 
 function variable_compute(variable) {
@@ -120,11 +121,7 @@ function variable_compute(variable) {
     variable._node.classList.add("O--running");
   }
   var valuePrior = variable._valuePrior;
-  return variable._value = Promise.all(variable._inputs.map(function(input) {
-      var val = variable_value(input);
-      if (!input._definition) return Promise.reject(new ReferenceError(input._name + " is not defined"));
-      return val.catch(function(){ throw new ResolutionError("Error in definition of " + input._name); });
-    })).then(function(inputs) {
+  return variable._value = Promise.all(variable._inputs.map(input_value)).then(function(inputs) {
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
