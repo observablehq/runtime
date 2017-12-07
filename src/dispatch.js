@@ -1,10 +1,11 @@
-export default function dispatch(node, type) {
+export default function dispatch(node, type, detail) {
   var document = node.ownerDocument, event = document.defaultView.CustomEvent;
   if (typeof event === "function") {
-    event = new event(type);
+    event = new event(type, {detail});
   } else {
     event = document.createEvent("Event");
     event.initEvent(type, false, false);
+    event.detail = detail || {};
   }
   node.dispatchEvent(event);
 }
