@@ -218,6 +218,16 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
   test.deepEqual(await valueof(v3), {error: "Error in definition of foo"});
 });
 
+tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const v1 = main.variable("#foo").define("foo", ["baz"], () => 1);
+  const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(v1), {error: "baz is not defined"});
+  test.deepEqual(await valueof(v2), {error: "Error in definition of foo"});
+});
+
 tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {
   const runtime = createRuntime({color: "red"});
   const main = runtime.module();
