@@ -1,5 +1,4 @@
 import dispatch from "./dispatch";
-import {ResolutionError} from "./errors";
 import inspect from "./inspect/index";
 import generatorish from "./generatorish";
 import Module from "./module";
@@ -107,9 +106,8 @@ function variable_increment(variable) {
   ++variable._indegree;
 }
 
-function input_value(variable) {
-  if (!variable._definition) return Promise.reject(new ReferenceError(variable._name + " is not defined"));
-  return variable._value.catch(function(){ throw new ResolutionError("Error in definition of " + variable._name); });
+function variable_value(variable) {
+  return variable._value.catch(variable._rejector);
 }
 
 function variable_compute(variable) {
@@ -121,7 +119,8 @@ function variable_compute(variable) {
     variable._node.classList.add("O--running");
   }
   var valuePrior = variable._valuePrior;
-  return variable._value = Promise.all(variable._inputs.map(input_value)).then(function(inputs) {
+  return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+    if (!variable._definition) throw new ReferenceError(variable._name + " is not defined");
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
