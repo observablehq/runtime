@@ -215,7 +215,7 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "foo is defined more than once"});
   test.deepEqual(await valueof(v2), {error: "foo is defined more than once"});
-  test.deepEqual(await valueof(v3), {error: "Error in definition of foo"});
+  test.deepEqual(await valueof(v3), {error: "foo is not defined"});
 });
 
 tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
@@ -225,7 +225,7 @@ tape("variable.define detects missing inputs and erroneous inputs", {html: "<div
   const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "baz is not defined"});
-  test.deepEqual(await valueof(v2), {error: "Error in definition of foo"});
+  test.deepEqual(await valueof(v2), {error: "foo is not defined"});
 });
 
 tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {

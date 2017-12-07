@@ -1,5 +1,6 @@
 import {map} from "./array";
 import constant from "./constant";
+import {ResolutionError} from "./errors";
 import identity from "./identity";
 import noop from "./noop";
 
@@ -20,6 +21,7 @@ export default function Variable(type, module, node) {
     _node: {value: node},
     _outputs: {value: new Set, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
+    _rejector: {value: variable_rejector(this)},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _valuePrior: {value: undefined, writable: true} // TODO Rename to the “resolved” value?
@@ -40,6 +42,12 @@ function variable_attach(variable) {
 function variable_detach(variable) {
   variable._module._runtime._dirty.add(variable);
   variable._outputs.delete(this);
+}
+
+function variable_rejector(variable) {
+  return function() {
+    throw new ResolutionError(variable._name + " is not defined");
+  };
 }
 
 function variable_duplicate(name) {
