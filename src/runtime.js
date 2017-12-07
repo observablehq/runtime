@@ -7,8 +7,8 @@ import stdlib from "./stdlib/index";
 import Variable, {TYPE_IMPLICIT} from "./variable";
 
 class ResolutionError extends Error {
-  constructor(error) {
-    super(error.message);
+  constructor(error, input) {
+    super(`Error in definition of ${input._name}`);
     this.name = "ResolutionError";
   }
 }
@@ -126,8 +126,11 @@ function variable_compute(variable) {
     variable._node.classList.add("O--running");
   }
   var valuePrior = variable._valuePrior;
-  return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
-    if (!variable._definition) throw new ReferenceError(variable._name + " is not defined");
+  return variable._value = Promise.all(variable._inputs.map((input) => {
+      var val = variable_value(input);
+      if (!input._definition) return Promise.reject(new ReferenceError(input._name + " is not defined"));
+      return val.catch(error => { throw new ResolutionError(error, input); });
+    })).then(function(inputs) {
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
@@ -137,8 +140,6 @@ function variable_compute(variable) {
       });
     }
     return value;
-  }, function(error) {
-    throw new ResolutionError(error);
   }).then(function(value) {
     variable._valuePrior = value;
     variable_displayValue(variable, value);
