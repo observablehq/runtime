@@ -187,7 +187,7 @@ function variable_displayError(variable, error) {
   if (!node) return;
   node.className = "O O--error";
   node.textContent = error + ""; // TODO Pretty stack trace.
-  dispatch(node, "update");
+  dispatch(node, "error", {error});
 }
 
 function variable_displayValue(variable, value) {
