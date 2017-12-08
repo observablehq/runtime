@@ -1,4 +1,5 @@
 import dispatch from "./dispatch";
+import {UndefinedError} from "./errors";
 import inspect from "./inspect/index";
 import generatorish from "./generatorish";
 import Module from "./module";
@@ -120,7 +121,7 @@ function variable_compute(variable) {
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
-    if (!variable._definition) throw new ReferenceError(variable._name + " is not defined");
+    if (!variable._definition) throw new UndefinedError(variable._name + " is not defined");
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
