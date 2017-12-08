@@ -75,7 +75,7 @@ tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar
   const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: undefined});
-  test.deepEqual(await valueof(bar), {error: "ResolutionError: foo is not defined"});
+  test.deepEqual(await valueof(bar), {error: "ReferenceError: foo is not defined"});
   foo.define("foo", 1);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -215,7 +215,7 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "ReferenceError: foo is defined more than once"});
   test.deepEqual(await valueof(v2), {error: "ReferenceError: foo is defined more than once"});
-  test.deepEqual(await valueof(v3), {error: "ResolutionError: foo is not defined"});
+  test.deepEqual(await valueof(v3), {error: "ResolutionError: foo could not be resolved"});
 });
 
 tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
@@ -224,8 +224,8 @@ tape("variable.define detects missing inputs and erroneous inputs", {html: "<div
   const v1 = main.variable("#foo").define("foo", ["baz"], () => 1);
   const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
   await new Promise(setImmediate);
-  test.deepEqual(await valueof(v1), {error: "ResolutionError: baz is not defined"});
-  test.deepEqual(await valueof(v2), {error: "ResolutionError: foo is not defined"});
+  test.deepEqual(await valueof(v1), {error: "ReferenceError: baz is not defined"});
+  test.deepEqual(await valueof(v2), {error: "ResolutionError: foo could not be resolved"});
 });
 
 tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {

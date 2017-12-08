@@ -1,6 +1,6 @@
 import {map} from "./array";
 import constant from "./constant";
-import {ResolutionError} from "./errors";
+import {ResolutionError, UndefinedError} from "./errors";
 import identity from "./identity";
 import noop from "./noop";
 
@@ -45,8 +45,9 @@ function variable_detach(variable) {
 }
 
 function variable_rejector(variable) {
-  return function() {
-    throw new ResolutionError(variable._name + " is not defined");
+  return function(error) {
+    if (error instanceof UndefinedError) throw new ReferenceError(error.message);
+    throw new ResolutionError(variable._name + " could not be resolved");
   };
 }
 
