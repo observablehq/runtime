@@ -13,5 +13,5 @@ tape("variable.delete allows a variable to be deleted", {html: "<div id=foo /><d
   foo.delete();
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: undefined});
-  test.deepEqual(await valueof(bar), {error: "foo is not defined"});
+  test.deepEqual(await valueof(bar), {error: "ResolutionError: foo is not defined"});
 });

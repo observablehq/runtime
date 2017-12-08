@@ -75,7 +75,7 @@ tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar
   const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: undefined});
-  test.deepEqual(await valueof(bar), {error: "foo is not defined"});
+  test.deepEqual(await valueof(bar), {error: "ResolutionError: foo is not defined"});
   foo.define("foo", 1);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -88,8 +88,8 @@ tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=ba
   const foo = module.variable("#foo").define("foo", 1);
   const bar = module.variable("#bar").define("foo", 2);
   await new Promise(setImmediate);
-  test.deepEqual(await valueof(foo), {error: "foo is defined more than once"});
-  test.deepEqual(await valueof(bar), {error: "foo is defined more than once"});
+  test.deepEqual(await valueof(foo), {error: "ReferenceError: foo is defined more than once"});
+  test.deepEqual(await valueof(bar), {error: "ReferenceError: foo is defined more than once"});
   bar.define("bar", 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -148,11 +148,11 @@ tape("variable.define correctly detects reachability for unreachable cycles", {h
   test.equal(baz._reachable, true);
   test.equal(quux._reachable, true);
   test.equal(zapp._reachable, true);
-  test.deepEqual(await valueof(bar), {error: "circular definition"});
-  test.deepEqual(await valueof(baz), {error: "circular definition"});
-  test.deepEqual(await valueof(quux), {error: "circular definition"});
-  test.deepEqual(await valueof(zapp), {error: "circular definition"});
-  test.deepEqual(await valueof(foo), {error: "circular definition"}); // Variables that depend on cycles are themselves circular.
+  test.deepEqual(await valueof(bar), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(baz), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(quux), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(zapp), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(foo), {error: "ReferenceError: circular definition"}); // Variables that depend on cycles are themselves circular.
   foo.define("foo", [], () => "foo");
   await new Promise(setImmediate);
   test.equal(foo._reachable, true);
@@ -160,10 +160,10 @@ tape("variable.define correctly detects reachability for unreachable cycles", {h
   test.equal(baz._reachable, false);
   test.equal(quux._reachable, false);
   test.equal(zapp._reachable, false);
-  test.deepEqual(await valueof(bar), {error: "circular definition"});
-  test.deepEqual(await valueof(baz), {error: "circular definition"});
-  test.deepEqual(await valueof(quux), {error: "circular definition"});
-  test.deepEqual(await valueof(zapp), {error: "circular definition"});
+  test.deepEqual(await valueof(bar), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(baz), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(quux), {error: "ReferenceError: circular definition"});
+  test.deepEqual(await valueof(zapp), {error: "ReferenceError: circular definition"});
   test.deepEqual(await valueof(foo), {value: "foo"});
   test.equal(returned, false); // Generator is never finalized because it has never run.
 });
@@ -213,9 +213,9 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
   const v2 = main.variable("#bar").define("foo", [], () => 2);
   const v3 = main.variable("#baz").define(null, ["foo"], foo => foo);
   await new Promise(setImmediate);
-  test.deepEqual(await valueof(v1), {error: "foo is defined more than once"});
-  test.deepEqual(await valueof(v2), {error: "foo is defined more than once"});
-  test.deepEqual(await valueof(v3), {error: "foo is not defined"});
+  test.deepEqual(await valueof(v1), {error: "ReferenceError: foo is defined more than once"});
+  test.deepEqual(await valueof(v2), {error: "ReferenceError: foo is defined more than once"});
+  test.deepEqual(await valueof(v3), {error: "ResolutionError: foo is not defined"});
 });
 
 tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
@@ -224,8 +224,8 @@ tape("variable.define detects missing inputs and erroneous inputs", {html: "<div
   const v1 = main.variable("#foo").define("foo", ["baz"], () => 1);
   const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
   await new Promise(setImmediate);
-  test.deepEqual(await valueof(v1), {error: "baz is not defined"});
-  test.deepEqual(await valueof(v2), {error: "foo is not defined"});
+  test.deepEqual(await valueof(v1), {error: "ResolutionError: baz is not defined"});
+  test.deepEqual(await valueof(v2), {error: "ResolutionError: foo is not defined"});
 });
 
 tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {
