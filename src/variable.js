@@ -1,6 +1,6 @@
 import {map} from "./array";
 import constant from "./constant";
-import {ResolutionError, UndefinedError} from "./errors";
+import {ResolutionError} from "./errors";
 import identity from "./identity";
 import noop from "./noop";
 
@@ -10,7 +10,7 @@ export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export default function Variable(type, module, node) {
   Object.defineProperties(this, {
-    _definition: {value: undefined, writable: true},
+    _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
     _generator: {value: undefined, writable: true},
@@ -44,9 +44,13 @@ function variable_detach(variable) {
   variable._outputs.delete(this);
 }
 
+function variable_undefined() {
+  throw variable_undefined;
+}
+
 function variable_rejector(variable) {
   return function(error) {
-    if (error instanceof UndefinedError) throw new ReferenceError(error.message);
+    if (error === variable_undefined) throw new ReferenceError(variable._name + " is not defined");
     throw new ResolutionError(variable._name + " could not be resolved");
   };
 }
