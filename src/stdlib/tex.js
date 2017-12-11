@@ -15,14 +15,20 @@ export default function(require, resource) {
       require("/katex.js"),
       style(resource("/katex.css"))
     ]).then(function(values) {
-      var katex = values[0];
-      return function(strings) {
-        var string = strings[0] + "", i = 0, n = arguments.length;
-        while (++i < n) string += arguments[i] + "" + strings[i];
-        var root = document.createElement("div");
-        katex.render(string, root);
-        return root;
-      };
+      var katex = values[0], tex = renderer();
+
+      function renderer(options) {
+        return function(strings) {
+          var string = strings[0] + "", i = 0, n = arguments.length;
+          while (++i < n) string += arguments[i] + "" + strings[i];
+          var root = document.createElement("div");
+          katex.render(string, root, options);
+          return root;
+        };
+      }
+
+      tex.block = renderer({displayMode: true});
+      return tex;
     });
   };
 }
