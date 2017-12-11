@@ -282,7 +282,7 @@ To access the context’s canvas, use [*context*.canvas](https://developer.mozil
 
 Returns an anchor element containing a button that when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/docs/Web/API/File) or a [blob](https://developer.mozilla.org/docs/Web/API/Blob).
 
-<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>(<i>name</i>)
+<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>(<i>name</i>[, <i>attributes</i>])
 
 Returns a new element with the specified *name*. For example, to create an empty H1 element:
 
@@ -307,6 +307,8 @@ This is equivalent to:
 ```js
 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 ```
+
+If *attributes* is specified, sets any attributes in the specified object before returning the new element.
 
 <a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>([<i>type</i>])
 
