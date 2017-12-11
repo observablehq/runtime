@@ -282,7 +282,7 @@ To access the context’s canvas, use [*context*.canvas](https://developer.mozil
 
 Returns an anchor element containing a button that when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/docs/Web/API/File) or a [blob](https://developer.mozilla.org/docs/Web/API/Blob).
 
-<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
+<a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>(<i>name</i>)
 
 Returns a new element with the specified *name*. For example, to create an empty H1 element:
 
@@ -296,10 +296,10 @@ This is equivalent to:
 var h1 = document.createElement("h1");
 ```
 
-If a *uri* is specified, uses [*document*.createElementNS](https://developer.mozilla.org/docs/Web/API/Document/createElementNS) instead of [*document*.createElement](https://developer.mozilla.org/docs/Web/API/Document/createElement). For example, to create an empty SVG element (see also [DOM.svg](#DOM_svg)):
+If the *name* has the prefix `svg:`, `math:` or `xhtml:`, uses [*document*.createElementNS](https://developer.mozilla.org/docs/Web/API/Document/createElementNS) instead of [*document*.createElement](https://developer.mozilla.org/docs/Web/API/Document/createElement). For example, to create an empty SVG element (see also [DOM.svg](#DOM_svg)):
 
 ```js
-var svg = DOM.element("http://www.w3.org/2000/svg", "svg");
+var svg = DOM.element("svg:svg");
 ```
 
 This is equivalent to:
@@ -307,8 +307,6 @@ This is equivalent to:
 ```js
 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 ```
-
-If *options* is specified, they will be passed along to *document*.createElement or *document*.createElementNS to define a custom element.
 
 <a href="#DOM_input" name="DOM_input">#</a> DOM.<b>input</b>([<i>type</i>])
 
