@@ -19,6 +19,7 @@ export default function(resolve) {
     Generators: Generators,
     Promises: Promises,
     require: constant(require),
+    resolve: constant(resolve),
     html: html,
     md: md(require, resolve),
     tex: tex(require, resolve),
