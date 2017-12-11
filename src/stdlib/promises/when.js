@@ -3,10 +3,12 @@ import constant from "../../constant";
 var timeouts = new Map;
 
 function timeout(now, time) {
-  if (!(now < time)) return Promise.reject(new Error("invalid time"));
   var t = new Promise(function(resolve) {
     timeouts.delete(time);
-    setTimeout(resolve, time - now);
+    var delay = time - now;
+    if (!(delay > 0)) throw new Error("invalid time");
+    if (delay > 0x7fffffff) throw new Error("too long to wait");
+    setTimeout(resolve, delay);
   });
   timeouts.set(time, t);
   return t;
