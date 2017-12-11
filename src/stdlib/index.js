@@ -4,6 +4,7 @@ import DOM from "./dom/index";
 import Files from "./files/index";
 import Generators from "./generators/index";
 import html from "./html";
+import importer from "./import";
 import md from "./md";
 import now from "./now";
 import Promises from "./promises/index";
@@ -18,6 +19,7 @@ export default function(resolve) {
     Files: Files,
     Generators: Generators,
     Promises: Promises,
+    import: constant(importer),
     require: constant(require),
     html: html,
     md: md(require, resolve),
