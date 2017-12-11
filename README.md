@@ -559,3 +559,7 @@ require("d3-array@1.1").then(d3 => {
 ```
 
 See [d3-require](https://github.com/d3/d3-require) for more information.
+
+<a href="#resolve" name="resolve">#</a> <b>resolve</b>(<i>name</i>)
+
+Returns the resolved URL to require the module with the specified *name*.
