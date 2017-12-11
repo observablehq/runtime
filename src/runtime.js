@@ -111,6 +111,12 @@ function variable_value(variable) {
 }
 
 function variable_compute(variable) {
+  var version = variable._version;
+  variable._inputs.forEach(function(input) {
+    if (input._version > version) {
+      variable._version  = version = input._version;
+    }
+  });
   if (variable._generator) {
     variable._generator.return();
     variable._generator = null;
@@ -120,27 +126,30 @@ function variable_compute(variable) {
   }
   var valuePrior = variable._valuePrior;
   return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+    if (variable._version !== version) return;
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        variable_recompute(variable, generator);
+        variable_recompute(variable, version, generator);
         return value;
       });
     }
     return value;
   }).then(function(value) {
+    if (variable._version !== version) return;
     variable._valuePrior = value;
     variable_displayValue(variable, value);
     return value;
   }, function(error) {
+    if (variable._version !== version) return;
     variable._valuePrior = undefined;
     variable_displayError(variable, error);
     throw error;
   });
 }
 
-function variable_recompute(variable, generator) {
+function variable_recompute(variable, version, generator) {
   requestAnimationFrame(function poll() {
     var next;
     try {
@@ -151,11 +160,13 @@ function variable_recompute(variable, generator) {
       next = Promise.reject(error);
     }
     next.then(function(nextValue) {
+      if (variable._version !== version) return;
       variable_postrecompute(variable, nextValue, next);
       variable_displayValue(variable, nextValue);
       requestAnimationFrame(poll);
       return nextValue;
     }, function(error) {
+      if (variable._version !== version) return;
       variable_postrecompute(variable, undefined, next);
       variable_displayError(variable, error);
       throw error;

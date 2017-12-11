@@ -289,3 +289,26 @@ tape("variable.define allows a variable to be redefined", {html: "<div id=foo />
   test.deepEqual(await valueof(foo), {value: 2});
   test.deepEqual(await valueof(bar), {value: 2});
 });
+
+tape("variable.define ignores an asynchronous result from a redefined variable", {html: "<div id=foo />"}, async test => {
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const foo = main.variable("#foo").define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
+  await new Promise(setImmediate);
+  foo.define("foo", [], () => "success");
+  await new Promise(resolve => setTimeout(resolve, 250));
+  test.deepEqual(await valueof(foo), {value: "success"});
+  test.deepEqual(foo._valuePrior, "success");
+});
+
+tape("variable.define ignores an asynchronous result from a redefined input", {html: "<div id=foo />"}, async test => {
+  const runtime = createRuntime();
+  const main = runtime.module();
+  const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
+  const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);
+  await new Promise(setImmediate);
+  bar.define("bar", [], () => "success");
+  await new Promise(resolve => setTimeout(resolve, 250));
+  test.deepEqual(await valueof(foo), {value: "success"});
+  test.deepEqual(foo._valuePrior, "success");
+});

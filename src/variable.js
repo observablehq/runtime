@@ -24,7 +24,8 @@ export default function Variable(type, module, node) {
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
     _value: {value: undefined, writable: true},
-    _valuePrior: {value: undefined, writable: true} // TODO Rename to the “resolved” value?
+    _valuePrior: {value: undefined, writable: true}, // TODO Rename to the “resolved” value?
+    _version: {value: 0, writable: true}
   });
 }
 
@@ -158,6 +159,7 @@ function variable_defineImpl(name, inputs, definition) {
     this._name = name;
   }
 
+  ++this._version;
   runtime._updates.add(this);
   runtime._compute();
   return this;
