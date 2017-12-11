@@ -527,7 +527,15 @@ var hello = md`Hello, *world*!`;
 <a href="#tex" name="tex">#</a> <b>tex</b>(<i>strings</i>, <i>values…</i>)
 
 ```js
-var hello = tex`E = mc^2`;
+tex`E = mc^2`
+```
+
+<a href="#tex_block" name="tex_block">#</a> tex.<b>block</b>(<i>strings</i>, <i>values…</i>)
+
+Equivalent to [tex](#tex), but uses KaTeX’s display mode to produce a bigger block element rather than a smaller inline element.
+
+```js
+tex.block`E = mc^2`
 ```
 
 ### require
