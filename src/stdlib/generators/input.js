@@ -2,8 +2,10 @@ import observe from "./observe";
 
 export default function(input) {
   return observe(function(change) {
-    var event = eventof(input), inputted = function() { change(valueof(input)); };
-    input.addEventListener(event, inputted), inputted();
+    var event = eventof(input), value = valueof(input);
+    function inputted() { change(valueof(input)); }
+    input.addEventListener(event, inputted);
+    if (value !== undefined) change(value);
     return function() { input.removeEventListener(event, inputted); };
   });
 }
