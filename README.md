@@ -85,7 +85,7 @@ A module is a namespace for [variables](#variables); within a module, variables 
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
-If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If *element* is specified as a string, the *element* is selected from the current document using [*document*.querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector). If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
+If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If *element* is specified as a string, the *element* is selected from the current document using [*document*.querySelector](https://developer.mozilla.org/docs/Web/API/Document/querySelector). If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
 
 A variable without an associated *element* is only computed if any transitive output of the variable has an *element*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
@@ -259,7 +259,7 @@ canvas.height = 500;
 
 <a href="#DOM_context2d" name="DOM_context2d">#</a> DOM.<b>context2d</b>(<i>width</i>, <i>height</i>[, <i>dpi</i>])
 
-Returns a new canvas context with the specified *width* and *height* and the specified device pixel ratio *dpi*. If *dpi* is not specified, it defaults to [*window*.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio). For example, to create a 960×500 canvas:
+Returns a new canvas context with the specified *width* and *height* and the specified device pixel ratio *dpi*. If *dpi* is not specified, it defaults to [*window*.devicePixelRatio](https://developer.mozilla.org/docs/Web/API/Window/devicePixelRatio). For example, to create a 960×500 canvas:
 
 ```js
 var context = DOM.context2d(960, 500);
@@ -276,11 +276,11 @@ var context = canvas.getContext("2d");
 context.scale(2, 2);
 ```
 
-To access the context’s canvas, use [*context*.canvas](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/canvas).
+To access the context’s canvas, use [*context*.canvas](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/canvas).
 
 <a href="#DOM_download" name="DOM_download">#</a> DOM.<b>download</b>(<i>object</i>\[, <i>name</i>\]\[, <i>value</i>\])
 
-Returns an anchor element containing a button that when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/en-US/docs/Web/API/File) or a [blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+Returns an anchor element containing a button that when clicked will download a file representing the specified *object*. The *object* should be anything supported by [URL.createObjectURL](https://developer.mozilla.org/docs/Web/API/URL/createObjectURL) such as a [file](https://developer.mozilla.org/docs/Web/API/File) or a [blob](https://developer.mozilla.org/docs/Web/API/Blob).
 
 <a href="#DOM_element" name="DOM_element">#</a> DOM.<b>element</b>([<i>uri</i>, ]<i>name</i>[, <i>options</i>])
 
@@ -296,7 +296,7 @@ This is equivalent to:
 var h1 = document.createElement("h1");
 ```
 
-If a *uri* is specified, uses [*document*.createElementNS](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS) instead of [*document*.createElement](https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement). For example, to create an empty SVG element (see also [DOM.svg](#DOM_svg)):
+If a *uri* is specified, uses [*document*.createElementNS](https://developer.mozilla.org/docs/Web/API/Document/createElementNS) instead of [*document*.createElement](https://developer.mozilla.org/docs/Web/API/Document/createElement). For example, to create an empty SVG element (see also [DOM.svg](#DOM_svg)):
 
 ```js
 var svg = DOM.element("http://www.w3.org/2000/svg", "svg");
@@ -408,15 +408,15 @@ var hello = document.createTextNode("Hello, world!");
 
 <a href="#Files_buffer" name="Files_buffer">#</a> Files.<b>buffer</b>(<i>file</i>)
 
-Reads the specified *file*, returning a promise of the ArrayBuffer yielded by [*fileReader*.readAsArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsArrayBuffer). This is useful for reading binary files, such as shapefiles and ZIP archives.
+Reads the specified *file*, returning a promise of the ArrayBuffer yielded by [*fileReader*.readAsArrayBuffer](https://developer.mozilla.org/docs/Web/API/FileReader/readAsArrayBuffer). This is useful for reading binary files, such as shapefiles and ZIP archives.
 
 <a href="#Files_text" name="Files_text">#</a> Files.<b>text</b>(<i>file</i>)
 
-Reads the specified *file*, returning a promise of the string yielded by [*fileReader*.readAsText](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText). This is useful for reading text files, such as plain text, CSV, Markdown and HTML.
+Reads the specified *file*, returning a promise of the string yielded by [*fileReader*.readAsText](https://developer.mozilla.org/docs/Web/API/FileReader/readAsText). This is useful for reading text files, such as plain text, CSV, Markdown and HTML.
 
 <a href="#Files_url" name="Files_url">#</a> Files.<b>url</b>(<i>file</i>)
 
-Reads the specified *file*, returning a promise of the data URL yielded by [*fileReader*.readAsDataURL](https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL). This is useful for reading a file into memory, represented as a data URL. For example, to display a local file as an image:
+Reads the specified *file*, returning a promise of the data URL yielded by [*fileReader*.readAsDataURL](https://developer.mozilla.org/docs/Web/API/FileReader/readAsDataURL). This is useful for reading a file into memory, represented as a data URL. For example, to display a local file as an image:
 
 ```js
 Files.url(file).then(url => {
@@ -426,7 +426,7 @@ Files.url(file).then(url => {
 })
 ```
 
-However, note that it may be more efficient to use the synchronous [URL.createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) method instead, such as:
+However, note that it may be more efficient to use the synchronous [URL.createObjectURL](https://developer.mozilla.org/docs/Web/API/URL/createObjectURL) method instead, such as:
 
 ```js
 var image = new Image;
@@ -480,13 +480,13 @@ Returns a promise that resolves with the specified *value* at the next integer m
 
 <a href="#Promises_when" name="Promises_when">#</a> Promises.<b>when</b>(<i>date</i>[, <i>value</i>])
 
-…
+… Note: the current implementation relies on [setTimeout](https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout), and thus the specified *date* must be no longer than 2,147,483,647 milliseconds (24.9 days) from now.
 
 ### Live Values
 
 <a href="#now" name="now">#</a> <b>now</b>
 
-The current value of [Date.now](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now).
+The current value of [Date.now](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date/now).
 
 <a href="#width" name="width">#</a> <b>width</b>
 
@@ -496,7 +496,7 @@ The current width of cells.
 
 <a href="#html" name="html">#</a> <b>html</b>(<i>strings</i>, <i>values…</i>)
 
-Returns the HTML element or node represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create an H1 element whose content is “Hello, world!”:
+Returns the HTML element or node represented by the specified *strings* and *values*. This function is intended to be used as a [tagged template literal](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals_and_escape_sequences). For example, to create an H1 element whose content is “Hello, world!”:
 
 ```js
 var hello = html`<h1>Hello, world!</h1>`;
