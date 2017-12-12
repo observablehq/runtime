@@ -363,10 +363,10 @@ var optionBlue = select.appendChild(document.createElement("option"));
 optionBlue.value = optionBlue.textContent = "blue";
 ```
 
-For greater control, consider using [DOM.html](#DOM_html) instead. For example, here is an equivalent way to define the above drop-down menu:
+For greater control, consider using [html](#html) instead. For example, here is an equivalent way to define the above drop-down menu:
 
 ```js
-var select = DOM.html`<select>
+var select = html`<select>
   <option value="red">red</option>
   <option value="green">green</option>
   <option value="blue">blue</option>
