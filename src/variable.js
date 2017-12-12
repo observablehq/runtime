@@ -51,14 +51,21 @@ function variable_undefined() {
 
 function variable_rejector(variable) {
   return function(error) {
-    if (error === variable_undefined) throw new ReferenceError(variable._name + " is not defined");
-    throw new ResolutionError(variable._name + " could not be resolved");
+    if (error === variable_undefined) {
+      error = new ReferenceError(variable._name + " is not defined");
+    } else {
+      error = new ResolutionError(variable._name + " could not be resolved", variable._name);
+    }
+    error.inputName = variable._name;
+    throw error;
   };
 }
 
 function variable_duplicate(name) {
   return function() {
-    throw new ReferenceError(name + " is defined more than once");
+    const error = new ReferenceError(name + " is defined more than once");
+    error.inputName = name;
+    throw error;
   };
 }
 
