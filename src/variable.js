@@ -56,7 +56,7 @@ function variable_rejector(variable) {
     } else {
       error = new ResolutionError(variable._name + " could not be resolved", variable._name);
     }
-    error.inputName = variable._name;
+    error.variable = {input: variable._name};
     throw error;
   };
 }
@@ -64,7 +64,7 @@ function variable_rejector(variable) {
 function variable_duplicate(name) {
   return function() {
     const error = new ReferenceError(name + " is defined more than once");
-    error.inputName = name;
+    error.variable = {name};
     throw error;
   };
 }
