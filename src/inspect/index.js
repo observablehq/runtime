@@ -4,7 +4,6 @@ import formatDate from "./formatDate";
 import formatError from "./formatError";
 import formatRegExp from "./formatRegExp";
 import formatSymbol from "./formatSymbol";
-import Import from "./import";
 import inspectFunction from "./inspectFunction";
 
 var objectToString = Object.prototype.toString;
@@ -16,7 +15,6 @@ export default function inspect(value, shallow, expand) {
     case "object": {
       if (value === null) { type = null, value = "null"; break; }
       if (value instanceof Date) { type = "date", value = formatDate(value); break; }
-      if (value === Import) { type = "import", value = "Import"; break; }
       switch (objectToString.call(value)) { // TODO Symbol.toStringTag?
         case "[object RegExp]": { type = "regexp", value = formatRegExp(value); break; }
         case "[object Error]": // https://github.com/lodash/lodash/blob/master/isError.js#L26
