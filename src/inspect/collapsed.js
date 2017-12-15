@@ -73,6 +73,7 @@ export default function inspectCollapsed(object, shallow) {
   span.addEventListener("mouseup", function clicked(event) {
     event.stopPropagation();
     var spanNew = inspectExpanded(object);
+    if (span.classList.contains("O--inspect")) spanNew.classList.add("O--inspect");
     span.parentNode.replaceChild(spanNew, span);
     dispatch(spanNew, "load");
   }, true);
