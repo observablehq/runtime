@@ -1,6 +1,6 @@
 import {map} from "./array";
 import constant from "./constant";
-import {ResolutionError} from "./errors";
+import {RuntimeError} from "./errors";
 import identity from "./identity";
 import noop from "./noop";
 
@@ -51,14 +51,14 @@ function variable_undefined() {
 
 function variable_rejector(variable) {
   return function(error) {
-    if (error === variable_undefined) throw new ReferenceError(variable._name + " is not defined");
-    throw new ResolutionError(variable._name + " could not be resolved");
+    if (error === variable_undefined) throw new RuntimeError(variable._name + " is not defined", {input: variable._name});
+    throw new RuntimeError(variable._name + " could not be resolved", {input: variable._name});
   };
 }
 
 function variable_duplicate(name) {
   return function() {
-    throw new ReferenceError(name + " is defined more than once");
+    throw new RuntimeError(name + " is defined more than once", {name});
   };
 }
 

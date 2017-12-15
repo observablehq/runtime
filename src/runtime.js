@@ -1,5 +1,6 @@
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
+import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
@@ -29,6 +30,8 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   module: {value: runtime_module, writable: true, configurable: true}
 });
+
+const LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
 
 function runtime_module() {
   return new Module(this);
@@ -91,7 +94,7 @@ function runtime_computeNow() {
 
   // Any remaining variables have circular definitions.
   variables.forEach(function(variable) {
-    var error = new ReferenceError("circular definition");
+    var error = new RuntimeError("circular definition", {name: variable._name});
     variable._valuePrior = undefined;
     (variable._value = Promise.reject(error)).catch(noop);
     variable_displayError(variable, error);
@@ -198,7 +201,7 @@ function variable_displayError(variable, error) {
   while (node.lastChild) node.removeChild(node.lastChild);
   var span = document.createElement("span");
   span.className = "O--inspect";
-  span.textContent = error + "";
+  span.textContent = (error + "").replace(LOCATION_MATCH, '');
   node.appendChild(span);
   dispatch(node, "error", {error: error});
 }
