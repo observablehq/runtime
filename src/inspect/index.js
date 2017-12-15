@@ -31,7 +31,7 @@ export default function inspect(value, shallow, expand) {
     }
   }
   var span = document.createElement("span");
-  span.className = `O--${type}`;
+  span.className = `O--inspect O--${type}`;
   span.textContent = value;
   return span;
 }

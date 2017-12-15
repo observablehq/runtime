@@ -194,18 +194,19 @@ function variable_reachable(variable) {
 function variable_displayError(variable, error) {
   var node = variable._node;
   if (!node) return;
-  node.className = "O O--error";
-  node.textContent = error + ""; // TODO Pretty stack trace.
+  node.className = "O";
+  while (node.lastChild) node.removeChild(node.lastChild);
+  var span = document.createElement("span");
+  span.className = `O--inspect O--error`;
+  span.textContent = error + "";
+  node.appendChild(span);
   dispatch(node, "error", {error: error});
 }
 
 function variable_displayValue(variable, value) {
   var node = variable._node;
   if (!node) return;
-  if ((value instanceof Element || value instanceof Text) && (!value.parentNode || value.parentNode === node)) {
-    node.className = "O";
-  } else {
-    node.className = "O O--inspect";
+  if (!(value instanceof Element || value instanceof Text) || (value.parentNode && value.parentNode !== node)) {
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
         && node.firstChild.classList.contains("O--expanded"));
