@@ -1,7 +1,8 @@
-export function ResolutionError(message) {
+export function RuntimeError(message, variable) {
   this.message = message + "";
-  this.name = "ResolutionError";
+  this.name = "RuntimeError";
+  if (variable) this.variable = variable;
 }
 
-ResolutionError.prototype = Object.create(Error.prototype);
-ResolutionError.prototype.constructor = ResolutionError;
+RuntimeError.prototype = Object.create(Error.prototype);
+RuntimeError.prototype.constructor = RuntimeError;
