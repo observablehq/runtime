@@ -1,6 +1,6 @@
 import observe from "./generators/observe";
 
-var inset = 14;
+var inset = 28;
 
 export default function() {
   return observe(function(change) {
