@@ -210,6 +210,7 @@ function variable_displayValue(variable, value) {
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
         && node.firstChild.classList.contains("O--expanded"));
+    value.classList.add("O--inspect");
   }
   node.className = "O";
   if (node.firstChild !== value) {
