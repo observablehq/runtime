@@ -194,7 +194,7 @@ function variable_reachable(variable) {
 function variable_displayError(variable, error) {
   var node = variable._node;
   if (!node) return;
-  node.className = "O";
+  node.classList.remove("O--running");
   while (node.lastChild) node.removeChild(node.lastChild);
   var span = document.createElement("span");
   span.className = `O--inspect O--error`;
@@ -211,6 +211,7 @@ function variable_displayValue(variable, value) {
         && node.firstChild.classList
         && node.firstChild.classList.contains("O--expanded"));
   }
+  node.classList.remove("O--running");
   if (node.firstChild !== value) {
     if (node.firstChild) {
       while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
