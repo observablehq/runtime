@@ -1,6 +1,5 @@
-import dispatch from "../dispatch";
 import inspectExpanded from "./expanded";
-import inspect from "./index";
+import inspect, {replace} from "./index";
 import isArrayIndex from "./isArrayIndex";
 import isArrayLike from "./isArrayLike";
 import getKeysAndSymbols from "./getKeysAndSymbols";
@@ -20,9 +19,7 @@ export default function inspectCollapsed(object, shallow) {
     span.className = "O--shallow";
     span.addEventListener("mouseup", function clicked(event) {
       event.stopPropagation();
-      var spanNew = inspectCollapsed(object);
-      span.parentNode.replaceChild(spanNew, span);
-      dispatch(spanNew, "load");
+      replace(span, inspectCollapsed(object));
     });
     return span;
   }
@@ -72,10 +69,7 @@ export default function inspectCollapsed(object, shallow) {
 
   span.addEventListener("mouseup", function clicked(event) {
     event.stopPropagation();
-    var spanNew = inspectExpanded(object);
-    if (span.classList.contains("O--inspect")) spanNew.classList.add("O--inspect");
-    span.parentNode.replaceChild(spanNew, span);
-    dispatch(spanNew, "load");
+    replace(span, inspectExpanded(object));
   }, true);
 
   return span;

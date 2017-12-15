@@ -1,3 +1,4 @@
+import dispatch from "../dispatch";
 import inspectCollapsed from "./collapsed";
 import inspectExpanded from "./expanded";
 import formatDate from "./formatDate";
@@ -34,4 +35,10 @@ export default function inspect(value, shallow, expand) {
   span.className = `O--${type}`;
   span.textContent = value;
   return span;
+}
+
+export function replace(spanOld, spanNew) {
+  if (spanOld.classList.contains("O--inspect")) spanNew.classList.add("O--inspect");
+  spanOld.parentNode.replaceChild(spanNew, spanOld);
+  dispatch(spanNew, "load");
 }

@@ -2,7 +2,7 @@ import dispatch from "../dispatch";
 import inspectCollapsed from "./collapsed";
 import formatSymbol from "./formatSymbol";
 import getKeysAndSymbols from "./getKeysAndSymbols";
-import inspect from "./index";
+import inspect, {replace} from "./index";
 import isArrayIndex from "./isArrayIndex";
 import isArrayLike from "./isArrayLike";
 
@@ -33,10 +33,7 @@ export default function inspectExpanded(object) {
   a.textContent = `▾${tag}${arrayLike ? " [" : " {"}`;
   a.addEventListener("mouseup", function clicked(event) {
     event.stopPropagation();
-    var spanNew = inspectCollapsed(object);
-    if (span.classList.contains("O--inspect")) spanNew.classList.add("O--inspect");
-    span.parentNode.replaceChild(spanNew, span);
-    dispatch(spanNew, "load");
+    replace(span, inspectCollapsed(object));
   });
 
   for (var i = 0, j = Math.min(20, n); i < j; ++i) {
