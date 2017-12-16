@@ -194,7 +194,7 @@ function variable_reachable(variable) {
 function variable_displayError(variable, error) {
   var node = variable._node;
   if (!node) return;
-  node.className = "O--error";
+  node.className = "O O--error";
   while (node.lastChild) node.removeChild(node.lastChild);
   var span = document.createElement("span");
   span.className = "O--inspect";
