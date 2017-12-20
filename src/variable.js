@@ -51,14 +51,14 @@ function variable_undefined() {
 
 function variable_rejector(variable) {
   return function(error) {
-    if (error === variable_undefined) throw new RuntimeError(variable._name + " is not defined", {input: variable._name});
-    throw new RuntimeError(variable._name + " could not be resolved", {input: variable._name});
+    if (error === variable_undefined) throw new RuntimeError(variable._name + " is not defined", variable._name);
+    throw new RuntimeError(variable._name + " could not be resolved", variable._name);
   };
 }
 
 function variable_duplicate(name) {
   return function() {
-    throw new RuntimeError(name + " is defined more than once", {name});
+    throw new RuntimeError(name + " is defined more than once");
   };
 }
 
