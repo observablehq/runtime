@@ -1,8 +1,8 @@
-export function RuntimeError(message, variable) {
+export function RuntimeError(message, input) {
   this.message = message + "";
-  this.name = "RuntimeError";
-  if (variable) this.variable = variable;
+  if (input) this.input = input;
 }
 
 RuntimeError.prototype = Object.create(Error.prototype);
+RuntimeError.prototype.name = "RuntimeError";
 RuntimeError.prototype.constructor = RuntimeError;
