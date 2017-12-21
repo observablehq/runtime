@@ -1,6 +1,6 @@
 export function RuntimeError(message, input) {
   this.message = message + "";
-  if (input) this.input = input;
+  this.input = input;
 }
 
 RuntimeError.prototype = Object.create(Error.prototype);
