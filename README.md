@@ -558,15 +558,17 @@ require("d3-array", "d3-color").then(d3 => {
 });
 ```
 
-Or, to load [d3-array](https://github.com/d3/d3-array) 1.1.x:
+See [d3-require](https://github.com/d3/d3-require) for more information.
+
+<a href="#require_at" name="require_at">#</a> require.<b>at</b>(<i>versions</i>)
+
+Returns a [require](#require) function where each module in the specified *versions* object has the corresponding semver range or tag. For example, to load [d3-array](https://github.com/d3/d3-array) 1.1.x:
 
 ```js
-require("d3-array@1.1").then(d3 => {
+require.at({"d3-array": "1.1"})("d3-array").then(d3 => {
   console.log(d3.range(100));
 });
 ```
-
-See [d3-require](https://github.com/d3/d3-require) for more information.
 
 <a href="#resolve" name="resolve">#</a> <b>resolve</b>(<i>name</i>)
 

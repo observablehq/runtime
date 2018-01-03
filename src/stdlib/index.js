@@ -13,6 +13,7 @@ import width from "./width";
 export default function(resolve) {
   if (resolve == null) resolve = resolveDefault;
   var require = requireFrom(resolve);
+  require.at = requireAt(resolve);
   return {
     DOM: DOM,
     Files: Files,
@@ -25,5 +26,13 @@ export default function(resolve) {
     tex: tex(require, resolve),
     now: now,
     width: width
+  };
+}
+
+function requireAt(resolve) {
+  return function(version) {
+    return requireFrom(function(name) {
+      return resolve(name in version ? name + "@" + version[name] : name);
+    });
   };
 }
