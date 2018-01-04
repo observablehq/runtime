@@ -30,9 +30,9 @@ export default function(resolve) {
 }
 
 function requireAt(resolve) {
-  return function(version) {
+  return function(versions) {
     return requireFrom(function(name) {
-      return resolve(name in version ? name + "@" + version[name] : name);
+      return resolve(name in versions ? name + "@" + versions[name] : name);
     });
   };
 }
