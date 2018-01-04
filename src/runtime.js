@@ -87,7 +87,7 @@ function runtime_computeNow() {
 
   // Compute the variables in topological order.
   while (variable = queue.pop()) {
-    variable_compute(variable).catch(noop);
+    variable_compute(variable);
     variable._outputs.forEach(postqueue);
     variables.delete(variable);
   }
@@ -127,7 +127,7 @@ function variable_compute(variable) {
     variable._node.classList.add("O--running");
   }
   var valuePrior = variable._valuePrior;
-  return variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+  var value = variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
     var value = variable._definition.apply(valuePrior, inputs);
     if (generatorish(value)) {
@@ -138,16 +138,15 @@ function variable_compute(variable) {
       });
     }
     return value;
-  }).then(function(value) {
+  });
+  value.then(function(value) {
     if (variable._version !== version) return;
     variable._valuePrior = value;
     variable_displayValue(variable, value);
-    return value;
   }, function(error) {
     if (variable._version !== version) return;
     variable._valuePrior = undefined;
     variable_displayError(variable, error);
-    throw error;
   });
 }
 
@@ -166,12 +165,10 @@ function variable_recompute(variable, version, generator) {
       variable_postrecompute(variable, nextValue, next);
       variable_displayValue(variable, nextValue);
       requestAnimationFrame(poll);
-      return nextValue;
     }, function(error) {
       if (variable._version !== version) return;
       variable_postrecompute(variable, undefined, next);
       variable_displayError(variable, error);
-      throw error;
     });
   });
 }
