@@ -23,7 +23,7 @@ export default function(require, resource) {
           while (++i < n) string += arguments[i] + "" + strings[i];
           var root = document.createElement("div");
           katex.render(string, root, options);
-          return root.firstChild;
+          return root.removeChild(root.firstChild);
         };
       }
 
