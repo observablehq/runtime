@@ -282,9 +282,9 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
-d3-require@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-0.6.1.tgz#fb108a8ac9d11b3c4d8a97f7aa3a3b1a5f4c4431"
+d3-require@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-0.6.2.tgz#18b7cf5923b3da9fe616fcd93358ad7a8cdd19b9"
 
 d3-time-format@^2.1.1:
   version "2.1.1"
