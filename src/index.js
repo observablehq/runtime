@@ -1,3 +1,3 @@
 export {default as runtime} from "./runtime";
-export {default as runtimeLibrary} from "./stdlib/index";
+export {runtimeLibrary} from "@observablehq/notebook-stdlib";
 export {RuntimeError} from "./errors";
