@@ -159,7 +159,6 @@ function variable_defineImpl(name, inputs, definition) {
     this._name = name;
   }
 
-  ++this._version;
   runtime._updates.add(this);
   runtime._compute();
   return this;

@@ -113,12 +113,8 @@ function variable_value(variable) {
   return variable._value.catch(variable._rejector);
 }
 
-function variable_version(version, variable) {
-  return Math.max(variable._version, version);
-}
-
 function variable_compute(variable) {
-  var version = variable._version = variable._inputs.reduce(variable_version, variable._version);
+  var version = ++variable._version;
   if (variable._generator) {
     variable._generator.return();
     variable._generator = null;
