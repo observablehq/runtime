@@ -14,7 +14,6 @@
     "cjs": true
   },
   "dependencies": {
-    "@observablehq/notebook-stdlib": "https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#8f40f5b",
     "@std/esm": "^0.16.0",
     "d3-time-format": "^2.1.1"
   },

@@ -10,9 +10,9 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 A runtime is responsible for evaluating [variables](#variables) in topological order whenever their input values change. A runtime typically has one or more [modules](#modules) to scope variables. Collectively, these variables represent a reactive program managed by the runtime.
 
-<a href="#runtime" name="runtime">#</a> O.<b>runtime</b>([<i>builtins</i>])
+<a href="#runtime" name="runtime">#</a> O.<b>runtime</b>(<i>builtins</i>)
 
-Returns a new [runtime](#runtimes). If a *builtins* object is specified, each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, the Observable notebook [standard library](#standard-library) is used.
+Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
 For example, to create a runtime whose only builtin is `color`:
 
@@ -90,7 +90,7 @@ The *definition* function may return a promise; derived variables will be comput
 For example, consider the following module that starts with a single undefined variable, *a*:
 
 ```js
-var runtime = O.runtime();
+var runtime = O.runtime(builtins);
 
 var module = runtime.module();
 
@@ -128,7 +128,7 @@ Note that the JavaScript symbols in the above example code (*a* and *b*) have no
 If more than one variable has the same *name* at the same time in the same module, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables *a* and *b* will throw a ReferenceError:
 
 ```js
-var module = O.runtime().module();
+var module = O.runtime(builtins).module();
 var a = module.variable("#a").define("foo", 1);
 var b = module.variable("#b").define("foo", 2);
 ```
@@ -146,7 +146,7 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
 ```js
-var runtime = O.runtime();
+var runtime = O.runtime(builtins);
 
 var module0 = runtime.module();
 

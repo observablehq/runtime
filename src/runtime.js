@@ -1,4 +1,3 @@
-import {runtimeLibrary as stdlib} from "@observablehq/notebook-stdlib";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
@@ -8,7 +7,6 @@ import noop from "./noop";
 import Variable, {TYPE_IMPLICIT} from "./variable";
 
 export default function(builtins) {
-  if (builtins == null) builtins = stdlib();
   return new Runtime(builtins);
 }
 

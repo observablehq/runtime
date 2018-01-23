@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-"@observablehq/notebook-stdlib@https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#8f40f5b":
-  version "0.0.0"
-  resolved "https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#8f40f5b506acbe691e9e83f405b400760ab74086"
-  dependencies:
-    "@std/esm" "^0.16.0"
-    d3-require "^0.6.2"
-
 "@std/esm@^0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@std/esm/-/esm-0.16.0.tgz#2a7a33ecb7f1701cebd4c87df6d0d945ed51f730"
@@ -288,10 +281,6 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-0.2.37.tgz#541097234cb2513c83ceed3acddc27ff27987d54"
   dependencies:
     cssom "0.3.x"
-
-d3-require@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-0.6.2.tgz#18b7cf5923b3da9fe616fcd93358ad7a8cdd19b9"
 
 d3-time-format@^2.1.1:
   version "2.1.1"
