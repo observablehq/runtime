@@ -3,6 +3,9 @@
   "name": "@observablehq/notebook-runtime",
   "version": "0.0.0",
   "main": "src/index",
+  "author": {
+    "name": "Observable, Inc."
+  },
   "scripts": {
     "test": "tape -r @std/esm 'test/**/*-test.js'",
     "precommit": "eslint . && yarn test",
