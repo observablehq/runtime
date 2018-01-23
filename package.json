@@ -2,7 +2,6 @@
   "private": true,
   "name": "@observablehq/notebook-runtime",
   "version": "0.0.0",
-  "license": "ISC",
   "main": "src/index",
   "scripts": {
     "test": "tape -r @std/esm 'test/**/*-test.js'",
