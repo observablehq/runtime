@@ -40,8 +40,8 @@ export default function inspectFunction(f) {
   // function* name(…)
   // async function name(…)
   // async function* name(…)
-  if (m = /^(async\s*)?function(\s*\*)?(?:\s*\w+)?\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
-    return formatFunction(type, (f.name || "") + (m[3] ? "(" + m[3].replace(/\s*,\s*/g, ", ") + ")" : "()"));
+  if (m = /^(?:async\s*)?function(?:\s*\*)?(?:\s*\w+)?\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
+    return formatFunction(type, (f.name || "") + (m[1] ? "(" + m[1].replace(/\s*,\s*/g, ", ") + ")" : "()"));
   }
 
   // Something else, like destructuring, comments or default values.
