@@ -1,113 +1,59 @@
-var functionToString = Function.prototype.toString;
+var toString = Function.prototype.toString,
+    TYPE_ASYNC = {prefix: "async ƒ"},
+    TYPE_ASYNC_GENERATOR = {prefix: "async ƒ*"},
+    TYPE_CLASS = {prefix: "class"},
+    TYPE_FUNCTION = {prefix: "ƒ"},
+    TYPE_GENERATOR = {prefix: "ƒ*"};
 
-/**
- * Modeled after, and should continue to have parity with the devtools-frontend
- * implementation.
- *
- * https://github.com/ChromeDevTools/devtools-frontend/blob/2586fc8a71ba3aa82683fa93d802509b84ba9b46/front_end/object_ui/ObjectPropertiesSection.js#L130-L393
- *
- * Only uses the "abbreviation" form for now.
- *
- */
-export default function inspectFunctionLike(fn) {
-  var text = functionToString.call(fn);
-  // This set of best-effort regular expressions captures common function descriptions.
-  // Ideally, some parser would provide prefix, arguments, function body text separately.
-  var isAsync = text.startsWith("async function ");
-  var isGenerator = text.startsWith("function* ");
-  var isGeneratorShorthand = text.startsWith("*");
-  var isBasic = !isGenerator && text.startsWith("function ");
-  var isClass = text.startsWith("class ") || text.startsWith("class{");
-  var firstArrowIndex = text.indexOf("=>");
-  var isArrow =
-    !isAsync && !isGenerator && !isBasic && !isClass && firstArrowIndex > 0;
-  // TODO: should default name be fixed?
-  var defaultName = "";
+export default function inspectFunction(f) {
+  var type, m, t = toString.call(f);
 
-  var textAfterPrefix;
-  if (isClass) {
-    // class A {} -> class A
-    textAfterPrefix = text.substring("class".length);
-    var classNameMatch = /^[^{\s]+/.exec(textAfterPrefix.trim());
-    var className = defaultName;
-    if (classNameMatch) className = classNameMatch[0].trim() || defaultName;
-    return inspectFunction("class", textAfterPrefix, className);
-  } else if (isAsync) {
-    // async function a() {} -> async ƒ a()
-    textAfterPrefix = text.substring("async function".length);
-    return inspectFunction(
-      "async ƒ",
-      textAfterPrefix,
-      nameAndArguments(textAfterPrefix)
-    );
-  } else if (isGenerator) {
-    // function a*() {} -> ƒ* a()
-    textAfterPrefix = text.substring("function*".length);
-    return inspectFunction(
-      "ƒ*",
-      textAfterPrefix,
-      nameAndArguments(textAfterPrefix)
-    );
-  } else if (isGeneratorShorthand) {
-    textAfterPrefix = text.substring("*".length);
-    return inspectFunction(
-      "ƒ*",
-      textAfterPrefix,
-      nameAndArguments(textAfterPrefix)
-    );
-  } else if (isBasic) {
-    // function a() {} -> ƒ a()
-    textAfterPrefix = text.substring("function".length);
-    return inspectFunction(
-      "ƒ",
-      textAfterPrefix,
-      nameAndArguments(textAfterPrefix)
-    );
-  } else if (isArrow) {
-    // () => {return 1} -> () => {return 1}
-    const maxArrowFunctionCharacterLength = 60;
-    var abbreviation = text;
-    if (defaultName) abbreviation = defaultName + "()";
-    else if (text.length > maxArrowFunctionCharacterLength)
-      // () => {return 1} -> () => {…}
-      abbreviation = text.substring(0, firstArrowIndex + 2) + " {\u2026}";
-    return inspectFunction("", text, abbreviation);
-  } else {
-    // () => {return 1} -> () => {return 1}
-    return inspectFunction("ƒ", text, nameAndArguments(text));
+  switch (f.constructor && f.constructor.name) {
+    case "AsyncFunction": type = TYPE_ASYNC; break;
+    case "AsyncGeneratorFunction": type = TYPE_ASYNC_GENERATOR; break;
+    case "GeneratorFunction": type = TYPE_GENERATOR; break;
+    default: type = /^class\b/.test(t) ? TYPE_CLASS : TYPE_FUNCTION; break;
   }
+
+  // A class, possibly named.
+  // class Name
+  if (type === TYPE_CLASS) {
+    return formatFunction(type, f.name || "");
+  }
+
+  // An arrow function with a single argument.
+  // foo =>
+  // async foo =>
+  if (m = /^(?:async\s*)?(\w+)\s*=>/.exec(t)) {
+    return formatFunction(type, "(" + m[1] + ")");
+  }
+
+  // An arrow function with parenthesized arguments.
+  // (…)
+  // async (…)
+  if (m = /^(?:async\s*)?\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
+    return formatFunction(type, m[1] ? "(" + m[1].replace(/\s*,\s*/g, ", ") + ")" : "()");
+  }
+
+  // A function, possibly: async, generator, anonymous, simply arguments.
+  // function name(…)
+  // function* name(…)
+  // async function name(…)
+  // async function* name(…)
+  if (m = /^(async\s*)?function(\s*\*)?(?:\s*\w+)?\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
+    return formatFunction(type, (f.name || "") + (m[3] ? "(" + m[3].replace(/\s*,\s*/g, ", ") + ")" : "()"));
+  }
+
+  // Something else, like destructuring, comments or default values.
+  return formatFunction(type, (f.name || "") + "(…)");
 }
 
-function nameAndArguments(contents) {
-  var defaultName = "";
-  var startOfArgumentsIndex = contents.indexOf("(");
-  var endOfArgumentsMatch = contents.match(/\)\s*{/);
-  if (
-    startOfArgumentsIndex !== -1 &&
-    endOfArgumentsMatch &&
-    endOfArgumentsMatch.index > startOfArgumentsIndex
-  ) {
-    var name =
-      contents.substring(0, startOfArgumentsIndex).trim() || defaultName;
-    var args = contents.substring(
-      startOfArgumentsIndex,
-      endOfArgumentsMatch.index + 1
-    );
-    return name + args;
-  }
-  return defaultName + "()";
-}
-
-// TODO Optionally show body?
-function inspectFunction(prefix, body, abbreviation) {
+function formatFunction(type, name) {
   var span = document.createElement("span");
   span.className = "O--function";
-  if (prefix) {
-    var spanPrefix = span.appendChild(document.createElement("span"));
-    spanPrefix.className = "O--keyword";
-    spanPrefix.textContent = prefix;
-    span.appendChild(document.createTextNode(" "));
-  }
-  span.appendChild(document.createTextNode(abbreviation.replace(/\n/, " ")));
+  var spanType = span.appendChild(document.createElement("span"));
+  spanType.className = "O--keyword";
+  spanType.textContent = type.prefix;
+  span.appendChild(document.createTextNode(" " + name));
   return span;
 }
