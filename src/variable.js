@@ -20,11 +20,11 @@ export default function Variable(type, module, node) {
     _name: {value: null, writable: true},
     _node: {value: node},
     _outputs: {value: new Set, writable: true},
+    _promise: {value: undefined, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
     _value: {value: undefined, writable: true},
-    _valuePrior: {value: undefined, writable: true}, // TODO Rename to the “resolved” value?
     _version: {value: 0, writable: true}
   });
 }
@@ -85,7 +85,7 @@ function variable_define(name, inputs, definition) {
 function variable_defineImpl(name, inputs, definition) {
   var scope = this._module._scope, runtime = this._module._runtime;
 
-  this._value = this._valuePrior = undefined;
+  this._promise = this._value = undefined;
   if (this._generator) this._generator.return(), this._generator = undefined;
   this._inputs.forEach(variable_detach, this);
   inputs.forEach(variable_attach, this);

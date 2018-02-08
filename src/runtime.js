@@ -93,8 +93,8 @@ function runtime_computeNow() {
   // Any remaining variables have circular definitions.
   variables.forEach(function(variable) {
     var error = new RuntimeError("circular definition");
-    variable._valuePrior = undefined;
-    (variable._value = Promise.reject(error)).catch(noop);
+    variable._value = undefined;
+    (variable._promise = Promise.reject(error)).catch(noop);
     variable_displayError(variable, error);
   });
 
@@ -108,7 +108,7 @@ function variable_increment(variable) {
 }
 
 function variable_value(variable) {
-  return variable._value.catch(variable._rejector);
+  return variable._promise.catch(variable._rejector);
 }
 
 function variable_compute(variable) {
@@ -120,10 +120,10 @@ function variable_compute(variable) {
   if (variable._node) {
     variable._node.classList.add("O--running");
   }
-  var valuePrior = variable._valuePrior;
-  var value = variable._value = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+  var value0 = variable._value;
+  var promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
-    var value = variable._definition.apply(valuePrior, inputs);
+    var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
       var generator = variable._generator = value, next = generator.next();
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
@@ -133,43 +133,43 @@ function variable_compute(variable) {
     }
     return value;
   });
-  value.then(function(value) {
+  promise.then(function(value) {
     if (variable._version !== version) return;
-    variable._valuePrior = value;
+    variable._value = value;
     variable_displayValue(variable, value);
   }, function(error) {
     if (variable._version !== version) return;
-    variable._valuePrior = undefined;
+    variable._value = undefined;
     variable_displayError(variable, error);
   });
 }
 
 function variable_recompute(variable, version, generator) {
   requestAnimationFrame(function poll() {
-    var next;
+    var promise;
     try {
-      next = generator.next();
+      var next = generator.next();
       if (next.done) return;
-      next = Promise.resolve(next.value);
+      promise = Promise.resolve(next.value);
     } catch (error) {
-      next = Promise.reject(error);
+      promise = Promise.reject(error);
     }
-    next.then(function(nextValue) {
+    promise.then(function(value) {
       if (variable._version !== version) return;
-      variable_postrecompute(variable, nextValue, next);
-      variable_displayValue(variable, nextValue);
+      variable_postrecompute(variable, value, promise);
+      variable_displayValue(variable, value);
       requestAnimationFrame(poll);
     }, function(error) {
       if (variable._version !== version) return;
-      variable_postrecompute(variable, undefined, next);
+      variable_postrecompute(variable, undefined, promise);
       variable_displayError(variable, error);
     });
   });
 }
 
-function variable_postrecompute(variable, valuePrior, value) {
+function variable_postrecompute(variable, value, promise) {
   var runtime = variable._module._runtime;
-  variable._valuePrior = valuePrior;
+  variable._promise = promise;
   variable._value = value;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   runtime._compute();

@@ -298,7 +298,7 @@ tape("variable.define ignores an asynchronous result from a redefined variable",
   foo.define("foo", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
-  test.deepEqual(foo._valuePrior, "success");
+  test.deepEqual(foo._value, "success");
 });
 
 tape("variable.define ignores an asynchronous result from a redefined input", {html: "<div id=foo />"}, async test => {
@@ -310,5 +310,5 @@ tape("variable.define ignores an asynchronous result from a redefined input", {h
   bar.define("bar", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
-  test.deepEqual(foo._valuePrior, "success");
+  test.deepEqual(foo._value, "success");
 });
