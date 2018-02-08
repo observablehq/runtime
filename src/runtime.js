@@ -125,10 +125,15 @@ function variable_compute(variable) {
     if (variable._version !== version) return;
     var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
-      var generator = variable._generator = value, next = generator.next();
-      return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        variable_recompute(variable, version, generator);
-        return value;
+      var generator = variable._generator = value;
+      return new Promise(function(resolve) {
+        resolve(generator.next());
+      }).then(function(next) {
+        if (next.done) return;
+        return Promise.resolve(next.value).then(function(value) {
+          requestAnimationFrame(variable_recompute(variable, version, generator));
+          return value;
+        });
       });
     }
     return value;
@@ -145,26 +150,25 @@ function variable_compute(variable) {
 }
 
 function variable_recompute(variable, version, generator) {
-  requestAnimationFrame(function poll() {
-    var promise;
-    try {
-      var next = generator.next();
+  return function recompute() {
+    var promise = variable._promise = new Promise(function(resolve) {
+      resolve(generator.next());
+    }).then(function(next) {
       if (next.done) return;
-      promise = Promise.resolve(next.value);
-    } catch (error) {
-      promise = Promise.reject(error);
-    }
-    promise.then(function(value) {
-      if (variable._version !== version) return;
-      variable_postrecompute(variable, value, promise);
-      variable_displayValue(variable, value);
-      requestAnimationFrame(poll);
-    }, function(error) {
+      return Promise.resolve(next.value).then(function(value) {
+        if (variable._version !== version) return;
+        variable_postrecompute(variable, value, promise);
+        variable_displayValue(variable, value);
+        requestAnimationFrame(recompute);
+        return value;
+      });
+    });
+    promise.catch(function(error) {
       if (variable._version !== version) return;
       variable_postrecompute(variable, undefined, promise);
       variable_displayError(variable, error);
     });
-  });
+  };
 }
 
 function variable_postrecompute(variable, value, promise) {
