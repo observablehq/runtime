@@ -155,26 +155,27 @@ function variable_recompute(variable, version, generator) {
       resolve(generator.next());
     }).then(function(next) {
       if (next.done) return;
-      return Promise.resolve(next.value).then(function(value) {
+      var promise = Promise.resolve(next.value);
+      promise.then(function(value) {
         if (variable._version !== version) return;
-        variable_postrecompute(variable, value, promise);
-        variable_displayValue(variable, value);
+        variable._value = value;
+        variable_postrecompute(variable);
         requestAnimationFrame(recompute);
-        return value;
+        variable_displayValue(variable, value);
       });
+      return promise;
     });
     promise.catch(function(error) {
       if (variable._version !== version) return;
-      variable_postrecompute(variable, undefined, promise);
+      variable._value = undefined;
+      variable_postrecompute(variable);
       variable_displayError(variable, error);
     });
   };
 }
 
-function variable_postrecompute(variable, value, promise) {
+function variable_postrecompute(variable) {
   var runtime = variable._module._runtime;
-  variable._promise = promise;
-  variable._value = value;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   runtime._compute();
 }
