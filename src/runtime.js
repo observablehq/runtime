@@ -150,29 +150,29 @@ function variable_compute(variable) {
 
 function variable_recompute(variable, version, generator) {
   return function recompute() {
-    var promise = variable._promise = new Promise(function(resolve) {
+    var promise = new Promise(function(resolve) {
       resolve(generator.next());
     }).then(function(next) {
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
         if (variable._version !== version) return value;
-        variable._value = value;
-        variable_postrecompute(variable);
         requestAnimationFrame(recompute);
+        variable_postrecompute(variable, value, promise);
         variable_displayValue(variable, value);
         return value;
       });
     });
     promise.catch(function(error) {
       if (variable._version !== version) return;
-      variable._value = undefined;
-      variable_postrecompute(variable);
+      variable_postrecompute(variable, undefined, promise);
       variable_displayError(variable, error);
     });
   };
 }
 
-function variable_postrecompute(variable) {
+function variable_postrecompute(variable, value, promise) {
   var runtime = variable._module._runtime;
+  variable._value = value;
+  variable._promise = promise;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   runtime._compute();
 }
