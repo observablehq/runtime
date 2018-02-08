@@ -129,8 +129,7 @@ function variable_compute(variable) {
       return new Promise(function(resolve) {
         resolve(generator.next());
       }).then(function(next) {
-        if (next.done) return;
-        return Promise.resolve(next.value).then(function(value) {
+        return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
           requestAnimationFrame(variable_recompute(variable, version, generator));
           return value;
         });
@@ -154,16 +153,14 @@ function variable_recompute(variable, version, generator) {
     var promise = variable._promise = new Promise(function(resolve) {
       resolve(generator.next());
     }).then(function(next) {
-      if (next.done) return;
-      var promise = Promise.resolve(next.value);
-      promise.then(function(value) {
-        if (variable._version !== version) return;
+      return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
+        if (variable._version !== version) return value;
         variable._value = value;
         variable_postrecompute(variable);
         requestAnimationFrame(recompute);
         variable_displayValue(variable, value);
+        return value;
       });
-      return promise;
     });
     promise.catch(function(error) {
       if (variable._version !== version) return;
