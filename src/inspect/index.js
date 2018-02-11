@@ -4,6 +4,7 @@ import inspectExpanded from "./expanded";
 import formatDate from "./formatDate";
 import formatError from "./formatError";
 import formatRegExp from "./formatRegExp";
+import formatString from "./formatString";
 import formatSymbol from "./formatSymbol";
 import inspectFunction from "./inspectFunction";
 
@@ -12,8 +13,13 @@ var objectToString = Object.prototype.toString;
 export default function inspect(value, shallow, expand) {
   var type = typeof value;
   switch (type) {
+    case "boolean":
+    case "number":
+    case "undefined": { value += ""; break; }
+    case "string": { value = formatString(value, shallow === false); break; }
+    case "symbol": { value = formatSymbol(value); break; }
     case "function": { return inspectFunction(value); }
-    case "object": {
+    default: {
       if (value === null) { type = null, value = "null"; break; }
       if (value instanceof Date) { type = "date", value = formatDate(value); break; }
       switch (objectToString.call(value)) { // TODO Symbol.toStringTag?
@@ -22,12 +28,6 @@ export default function inspect(value, shallow, expand) {
         case "[object DOMException]": { type = "error", value = formatError(value); break; }
         default: return (expand ? inspectExpanded : inspectCollapsed)(value, shallow);
       }
-      break;
-    }
-    case "symbol": { value = formatSymbol(value); break; }
-    default: {
-      value += "";
-      if (shallow && !expand && value.length > 100) value = `${value.slice(0, 50)}…${value.slice(-49)}`;
       break;
     }
   }
