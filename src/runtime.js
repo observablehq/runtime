@@ -26,6 +26,8 @@ function Runtime(builtins) {
 
 Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
+  _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
+  _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   module: {value: runtime_module, writable: true, configurable: true}
 });
 
@@ -36,8 +38,17 @@ function runtime_module() {
 }
 
 function runtime_compute() {
-  if (this._computing) return;
-  this._computing = requestAnimationFrame(runtime_computeNow.bind(this));
+  return this._computing || (this._computing = this._computeSoon());
+}
+
+function runtime_computeSoon() {
+  var runtime = this;
+  return new Promise(function(resolve) {
+    requestAnimationFrame(function() {
+      resolve();
+      runtime._computeNow();
+    });
+  });
 }
 
 function runtime_computeNow() {
@@ -130,7 +141,7 @@ function variable_compute(variable) {
         resolve(generator.next());
       }).then(function(next) {
         return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-          requestAnimationFrame(variable_recompute(variable, version, generator));
+          variable._module._runtime._compute().then(variable_recompute(variable, version, generator));
           return value;
         });
       });
@@ -154,9 +165,8 @@ function variable_recompute(variable, version, generator) {
       resolve(generator.next());
     }).then(function(next) {
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        if (variable._version !== version) return value;
-        requestAnimationFrame(recompute);
-        variable_postrecompute(variable, value, promise);
+        if (variable._version !== version) return;
+        variable_postrecompute(variable, value, promise).then(recompute);
         variable_displayValue(variable, value);
         return value;
       });
@@ -174,7 +184,7 @@ function variable_postrecompute(variable, value, promise) {
   variable._value = value;
   variable._promise = promise;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
-  runtime._compute();
+  return runtime._compute();
 }
 
 function variable_reachable(variable) {
