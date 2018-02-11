@@ -140,10 +140,10 @@ function variable_compute(variable) {
       return new Promise(function(resolve) {
         resolve(generator.next());
       }).then(function(next) {
-        return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-          variable._module._runtime._compute().then(variable_recompute(variable, version, generator));
-          return value;
-        });
+        if (next.done) return;
+        var promise = Promise.resolve(next.value);
+        promise.then(variable_recompute(variable, version, generator));
+        return promise;
       });
     }
     return value;

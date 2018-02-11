@@ -31,7 +31,6 @@ tape("runtime(builtins) allows builtins to be defined as generators", {html: "<d
   const runtime = createRuntime({i: function*() { while (true) yield ++i; }});
   const main = runtime.module();
   const foo = main.variable("#foo").define(null, ["i"], i => i);
-  await new Promise(setImmediate); // TODO Why two awaits?
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
   await new Promise(setImmediate);
