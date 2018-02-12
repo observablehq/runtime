@@ -141,9 +141,8 @@ function variable_compute(variable) {
         resolve(generator.next());
       }).then(function(next) {
         if (next.done) return;
-        var promise = Promise.resolve(next.value);
         promise.then(variable_recompute(variable, version, generator));
-        return promise;
+        return Promise.resolve(next.value);
       });
     }
     return value;
