@@ -12,7 +12,7 @@ var objectToString = Object.prototype.toString;
 
 export default function inspect(value, shallow, expand) {
   var type = typeof value;
-  if (type === "object" && value.constructor.name === "Mutable") {
+  if (value != null && type === "object" && value.constructor.name === "Mutable") {
     value = value.value;
     type = typeof value;
   }
