@@ -211,7 +211,7 @@ function variable_displayError(variable, error) {
 function variable_displayValue(variable, value) {
   var node = variable._node;
   if (!node) return;
-  if (!(value instanceof Element || value instanceof Text) || (value.parentNode && value.parentNode !== node)) {
+  if (!(value instanceof Node) || (value.parentNode && value.parentNode !== node)) {
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
         && node.firstChild.classList.contains("O--expanded"));
