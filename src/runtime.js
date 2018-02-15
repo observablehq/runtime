@@ -218,8 +218,8 @@ function variable_displayValue(variable, value) {
     value.classList.add("O--inspect");
   }
   if (node.firstChild) {
+    while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
     if (node.firstChild !== value) node.replaceChild(value, node.firstChild);
-    while (value.nextSibling) node.removeChild(value.nextSibling);
   } else {
     node.appendChild(value);
   }
