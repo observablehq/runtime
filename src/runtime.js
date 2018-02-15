@@ -218,7 +218,9 @@ function variable_displayValue(variable, value) {
     value.classList.add("O--inspect");
   }
   node.className = "O";
-  if (node.firstChild !== value) {
+  if (node.firstChild === value) {
+    while (value.nextSibling) node.removeChild(value.nextSibling);
+  } else {
     if (node.firstChild) {
       while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
       node.replaceChild(value, node.firstChild);
