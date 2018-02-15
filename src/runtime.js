@@ -211,22 +211,18 @@ function variable_displayError(variable, error) {
 function variable_displayValue(variable, value) {
   var node = variable._node;
   if (!node) return;
-  if (!(value instanceof Node) || (value.parentNode && value.parentNode !== node)) {
+  if (!(value instanceof Node) || (value.parentNode && !node.contains(value))) {
     value = inspect(value, false, node.firstChild // TODO Do this better.
         && node.firstChild.classList
         && node.firstChild.classList.contains("O--expanded"));
     value.classList.add("O--inspect");
   }
-  node.className = "O";
-  if (node.firstChild === value) {
+  if (node.firstChild) {
+    if (node.firstChild !== value) node.replaceChild(value, node.firstChild);
     while (value.nextSibling) node.removeChild(value.nextSibling);
   } else {
-    if (node.firstChild) {
-      while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
-      node.replaceChild(value, node.firstChild);
-    } else {
-      node.appendChild(value);
-    }
+    node.appendChild(value);
   }
+  node.className = "O";
   dispatch(node, "update");
 }
