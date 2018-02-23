@@ -7,6 +7,7 @@ import formatRegExp from "./formatRegExp";
 import formatString from "./formatString";
 import formatSymbol from "./formatSymbol";
 import inspectFunction from "./inspectFunction";
+import {FORBIDDEN} from "./forbidden";
 
 var objectToString = Object.prototype.toString;
 
@@ -22,6 +23,7 @@ export default function inspect(value, shallow, expand) {
     default: {
       if (value === null) { type = null, value = "null"; break; }
       if (value instanceof Date) { type = "date", value = formatDate(value); break; }
+      if (value === FORBIDDEN) { type = "forbidden", value = "[forbidden]"; break; }
       switch (objectToString.call(value)) { // TODO Symbol.toStringTag?
         case "[object RegExp]": { type = "regexp", value = formatRegExp(value); break; }
         case "[object Error]": // https://github.com/lodash/lodash/blob/master/isError.js#L26
