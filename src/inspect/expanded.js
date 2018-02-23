@@ -5,6 +5,7 @@ import getKeysAndSymbols from "./getKeysAndSymbols";
 import inspect, {replace} from "./index";
 import isArrayIndex from "./isArrayIndex";
 import isArrayLike from "./isArrayLike";
+import {maybeProperty} from "./forbidden";
 
 export default function inspectExpanded(object) {
   var span = document.createElement("span"),
@@ -100,7 +101,7 @@ function* objectFields(object) {
       span.textContent = `  ${key}`;
     }
     item.appendChild(document.createTextNode(": "));
-    item.appendChild(inspect(object[key]));
+    item.appendChild(inspect(maybeProperty(object, key)));
     yield item;
   }
 }

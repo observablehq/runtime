@@ -4,6 +4,7 @@ import isArrayIndex from "./isArrayIndex";
 import isArrayLike from "./isArrayLike";
 import getKeysAndSymbols from "./getKeysAndSymbols";
 import formatSymbol from "./formatSymbol";
+import {maybeProperty} from "./forbidden";
 
 export default function inspectCollapsed(object, shallow) {
   var span = document.createElement("span"),
@@ -60,7 +61,7 @@ export default function inspectCollapsed(object, shallow) {
         }
         span.appendChild(document.createTextNode(": "));
       }
-      span.appendChild(inspect(object[key], true));
+      span.appendChild(inspect(maybeProperty(object, key), true));
     }
   }
 
