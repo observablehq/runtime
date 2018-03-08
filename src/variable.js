@@ -16,6 +16,8 @@ export default function Variable(type, module, node) {
     _generator: {value: undefined, writable: true},
     _indegree: {value: 0, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
+    _interrupt: {value: null, writable: true},
+    _interrupted: {value: null, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
     _node: {value: node},
@@ -30,9 +32,11 @@ export default function Variable(type, module, node) {
 }
 
 Object.defineProperties(Variable.prototype, {
+  _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
-  import: {value: variable_import, writable: true, configurable: true}
+  import: {value: variable_import, writable: true, configurable: true},
+  interrupt: {get: variable_interrupt, configurable: true}
 });
 
 function variable_attach(variable) {
@@ -43,6 +47,22 @@ function variable_attach(variable) {
 function variable_detach(variable) {
   variable._module._runtime._dirty.add(variable);
   variable._outputs.delete(this);
+}
+
+function variable_resolve(name) {
+  return name === "self"
+      ? new Variable(TYPE_IMPLICIT, this._module).define(this)
+      : this._module._resolve(name);
+}
+
+function variable_interrupt() {
+  return this._interrupt || variable_interrupter(this);
+}
+
+function variable_interrupter(variable) {
+  return variable._interrupt = new Promise(function(resolve) {
+    variable._interrupted = resolve;
+  });
 }
 
 function variable_undefined() {
@@ -77,7 +97,7 @@ function variable_define(name, inputs, definition) {
   }
   return variable_defineImpl.call(this,
     name == null ? null : name + "",
-    inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
+    inputs == null ? [] : map.call(inputs, this._resolve, this),
     typeof definition === "function" ? definition : constant(definition)
   );
 }
@@ -101,7 +121,7 @@ function variable_defineImpl(name, inputs, definition) {
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
         scope.delete(this._name);
-        found = this._module._resolve(this._name);
+        found = this._resolve(this._name);
         found._outputs = this._outputs, this._outputs = new Set;
         found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = found; }, this);
         found._outputs.forEach(runtime._updates.add, runtime._updates);
