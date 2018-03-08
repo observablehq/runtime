@@ -124,6 +124,11 @@ function variable_value(variable) {
 
 function variable_compute(variable) {
   var version = ++variable._version;
+  if (variable._interrupted) {
+    variable._interrupted();
+    variable._interrupted = null;
+    variable._interrupt = null;
+  }
   if (variable._generator) {
     variable._generator.return();
     variable._generator = null;
