@@ -4,7 +4,7 @@ import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT} from "./variable";
+import Variable, {TYPE_IMPLICIT, variable_interrupt} from "./variable";
 
 export default function(builtins) {
   return new Runtime(builtins);
@@ -122,9 +122,21 @@ function variable_value(variable) {
   return variable._promise.catch(variable._rejector);
 }
 
+function variable_local(value) {
+  return value === variable_interrupt
+      ? this._interrupt || variable_interrupter(this)
+      : value;
+}
+
+function variable_interrupter(variable) {
+  return variable._interrupt = new Promise(function(resolve, reject) {
+    variable._interrupted = reject;
+  });
+}
+
 function variable_compute(variable) {
   var version = ++variable._version;
-  if (variable._interrupted) {
+  if (variable._interrupt) {
     variable._interrupted();
     variable._interrupted = null;
     variable._interrupt = null;
@@ -139,7 +151,7 @@ function variable_compute(variable) {
   var value0 = variable._value;
   var promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
-    var value = variable._definition.apply(value0, inputs);
+    var value = variable._definition.apply(value0, inputs.map(variable_local, variable));
     if (generatorish(value)) {
       var generator = variable._generator = value;
       return new Promise(function(resolve) {
