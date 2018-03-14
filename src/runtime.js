@@ -65,9 +65,8 @@ function runtime_computeNow() {
     const reachable = variable_reachable(variable);
     if (reachable > variable._reachable) {
       this._updates.add(variable);
-    } else if (reachable < variable._reachable && variable._generator) {
-      variable._generator.return();
-      variable._generator = undefined;
+    } else if (reachable < variable._reachable) {
+      variable._interrupt();
     }
     variable._reachable = reachable;
   }, this);
@@ -123,42 +122,25 @@ function variable_value(variable) {
 }
 
 function variable_local(value) {
-  return value === variable_interrupt
-      ? this._interrupt || variable_interrupter(this)
-      : value;
-}
-
-function variable_interrupter(variable) {
-  return variable._interrupt = new Promise(function(resolve, reject) {
-    variable._interrupted = reject;
-  });
+  return value === variable_interrupt ? this : value;
 }
 
 function variable_compute(variable) {
-  var version = ++variable._version;
-  if (variable._interrupt) {
-    variable._interrupted();
-    variable._interrupted = null;
-    variable._interrupt = null;
-  }
-  if (variable._generator) {
-    variable._generator.return();
-    variable._generator = null;
-  }
-  if (variable._node) {
-    variable._node.classList.add("O--running");
-  }
-  var value0 = variable._value;
-  var promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+  variable._interrupt();
+  if (variable._node) variable._node.classList.add("O--running");
+  var value0 = variable._value,
+      version = ++variable._version,
+      interrupt = new Promise(function(resolve) { variable._interrupt = resolve; }),
+      promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
-    var value = variable._definition.apply(value0, inputs.map(variable_local, variable));
+    var value = variable._definition.apply(value0, inputs.map(variable_local, interrupt));
     if (generatorish(value)) {
-      var generator = variable._generator = value;
+      interrupt.then(variable_return(value));
       return new Promise(function(resolve) {
-        resolve(generator.next());
+        resolve(value.next());
       }).then(function(next) {
         if (next.done) return;
-        promise.then(variable_recompute(variable, version, generator));
+        promise.then(variable_recompute(variable, version, value));
         return Promise.resolve(next.value);
       });
     }
@@ -201,6 +183,12 @@ function variable_postrecompute(variable, value, promise) {
   variable._promise = promise;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   return runtime._compute();
+}
+
+function variable_return(generator) {
+  return function() {
+    generator.return();
+  };
 }
 
 function variable_reachable(variable) {

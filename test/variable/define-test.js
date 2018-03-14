@@ -202,7 +202,8 @@ tape("variable.define does not terminate reachable generators", {html: "<div id=
   test.deepEqual(await valueof(foo), {value: "foo"});
   test.deepEqual(await valueof(baz), {value: 1});
   test.equal(returned, false);
-  bar._generator.return();
+  bar._interrupt();
+  await new Promise(setImmediate);
   test.equal(returned, true);
 });
 
@@ -259,7 +260,7 @@ tape("variable.define supports generators", {html: "<div id=foo />"}, async test
   test.deepEqual(await valueof(foo), {value: 2});
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
-  foo._generator.return();
+  foo._interrupt();
 });
 
 tape("variable.define supports asynchronous generators", {html: "<div id=foo />"}, async test => {
@@ -273,7 +274,7 @@ tape("variable.define supports asynchronous generators", {html: "<div id=foo />"
   test.deepEqual(await valueof(foo), {value: 2});
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
-  foo._generator.return();
+  foo._interrupt();
 });
 
 tape("variable.define allows a variable to be redefined", {html: "<div id=foo /><div id=bar />"}, async test => {
