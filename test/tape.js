@@ -28,6 +28,7 @@ function wrap({html = ""} = {}, run) {
     global.Node = window.Node;
     try {
       await run(test);
+      await new Promise(resolve => setTimeout(resolve, 20));
     } finally {
       delete global.requestAnimationFrame;
       delete global.window;

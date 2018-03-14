@@ -15,16 +15,14 @@ export default function Variable(type, module, node) {
     _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
-    _generator: {value: undefined, writable: true},
     _indegree: {value: 0, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
-    _interrupt: {value: null, writable: true},
-    _interrupted: {value: null, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
     _node: {value: node},
     _outputs: {value: new Set, writable: true},
     _promise: {value: undefined, writable: true},
+    _interrupt: {value: noop, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
@@ -96,12 +94,11 @@ function variable_define(name, inputs, definition) {
 function variable_defineImpl(name, inputs, definition) {
   var scope = this._module._scope, runtime = this._module._runtime;
 
-  this._promise = this._value = undefined;
-  if (this._generator) this._generator.return(), this._generator = undefined;
   this._inputs.forEach(variable_detach, this);
   inputs.forEach(variable_attach, this);
   this._inputs = inputs;
   this._definition = definition;
+  this._value = undefined;
 
   // Did the variable’s name change? Time to patch references!
   if (name == this._name && scope.get(name) === this) {

@@ -37,5 +37,5 @@ tape("runtime(builtins) allows builtins to be defined as generators", {html: "<d
   test.deepEqual(await valueof(foo), {value: 2});
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
-  runtime._builtin._scope.get("i")._generator.return();
+  runtime._builtin._scope.get("i")._interrupt();
 });
