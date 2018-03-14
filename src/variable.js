@@ -8,7 +8,7 @@ export var TYPE_NORMAL = 1; // a normal variable
 export var TYPE_IMPLICIT = 2; // created on reference
 export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
-export var variable_interrupt = {};
+export var variable_invalidate = {};
 
 export default function Variable(type, module, node) {
   Object.defineProperties(this, {
@@ -22,7 +22,7 @@ export default function Variable(type, module, node) {
     _node: {value: node},
     _outputs: {value: new Set, writable: true},
     _promise: {value: undefined, writable: true},
-    _interrupt: {value: noop, writable: true},
+    _invalidate: {value: noop, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
@@ -49,8 +49,8 @@ function variable_detach(variable) {
 }
 
 function variable_resolve(name) {
-  return name === "interrupt"
-      ? new Variable(TYPE_IMPLICIT, this._module).define(variable_interrupt)
+  return name === "invalidation"
+      ? new Variable(TYPE_IMPLICIT, this._module).define(variable_invalidate)
       : this._module._resolve(name);
 }
 

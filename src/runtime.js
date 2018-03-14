@@ -4,7 +4,7 @@ import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, variable_interrupt} from "./variable";
+import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
 export default function(builtins) {
   return new Runtime(builtins);
@@ -66,7 +66,7 @@ function runtime_computeNow() {
     if (reachable > variable._reachable) {
       this._updates.add(variable);
     } else if (reachable < variable._reachable) {
-      variable._interrupt();
+      variable._invalidate();
     }
     variable._reachable = reachable;
   }, this);
@@ -121,21 +121,35 @@ function variable_value(variable) {
   return variable._promise.catch(variable._rejector);
 }
 
-function variable_local(value) {
-  return value === variable_interrupt ? this : value;
+function variable_invalidater(variable) {
+  return new Promise(function(resolve) {
+    variable._invalidate = resolve;
+  });
 }
 
 function variable_compute(variable) {
-  variable._interrupt();
+  variable._invalidate();
+  variable._invalidate = noop;
   if (variable._node) variable._node.classList.add("O--running");
   var value0 = variable._value,
       version = ++variable._version,
-      interrupt = new Promise(function(resolve) { variable._interrupt = resolve; }),
       promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
-    var value = variable._definition.apply(value0, inputs.map(variable_local, interrupt));
+
+    // Initialize the invalidation promise lazily.
+    for (var i = 0, n = inputs.length, invalidate = null; i < n; ++i) {
+      if (inputs[i] === variable_invalidate) {
+        inputs[i] = invalidate = variable_invalidater(variable);
+        break;
+      }
+    }
+
+    var value = variable._definition.apply(value0, inputs);
+
+    // If the value is a generator, then retrieve its first value,
+    // and dispose of the generator if the variable is invalidated.
     if (generatorish(value)) {
-      interrupt.then(variable_return(value));
+      (invalidate || variable_invalidater(variable)).then(variable_return(value));
       return new Promise(function(resolve) {
         resolve(value.next());
       }).then(function(next) {
@@ -144,6 +158,7 @@ function variable_compute(variable) {
         return Promise.resolve(next.value);
       });
     }
+
     return value;
   });
   promise.then(function(value) {

@@ -28,7 +28,7 @@ tape("runtime(builtins) allows builtins to be defined as async functions", {html
 
 tape("runtime(builtins) allows builtins to be defined as generators", {html: "<div id=foo />"}, async test => {
   let i = 0;
-  const runtime = createRuntime({i: function*() { while (true) yield ++i; }});
+  const runtime = createRuntime({i: function*() { while (i < 3) yield ++i; }});
   const main = runtime.module();
   const foo = main.variable("#foo").define(null, ["i"], i => i);
   await new Promise(setImmediate);
@@ -37,5 +37,4 @@ tape("runtime(builtins) allows builtins to be defined as generators", {html: "<d
   test.deepEqual(await valueof(foo), {value: 2});
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
-  runtime._builtin._scope.get("i")._interrupt();
 });
