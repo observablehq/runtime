@@ -17,12 +17,12 @@ export default function Variable(type, module, node) {
     _duplicates: {value: undefined, writable: true},
     _indegree: {value: 0, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
+    _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
     _node: {value: node},
     _outputs: {value: new Set, writable: true},
     _promise: {value: undefined, writable: true},
-    _invalidate: {value: noop, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
