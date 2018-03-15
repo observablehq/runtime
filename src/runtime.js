@@ -136,7 +136,7 @@ function variable_compute(variable) {
       promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
 
-    // Initialize the invalidation promise lazily.
+    // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length, invalidate = null; i < n; ++i) {
       if (inputs[i] === variable_invalidate) {
         inputs[i] = invalidate = variable_invalidater(variable);
@@ -144,19 +144,13 @@ function variable_compute(variable) {
       }
     }
 
-    var value = variable._definition.apply(value0, inputs);
-
+    // Compute the initial value of the variable.
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
+    var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
       (invalidate || variable_invalidater(variable)).then(variable_return(value));
-      return new Promise(function(resolve) {
-        resolve(value.next());
-      }).then(function(next) {
-        if (next.done) return;
-        promise.then(variable_recompute(variable, version, value));
-        return Promise.resolve(next.value);
-      });
+      return variable_precompute(variable, version, promise, value);
     }
 
     return value;
@@ -172,8 +166,8 @@ function variable_compute(variable) {
   });
 }
 
-function variable_recompute(variable, version, generator) {
-  return function recompute() {
+function variable_precompute(variable, version, promise, generator) {
+  function recompute() {
     var promise = new Promise(function(resolve) {
       resolve(generator.next());
     }).then(function(next) {
@@ -189,7 +183,14 @@ function variable_recompute(variable, version, generator) {
       variable_postrecompute(variable, undefined, promise);
       variable_displayError(variable, error);
     });
-  };
+  }
+  return new Promise(function(resolve) {
+    resolve(generator.next());
+  }).then(function(next) {
+    if (next.done) return;
+    promise.then(recompute);
+    return Promise.resolve(next.value);
+  });
 }
 
 function variable_postrecompute(variable, value, promise) {
