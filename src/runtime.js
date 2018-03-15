@@ -4,7 +4,7 @@ import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
+import Variable, {TYPE_IMPLICIT, variable_invalidation, variable_requestAnimationFrame} from "./variable";
 
 export default function(builtins) {
   return new Runtime(builtins);
@@ -121,10 +121,27 @@ function variable_value(variable) {
   return variable._promise.catch(variable._rejector);
 }
 
-function variable_invalidater(variable) {
+function variable_invalidate(variable) {
   return new Promise(function(resolve) {
     variable._invalidate = resolve;
   });
+}
+
+function variable_requestAnimationFramer(invalidate) {
+  var handles = new Set, invalid = false;
+  invalidate.then(function() {
+    invalid = true;
+    handles.forEach(cancelAnimationFrame);
+    handles.clear();
+  });
+  return function(callback) {
+    if (invalid) throw new Error("invalidated");
+    var handle = requestAnimationFrame(function() {
+      handles.delete(handle);
+      callback.apply(this, arguments);
+    });
+    handles.add(handle);
+  };
 }
 
 function variable_compute(variable) {
@@ -138,9 +155,16 @@ function variable_compute(variable) {
 
     // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length, invalidate = null; i < n; ++i) {
-      if (inputs[i] === variable_invalidate) {
-        inputs[i] = invalidate = variable_invalidater(variable);
-        break;
+      switch (inputs[i]) {
+        case variable_invalidation: {
+          inputs[i] = invalidate || (invalidate = variable_invalidate(variable));
+          break;
+        }
+        case variable_requestAnimationFrame: {
+          if (!invalidate) invalidate = variable_invalidate(variable);
+          inputs[i] = variable_requestAnimationFramer(invalidate);
+          break;
+        }
       }
     }
 
@@ -149,7 +173,8 @@ function variable_compute(variable) {
     // and dispose of the generator if the variable is invalidated.
     var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
-      (invalidate || variable_invalidater(variable)).then(variable_return(value));
+      if (!invalidate) invalidate = variable_invalidate(variable);
+      invalidate.then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
 
