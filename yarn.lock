@@ -2,10 +2,6 @@
 # yarn lockfile v1
 
 
-"@std/esm@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@std/esm/-/esm-0.16.0.tgz#2a7a33ecb7f1701cebd4c87df6d0d945ed51f730"
-
 "@types/node@*":
   version "8.0.53"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.53.tgz#396b35af826fa66aad472c8cb7b8d5e277f4e6d8"
@@ -436,6 +432,10 @@ eslint@^4.12.1:
     strip-json-comments "~2.0.1"
     table "^4.0.1"
     text-table "~0.2.0"
+
+esm@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/esm/-/esm-3.0.5.tgz#5a700ef30d0cd130140aae14bafe7e8bbdf840bf"
 
 espree@^3.5.2:
   version "3.5.2"

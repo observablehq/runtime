@@ -7,16 +7,16 @@
     "name": "Observable, Inc."
   },
   "scripts": {
-    "test": "tape -r @std/esm 'test/**/*-test.js'",
+    "test": "tape -r esm 'test/**/*-test.js'",
     "precommit": "eslint . && yarn test",
     "prepare": "rollup -c"
   },
-  "@std/esm": {
-    "esm": "js",
+  "esm": {
+    "mode": "all",
     "cjs": true
   },
   "dependencies": {
-    "@std/esm": "^0.16.0",
+    "esm": "^3.0.5",
     "d3-time-format": "^2.1.1"
   },
   "devDependencies": {
