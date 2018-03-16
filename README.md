@@ -203,3 +203,5 @@ export default {
   ]
 }
 ```
+
+A notebook module can be loaded by the runtime by calling `runtime.load(notebook)`.
