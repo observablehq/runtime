@@ -31,7 +31,7 @@ export default function inspectFunction(f) {
   // An arrow function with parenthesized arguments.
   // (…)
   // async (…)
-  if (m = /^(?:async\s*)?\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
+  if (m = /^(?:async\s*)?\((.*)\)/.exec(t)) {
     return formatFunction(type, m[1] ? "(" + m[1].replace(/\s*,\s*/g, ", ") + ")" : "()");
   }
 
@@ -40,7 +40,7 @@ export default function inspectFunction(f) {
   // function* name(…)
   // async function name(…)
   // async function* name(…)
-  if (m = /^(?:async\s*)?function(?:\s*\*)?(?:\s*\w+)?\s*\(\s*(\w+(?:\s*,\s*\w+)*)?\s*\)/.exec(t)) {
+  if (m = /^(?:async\s*)?function(?:\s*\*)?(?:\s*\w+)?\s*\((.*)\)/.exec(t)) {
     return formatFunction(type, (f.name || "") + (m[1] ? "(" + m[1].replace(/\s*,\s*/g, ", ") + ")" : "()"));
   }
 
