@@ -6,11 +6,12 @@ import inspect, {replace} from "./index";
 import isArrayIndex from "./isArrayIndex";
 import isArrayLike from "./isArrayLike";
 import {maybeProperty} from "./forbidden";
+import tagof from "./tagof";
 
 export default function inspectExpanded(object) {
   var span = document.createElement("span"),
       arrayLike = isArrayLike(object),
-      tag = object[Symbol.toStringTag] || object.constructor.name,
+      tag = tagof(object),
       fields,
       n;
 

@@ -5,11 +5,12 @@ import isArrayLike from "./isArrayLike";
 import getKeysAndSymbols from "./getKeysAndSymbols";
 import formatSymbol from "./formatSymbol";
 import {maybeProperty} from "./forbidden";
+import tagof from "./tagof";
 
 export default function inspectCollapsed(object, shallow) {
   var span = document.createElement("span"),
       arrayLike = isArrayLike(object),
-      tag = object[Symbol.toStringTag] || object.constructor.name,
+      tag = tagof(object),
       n;
 
   if (object instanceof Map || object instanceof Set) tag += `(${object.size})`;
