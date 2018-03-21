@@ -1,108 +1,129 @@
 import dispatch from "../dispatch";
+import {isarray, isindex} from "./array";
 import inspectCollapsed from "./collapsed";
 import formatSymbol from "./formatSymbol";
-import getKeysAndSymbols from "./getKeysAndSymbols";
 import inspect, {replace} from "./index";
-import isArrayIndex from "./isArrayIndex";
-import isArrayLike from "./isArrayLike";
-import {maybeProperty} from "./forbidden";
-import tagof from "./tagof";
+import {isown, symbolsof, tagof, valueof} from "./object";
 
 export default function inspectExpanded(object) {
-  var span = document.createElement("span"),
-      arrayLike = isArrayLike(object),
-      tag = tagof(object),
-      fields,
-      n;
-
-  span.className = "O--expanded";
+  const arrayish = isarray(object);
+  let tag, fields, next;
 
   if (object instanceof Map) {
-    n = object.size;
-    tag += `(${n})`;
-    fields = mapFields(object);
+    tag = `Map(${object.size})`;
+    fields = iterateMap;
   } else if (object instanceof Set) {
-    n = object.size;
-    tag += `(${n})`;
-    fields = setFields(object);
+    tag = `Set(${object.size})`;
+    fields = iterateSet;
+  } else if (arrayish) {
+    tag = `${object.constructor.name}(${object.length})`;
+    fields = iterateArray;
   } else {
-    n = getKeysAndSymbols(object).length;
-    if (arrayLike) tag += `(${n})`;
-    fields = objectFields(object);
+    tag = tagof(object);
+    fields = iterateObject;
   }
 
-  var a = span.appendChild(document.createElement("a"));
-  a.textContent = `▾${tag}${arrayLike ? " [" : " {"}`;
-  a.addEventListener("mouseup", function clicked(event) {
+  const span = document.createElement("span");
+  span.className = "O--expanded";
+  const a = span.appendChild(document.createElement("a"));
+  a.textContent = `▾${tag}${arrayish ? " [" : " {"}`;
+  a.addEventListener("mouseup", function(event) {
     event.stopPropagation();
     replace(span, inspectCollapsed(object));
   });
 
-  for (var i = 0, j = Math.min(20, n); i < j; ++i) {
-    span.appendChild(fields.next().value);
+  fields = fields(object);
+  for (let i = 0; !(next = fields.next()).done && i < 20; ++i) {
+    span.appendChild(next.value);
   }
 
-  if (i < n) {
-    var a = span.appendChild(document.createElement("a"));
+  if (!next.done) {
+    const a = span.appendChild(document.createElement("a"));
     a.className = "O--field";
     a.style.display = "block";
-    a.appendChild(document.createTextNode(`  … ${n - i} more`));
-    a.addEventListener("mouseup", function clicked(event) {
+    a.appendChild(document.createTextNode(`  … more`));
+    a.addEventListener("mouseup", function(event) {
       event.stopPropagation();
-      for (var j = Math.min(i + 20, n); i < j; ++i) {
-        span.insertBefore(fields.next().value, span.lastChild.previousSibling);
+      span.insertBefore(next.value, span.lastChild.previousSibling);
+      for (let i = 0; !(next = fields.next()).done && i < 19; ++i) {
+        span.insertBefore(next.value, span.lastChild.previousSibling);
       }
-      if (i < n) {
-        span.lastChild.previousSibling.textContent = `  … ${n - i} more`;
-      } else {
-        span.removeChild(span.lastChild.previousSibling);
-      }
+      if (next.done) span.removeChild(span.lastChild.previousSibling);
       dispatch(span, "load");
     });
   }
 
-  span.appendChild(document.createTextNode(arrayLike ? "]" : "}"));
+  span.appendChild(document.createTextNode(arrayish ? "]" : "}"));
 
   return span;
 }
 
-function* mapFields(object) {
-  for (var [key, value] of object.entries()) {
-    var item = document.createElement("div");
-    item.className = "O--field";
-    item.appendChild(document.createTextNode("  "));
-    item.appendChild(inspect(key));
-    item.appendChild(document.createTextNode(" => "));
-    item.appendChild(inspect(value));
-    yield item;
+function* iterateMap(map) {
+  for (const [key, value] of map) {
+    yield formatMapField(key, value);
   }
+  yield* iterateObject(map);
 }
 
-function* setFields(object) {
-  for (var value of object.values()) {
-    var item = document.createElement("div");
-    item.className = "O--field";
-    item.appendChild(document.createTextNode("  "));
-    item.appendChild(inspect(value));
-    yield item;
+function* iterateSet(set) {
+  for (const value of set) {
+    yield formatSetField(value);
   }
+  yield* iterateObject(set);
 }
 
-function* objectFields(object) {
-  var array = isArrayLike(object);
-  for (var key of getKeysAndSymbols(object)) {
-    var item = document.createElement("div"),
-        span = item.appendChild(document.createElement("span"));
-    item.className = "O--field";
-    if (typeof key === "symbol") {
-      span.className = "O--symbol";
-      span.textContent = `  ${formatSymbol(key)}`;
-    } else {
-      span.className = `O--${array && isArrayIndex(key) ? "index" : "key"}`;
-      span.textContent = `  ${key}`;
+function* iterateArray(array) {
+  for (let i = 0, n = array.length; i < n; ++i) {
+    if (i in array) {
+      yield formatField(i, valueof(array, i), "O--index");
     }
-    item.appendChild(document.createTextNode(": "));
-    item.appendChild(inspect(maybeProperty(object, key)));
-    yield item;
   }
+  for (const key in array) {
+    if (!isindex(key) && isown(array, key)) {
+      yield formatField(key, valueof(array, key), "O--key");
+    }
+  }
+  for (const symbol of symbolsof(array)) {
+    yield formatField(formatSymbol(symbol), valueof(array, symbol), "O--symbol");
+  }
+}
+
+function* iterateObject(object) {
+  for (const key in object) {
+    if (isown(object, key)) {
+      yield formatField(key, valueof(object, key), "O--key");
+    }
+  }
+  for (const symbol of symbolsof(object)) {
+    yield formatField(formatSymbol(symbol), valueof(object, symbol), "O--symbol");
+  }
+}
+
+function formatField(key, value, className) {
+  const item = document.createElement("div");
+  const span = item.appendChild(document.createElement("span"));
+  item.className = "O--field";
+  span.className = className;
+  span.textContent = `  ${key}`;
+  item.appendChild(document.createTextNode(": "));
+  item.appendChild(inspect(value));
+  return item;
+}
+
+function formatMapField(key, value) {
+  const item = document.createElement("div");
+  item.className = "O--field";
+  item.appendChild(document.createTextNode("  "));
+  item.appendChild(inspect(key));
+  item.appendChild(document.createTextNode(" => "));
+  item.appendChild(inspect(value));
+  return item;
+}
+
+function formatSetField(value) {
+  const item = document.createElement("div");
+  item.className = "O--field";
+  item.appendChild(document.createTextNode("  "));
+  item.appendChild(inspect(value));
+  return item;
 }

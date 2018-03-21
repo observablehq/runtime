@@ -1,78 +1,122 @@
+import {isarray, isindex} from "./array";
 import inspectExpanded from "./expanded";
-import inspect, {replace} from "./index";
-import isArrayIndex from "./isArrayIndex";
-import isArrayLike from "./isArrayLike";
-import getKeysAndSymbols from "./getKeysAndSymbols";
 import formatSymbol from "./formatSymbol";
-import {maybeProperty} from "./forbidden";
-import tagof from "./tagof";
+import inspect, {replace} from "./index";
+import {isown, symbolsof, tagof, valueof} from "./object";
 
 export default function inspectCollapsed(object, shallow) {
-  var span = document.createElement("span"),
-      arrayLike = isArrayLike(object),
-      tag = tagof(object),
-      n;
+  const arrayish = isarray(object);
+  let tag, fields, next;
 
-  if (object instanceof Map || object instanceof Set) tag += `(${object.size})`;
-  else if (arrayLike) tag += `(${object.length})`;
+  if (object instanceof Map) {
+    tag = `Map(${object.size})`;
+    fields = iterateMap;
+  } else if (object instanceof Set) {
+    tag = `Set(${object.size})`;
+    fields = iterateSet;
+  } else if (arrayish) {
+    tag = `${object.constructor.name}(${object.length})`;
+    fields = iterateArray;
+  } else {
+    tag = tagof(object);
+    fields = iterateObject;
+  }
 
   if (shallow) {
-    span.appendChild(document.createTextNode(tag));
+    const span = document.createElement("span");
     span.className = "O--shallow";
-    span.addEventListener("mouseup", function clicked(event) {
+    span.appendChild(document.createTextNode(tag));
+    span.addEventListener("mouseup", function(event) {
       event.stopPropagation();
       replace(span, inspectCollapsed(object));
     });
     return span;
   }
 
-  var a = span.appendChild(document.createElement("a"));
-  a.textContent = `▸${tag}${arrayLike ? " [" : " {"}`;
+  const span = document.createElement("span");
   span.className = "O--collapsed";
-
-  if (object instanceof Set) {
-    var values = object.values();
-    for (var i = 0, j = Math.min(20, n = object.size); i < j; ++i) {
-      var {value} = values.next();
-      if (i > 0) span.appendChild(document.createTextNode(", "));
-      span.appendChild(inspect(value, true));
-    }
-  } else if (object instanceof Map) {
-    var entries = object.entries();
-    for (var i = 0, j = Math.min(20, n = object.size); i < j; ++i) {
-      var {value: [key, value]} = entries.next();
-      if (i > 0) span.appendChild(document.createTextNode(", "));
-      span.appendChild(inspect(key, true));
-      span.appendChild(document.createTextNode(" => "));
-      span.appendChild(inspect(value, true));
-    }
-  } else {
-    var keys = getKeysAndSymbols(object); // TODO Show missing entries in sparse arrays?
-    for (var i = 0, j = Math.min(20, n = keys.length); i < j; ++i) {
-      if (i > 0) span.appendChild(document.createTextNode(", "));
-      var key = keys[i];
-      if (!arrayLike || !isArrayIndex(key)) {
-        var spanKey = span.appendChild(document.createElement("span"));
-        if (typeof key === "symbol") {
-          spanKey.className = "O--symbol";
-          spanKey.textContent = formatSymbol(key);
-        } else {
-          spanKey.className = "O--key";
-          spanKey.textContent = key;
-        }
-        span.appendChild(document.createTextNode(": "));
-      }
-      span.appendChild(inspect(maybeProperty(object, key), true));
-    }
-  }
-
-  if (i < n) span.appendChild(document.createTextNode(", …"));
-  span.appendChild(document.createTextNode(arrayLike ? "]" : "}"));
-
-  span.addEventListener("mouseup", function clicked(event) {
+  const a = span.appendChild(document.createElement("a"));
+  a.textContent = `▸${tag}${arrayish ? " [" : " {"}`;
+  span.addEventListener("mouseup", function(event) {
     event.stopPropagation();
     replace(span, inspectExpanded(object));
   }, true);
 
+  fields = fields(object);
+  for (let i = 0; !(next = fields.next()).done && i < 20; ++i) {
+    if (i > 0) span.appendChild(document.createTextNode(", "));
+    span.appendChild(next.value);
+  }
+
+  if (!next.done) span.appendChild(document.createTextNode(", …"));
+  span.appendChild(document.createTextNode(arrayish ? "]" : "}"));
+
   return span;
+}
+
+function* iterateMap(map) {
+  for (const [key, value] of map) {
+    yield formatMapField(key, value);
+  }
+  yield* iterateObject(map);
+}
+
+function* iterateSet(set) {
+  for (const value of set) {
+    yield inspect(value, true);
+  }
+  yield* iterateObject(set);
+}
+
+function* iterateArray(array) {
+  for (let i0 = -1, i1 = 0, n = array.length; i1 < n; ++i1) {
+    if (i1 in array) {
+      let e = i1 - i0 - 1;
+      if (e > 0) {
+        const span = document.createElement("span");
+        span.className = "O--empty";
+        span.textContent = e === 1 ? "empty" : `empty × ${i1 - i0 - 1}`;
+        yield span;
+      }
+      yield inspect(valueof(array, i1), true);
+      i0 = i1;
+    }
+  }
+  for (const key in array) {
+    if (!isindex(key) && isown(array, key)) {
+      yield formatField(key, valueof(array, key), "O--key");
+    }
+  }
+  for (const symbol of symbolsof(array)) {
+    yield formatField(formatSymbol(symbol), valueof(array, symbol), "O--symbol");
+  }
+}
+
+function* iterateObject(object) {
+  for (const key in object) {
+    if (isown(object, key)) {
+      yield formatField(key, valueof(object, key), "O--key");
+    }
+  }
+  for (const symbol of symbolsof(object)) {
+    yield formatField(formatSymbol(symbol), valueof(object, symbol), "O--symbol");
+  }
+}
+
+function formatField(key, value, className) {
+  const fragment = document.createDocumentFragment();
+  const span = fragment.appendChild(document.createElement("span"));
+  span.className = className;
+  span.textContent = key;
+  fragment.appendChild(document.createTextNode(": "));
+  fragment.appendChild(inspect(value, true));
+  return fragment;
+}
+
+function formatMapField(key, value) {
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(inspect(key, true));
+  fragment.appendChild(document.createTextNode(" => "));
+  fragment.appendChild(inspect(value, true));
+  return fragment;
 }

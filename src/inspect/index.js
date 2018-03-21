@@ -7,12 +7,12 @@ import formatRegExp from "./formatRegExp";
 import formatString from "./formatString";
 import formatSymbol from "./formatSymbol";
 import inspectFunction from "./inspectFunction";
-import {FORBIDDEN} from "./forbidden";
+import {FORBIDDEN} from "./object";
 
-var objectToString = Object.prototype.toString;
+const {prototype: {toString}} = Object;
 
 export default function inspect(value, shallow, expand) {
-  var type = typeof value;
+  let type = typeof value;
   switch (type) {
     case "boolean":
     case "number":
@@ -24,7 +24,7 @@ export default function inspect(value, shallow, expand) {
       if (value === null) { type = null, value = "null"; break; }
       if (value instanceof Date) { type = "date", value = formatDate(value); break; }
       if (value === FORBIDDEN) { type = "forbidden", value = "[forbidden]"; break; }
-      switch (objectToString.call(value)) { // TODO Symbol.toStringTag?
+      switch (toString.call(value)) {
         case "[object RegExp]": { type = "regexp", value = formatRegExp(value); break; }
         case "[object Error]": // https://github.com/lodash/lodash/blob/master/isError.js#L26
         case "[object DOMException]": { type = "error", value = formatError(value); break; }
@@ -33,7 +33,7 @@ export default function inspect(value, shallow, expand) {
       break;
     }
   }
-  var span = document.createElement("span");
+  const span = document.createElement("span");
   span.className = `O--${type}`;
   span.textContent = value;
   return span;

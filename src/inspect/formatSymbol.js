@@ -1,6 +1,6 @@
-// Symbol do not coerce to strings, they must be explicitly converted.
-var symbolToString = Symbol.prototype.toString;
+const symbolToString = Symbol.prototype.toString;
 
-export default function formatSymbol(value) {
-  return symbolToString.call(value);
+// Symbols do not coerce to strings; they must be explicitly converted.
+export default function formatSymbol(symbol) {
+  return symbolToString.call(symbol);
 }
