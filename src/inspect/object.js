@@ -17,7 +17,9 @@ export function tagof(object) {
 
 export function valueof(object, key) {
   try {
-    return object[key]; // TODO Test object[key].constructor is allowed, too?
+    const value = object[key];
+    if (value) value.constructor; // Test for SecurityError.
+    return value;
   } catch (ignore) {
     return FORBIDDEN;
   }
