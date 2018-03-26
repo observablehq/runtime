@@ -121,7 +121,7 @@ function variable_value(variable) {
   return variable._promise.catch(variable._rejector);
 }
 
-function variable_invalidater(variable) {
+function variable_invalidator(variable) {
   return new Promise(function(resolve) {
     variable._invalidate = resolve;
   });
@@ -139,7 +139,7 @@ function variable_compute(variable) {
     // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length, invalidate = null; i < n; ++i) {
       if (inputs[i] === variable_invalidate) {
-        inputs[i] = invalidate = variable_invalidater(variable);
+        inputs[i] = invalidate = variable_invalidator(variable);
         break;
       }
     }
@@ -149,7 +149,7 @@ function variable_compute(variable) {
     // and dispose of the generator if the variable is invalidated.
     var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
-      (invalidate || variable_invalidater(variable)).then(variable_return(value));
+      (invalidate || variable_invalidator(variable)).then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
 
