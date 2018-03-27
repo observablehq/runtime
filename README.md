@@ -180,28 +180,3 @@ module1.variable().import("foo", "bar", module0);
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
-
-## Notebook Specification
-
-The Observable runtime supports the loading of compiled notebooks as ES modules. When we implement them, a notebook module might look like this:
-
-```js
-export default {
-  title: "Earthquake Map",
-  slug: "earthquake-map",
-  version: 23,
-  id: "adb5b0a0e6dc4b4c",
-  cells: [
-    {
-      name: "map",
-      definition: function(d3, data, ...) {
-        ...
-      },
-      inputs: ["d3", "data"]
-    },
-    ...
-  ]
-}
-```
-
-A notebook module can be loaded by the runtime by calling `runtime.load(notebook)`.
