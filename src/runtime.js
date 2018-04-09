@@ -1,13 +1,23 @@
+import {runtimeLibrary} from "@observablehq/notebook-stdlib";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
+import Mutable from "./mutable";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
-export default function(builtins) {
+const library = runtimeLibrary();
+const {input, observe} = library.Generators;
+const compile = eval;
+
+export default function runtime(builtins) {
   return new Runtime(builtins);
+}
+
+export function standardRuntime() {
+  return runtime(library);
 }
 
 function Runtime(builtins) {
@@ -16,7 +26,8 @@ function Runtime(builtins) {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _builtin: {value: module}
+    _builtin: {value: module},
+    modules: {value: new Map()}
   });
   if (builtins) for (var name in builtins) {
     var builtin = new Variable(TYPE_IMPLICIT, module);
@@ -28,13 +39,33 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
-  module: {value: runtime_module, writable: true, configurable: true}
+  _main: {value: null, writable: true, configurable: true},
+  module: {value: runtime_module, writable: true, configurable: true},
+  main: {value: runtime_main, writable: true, configurable: true},
+  define: {value: cell_define, writable: true, configurable: true},
+  delete: {value: cell_delete, writable: true, configurable: true}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
 
-function runtime_module() {
-  return new Module(this);
+function runtime_module(id) {
+  if (id) {
+    let module = this.modules.get(id);
+    if (!module) this.modules.set(id, (module = this.module()));
+    return module;
+  } else {
+    return new Module(this);
+  }
+}
+
+function runtime_main(id) {
+  if (id) {
+    if (this._main) throw new Error("already initialized");
+    const main = this.module();
+    this.modules.set(id, main);
+    this._main = main;
+  }
+  return this._main;
 }
 
 function runtime_compute() {
@@ -248,4 +279,151 @@ function variable_displayValue(variable, value) {
     }
   }
   dispatch(node, "update");
+}
+
+function cell_define(cell, definition, cell_displayImport) {
+  if (definition.modules) {
+    const imports = [];
+    const module = this.module(definition.id);
+
+    definition.modules.forEach(definition => {
+      const module = this.module(definition.id);
+      definition.values.forEach(definition => {
+        let variable = module._scope.get(definition.name); // TODO Cleaner?
+        if (variable) {
+          variable._exdegree = (variable._exdegree || 0) + 1;
+        } else {
+          variable = module.variable();
+          variable._exdegree = 1;
+        }
+        if (definition.module) {
+          variable.import(
+            definition.remote,
+            definition.name,
+            this.module(definition.module)
+          );
+        } else if (definition.view) {
+          const view = module_variable(module, `viewof ${definition.name}`);
+          cell_defineView(definition, view, variable);
+          imports.push(view);
+        } else if (definition.mutable) {
+          const mutable = module_variable(module, `mutable ${definition.name}`);
+          cell_defineMutable(definition, mutable, variable);
+          imports.push(mutable);
+        } else {
+          variable.define(
+            definition.name,
+            definition.inputs,
+            cell_value(definition)
+          );
+        }
+        imports.push(variable);
+      });
+    });
+
+    definition.imports.forEach(definition => {
+      const variable = this._main.variable();
+      variable._exdegree = 1;
+      variable.import(definition.remote, definition.name, module);
+      imports.push(variable);
+    });
+
+    cell_deleteImports(cell);
+    cell_deleteSource(cell);
+    cell._imports = imports;
+    cell._variable.define(cell_displayImport(definition));
+  } else if (definition.view) {
+    cell_deleteImports(cell);
+    if (!cell._source) cell._source = this._main.variable();
+    cell_defineView(definition, cell._variable, cell._source);
+  } else if (definition.mutable) {
+    cell_deleteImports(cell);
+    if (!cell._source) cell._source = this._main.variable();
+    cell_defineMutable(definition, cell._source, cell._variable);
+  } else {
+    cell_deleteImports(cell);
+    cell_deleteSource(cell);
+    cell._variable.define(
+      definition.name,
+      definition.inputs,
+      cell_value(definition)
+    );
+  }
+}
+
+function cell_delete(cell) {
+  cell_deleteImports(cell);
+  cell_deleteSource(cell);
+  cell._variable.delete();
+}
+
+function module_variable(module, reference) {
+  let variable = module._scope.get(reference); // TODO Cleaner?
+  if (variable) {
+    variable._exdegree = (variable._exdegree || 0) + 1;
+  } else {
+    variable = module.variable();
+    variable._exdegree = 1;
+  }
+  return variable;
+}
+
+function cell_defineView(definition, view, value) {
+  const reference = `viewof ${definition.name}`;
+  view.define(reference, definition.inputs, cell_value(definition));
+  value.define(definition.name, [reference], input);
+}
+
+function cell_defineMutable(definition, initializer, value) {
+  let change,
+    observer = observe(_ => (change = _));
+  const reference = `mutable ${definition.name}`;
+  initializer.define(
+    reference,
+    definition.inputs,
+    variable_mutable(change, definition)
+  );
+  value.define(definition.name, [reference], observer);
+}
+
+// TODO Delete empty modules after detaching?
+function cell_deleteImports(cell) {
+  if (cell._imports) {
+    cell._imports.forEach(import_detach);
+    cell._imports = null;
+  }
+}
+
+function cell_deleteSource(cell) {
+  if (cell._source) {
+    cell._source.delete();
+    cell._source = null;
+  }
+}
+
+function import_detach(variable) {
+  if (--variable._exdegree === 0) {
+    variable.delete();
+  }
+}
+
+function variable_mutable(change, definition) {
+  definition = cell_value(definition);
+  return function() {
+    return new Mutable(change, definition.apply(this, arguments));
+  };
+}
+
+function cell_value(definition) {
+  try {
+    return compile(definition.body);
+  } catch (error) {
+    return rethrow(error);
+  }
+}
+
+function rethrow(error) {
+  return function() {
+    throw error;
+  };
 }
