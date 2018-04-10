@@ -46,6 +46,10 @@ var runtime = O.standardRuntime();
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
+<a href="#runtime-define" name="runtime-define">#</a> <i>runtime</i>.<b>define</b>(cell, definition)
+
+As a high level API, the [runtime](#runtimes) also
+
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.

@@ -281,7 +281,7 @@ function variable_displayValue(variable, value) {
   dispatch(node, "update");
 }
 
-function cell_define(cell, definition, cell_displayImport) {
+function cell_define(cell, definition) {
   cell_deleteImports(cell);
   if (definition.modules) {
     const imports = [];
@@ -381,6 +381,16 @@ function cell_defineMutable(definition, initializer, value) {
     variable_mutable(change, definition)
   );
   value.define(definition.name, [reference], observer);
+}
+
+function cell_displayImport(definition) {
+  const span = document.createElement("span");
+  span.className = "O--inspect O--import";
+  span.appendChild(document.createTextNode("import "));
+  const a = span.appendChild(document.createElement("a"));
+  a.href = `${definition.origin}/${definition.module.replace(/@[0-9]+(?=\?|$)/, "")}`;
+  a.textContent = definition.module;
+  return span;
 }
 
 // TODO Delete empty modules after detaching?
