@@ -282,6 +282,7 @@ function variable_displayValue(variable, value) {
 }
 
 function cell_define(cell, definition, cell_displayImport) {
+  cell_deleteImports(cell);
   if (definition.modules) {
     const imports = [];
     const module = this.module(definition.id);
@@ -328,20 +329,16 @@ function cell_define(cell, definition, cell_displayImport) {
       imports.push(variable);
     });
 
-    cell_deleteImports(cell);
     cell_deleteSource(cell);
     cell._imports = imports;
     cell._variable.define(cell_displayImport(definition));
   } else if (definition.view) {
-    cell_deleteImports(cell);
     if (!cell._source) cell._source = this._main.variable();
     cell_defineView(definition, cell._variable, cell._source);
   } else if (definition.mutable) {
-    cell_deleteImports(cell);
     if (!cell._source) cell._source = this._main.variable();
     cell_defineMutable(definition, cell._source, cell._variable);
   } else {
-    cell_deleteImports(cell);
     cell_deleteSource(cell);
     cell._variable.define(
       definition.name,
