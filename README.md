@@ -34,6 +34,14 @@ This would produce the following output:
 
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
 
+<a href="#standardRuntime" name="standardRuntime">#</a> O.<b>standardRuntime</b>()
+
+Observable comes with a [standard library](https://github.com/observablehq/notebook-stdlib), which provides the built-in functions and objects for the notebook interface. To create a new runtime with the standard library as built-ins:
+
+```js
+var runtime = O.standardRuntime();
+```
+
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
