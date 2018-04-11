@@ -28,7 +28,8 @@ function Runtime(builtins) {
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
     _builtin: {value: module},
-    modules: {value: new Map()}
+    cells: {value: new Map()},
+    modules: {value: new Map()},
   });
   if (builtins) for (var name in builtins) {
     var builtin = new Variable(TYPE_IMPLICIT, module);
@@ -285,7 +286,10 @@ function variable_displayValue(variable, value) {
 }
 
 function cell_declare(id, node) {
-  return new Cell(this.main(), id, node);
+  if (this.cells.has(id)) throw new RuntimeError("duplicate cell");
+  const cell = new Cell(this.main(), id, node);
+  this.cells.set(id, cell);
+  return cell;
 }
 
 function cell_define(cell, definition) {
@@ -395,6 +399,7 @@ function cell_displayImport(definition) {
 }
 
 function cell_delete(cell) {
+  this.cells.delete(cell._id);
   cell_deleteImports(cell);
   cell_deleteSource(cell);
   cell._variable.delete();
