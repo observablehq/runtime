@@ -264,5 +264,6 @@ function variable_displayValue(variable, value) {
 }
 
 function cell_declare(node) {
+  if (typeof node === "string") node = document.querySelector(node);
   return new Cell(this, node);
 }
