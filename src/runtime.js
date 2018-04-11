@@ -10,27 +10,31 @@ import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
 const library = runtimeLibrary();
 
-export default function runtime(builtins) {
-  return new Runtime(builtins);
+export default function runtime(builtins, mainId) {
+  return new Runtime(builtins, mainId);
 }
 
-export function standardRuntime() {
-  return runtime(library);
+export function standardRuntime(mainId) {
+  return runtime(library, mainId);
 }
 
-function Runtime(builtins) {
-  var module = this.module();
+function Runtime(builtins, mainId) {
+  if (mainId == null) mainId = "main";
+  var builtin = this.module();
+  var main = this.module();
+  var modules = new Map();
+  modules.set(mainId, main);
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _builtin: {value: module},
+    _builtin: {value: builtin},
     cells: {value: new Map()},
-    modules: {value: new Map()},
+    main: {value: main},
+    modules: {value: modules},
   });
   if (builtins) for (var name in builtins) {
-    var builtin = new Variable(TYPE_IMPLICIT, module);
-    builtin.define(name, [], builtins[name]);
+    (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);
   }
 }
 
@@ -38,9 +42,7 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
-  _main: {value: null, writable: true, configurable: true},
   module: {value: runtime_module, writable: false},
-  main: {value: runtime_main, writable: false},
   declare: {value: cell_declare, writable: false}
 });
 
@@ -54,17 +56,6 @@ function runtime_module(id) {
   } else {
     return new Module(this);
   }
-}
-
-function runtime_main(id) {
-  if (id) {
-    if (this._main) throw new RuntimeError("already initialized");
-    const main = this.module();
-    this.modules.set(id, main);
-    this._main = main;
-  }
-  if (!this._main) throw new RuntimeError("runtime not initialized");
-  return this._main;
 }
 
 function runtime_compute() {

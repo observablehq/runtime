@@ -10,7 +10,7 @@ export default function Cell(runtime, id, node) {
     _node: {value: node},
     _runtime: {value: runtime},
     _error: {value: undefined, writable: true},
-    _variable: {value: runtime.main().variable(node)},
+    _variable: {value: runtime.main.variable(node)},
     _loaded: {value: false, writable: true},
     _view: {value: null, writable: true},
     _imports: {value: null, writable: true},
@@ -65,7 +65,7 @@ function cell_define(definition) {
     });
 
     definition.imports.forEach(definition => {
-      const variable = this._runtime.main().variable();
+      const variable = this._runtime.main.variable();
       variable._exdegree = 1;
       variable.import(definition.remote, definition.name, module);
       imports.push(variable);
@@ -75,10 +75,10 @@ function cell_define(definition) {
     this._imports = imports;
     this._variable.define(cell_displayImport(definition));
   } else if (definition.view) {
-    if (!this._source) this._source = this._runtime.main().variable();
+    if (!this._source) this._source = this._runtime.main.variable();
     cell_defineView(definition, this._variable, this._source);
   } else if (definition.mutable) {
-    if (!this._source) this._source = this._runtime.main().variable();
+    if (!this._source) this._source = this._runtime.main.variable();
     cell_defineMutable(definition, this._source, this._variable);
   } else {
     cell_deleteSource(this);
