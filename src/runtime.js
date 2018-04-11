@@ -348,12 +348,6 @@ function cell_define(cell, definition) {
   }
 }
 
-function cell_delete(cell) {
-  cell_deleteImports(cell);
-  cell_deleteSource(cell);
-  cell._variable.delete();
-}
-
 function module_variable(module, reference) {
   let variable = module._scope.get(reference); // TODO Cleaner?
   if (variable) {
@@ -391,6 +385,12 @@ function cell_displayImport(definition) {
   a.href = `${definition.origin}/${definition.module.replace(/@[0-9]+(?=\?|$)/, "")}`;
   a.textContent = definition.module;
   return span;
+}
+
+function cell_delete(cell) {
+  cell_deleteImports(cell);
+  cell_deleteSource(cell);
+  cell._variable.delete();
 }
 
 // TODO Delete empty modules after detaching?
