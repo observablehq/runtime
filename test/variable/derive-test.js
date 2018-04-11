@@ -1,9 +1,9 @@
-import {runtime as createRuntime} from "../../";
+import {Runtime} from "../../";
 import tape from "../tape";
 import valueof from "./valueof";
 
 tape("module.derive(overrides, module) injects variables into a copied module", {html: "<div id=a /><div id=b /><div id=c /><div id=c1 />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module0 = runtime.module();
   const a0 = module0.variable("#a").define("a", [], () => 1);
   const b0 = module0.variable("#b").define("b", [], () => 2);

@@ -5,7 +5,7 @@
 <script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = O.runtime(),
+var runtime = new Runtime(),
     module = runtime.module();
 
 module.variable().define("d3", ["require"], require => require("d3-array"));

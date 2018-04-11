@@ -1,9 +1,9 @@
-import {runtime as createRuntime} from "../../";
+import {Runtime} from "../../";
 import tape from "../tape";
 import valueof from "./valueof";
 
 tape("variable.import(name, module) imports a variable from another module", {html: "<div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   module.define("foo", [], () => 42);
@@ -14,7 +14,7 @@ tape("variable.import(name, module) imports a variable from another module", {ht
 });
 
 tape("variable.import(name, alias, module) imports a variable from another module under an alias", {html: "<div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   module.define("foo", [], () => 42);
@@ -25,7 +25,7 @@ tape("variable.import(name, alias, module) imports a variable from another modul
 });
 
 tape("variable.import(name, module) does not compute the imported variable unless referenced", async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const foo = module.define("foo", [], () => test.fail());

@@ -1,4 +1,4 @@
-import {runtimeLibrary} from "@observablehq/notebook-stdlib";
+import Library from "@observablehq/notebook-stdlib";
 import Cell from "./cell";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
@@ -8,17 +8,10 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
-const library = runtimeLibrary();
+const library = new Library();
 
-export default function runtime(builtins, mainId) {
-  return new Runtime(builtins, mainId);
-}
-
-export function standardRuntime(mainId) {
-  return runtime(library, mainId);
-}
-
-function Runtime(builtins, mainId) {
+export default function Runtime(builtins, mainId) {
+  if (builtins == null) builtins = library;
   if (mainId == null) mainId = "main";
   var builtin = this.module();
   var main = this.module();

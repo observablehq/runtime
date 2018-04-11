@@ -6,7 +6,7 @@
 <script src="/build/notebook-runtime.js"></script>
 <script>
 
-var runtime = O.runtime(),
+var runtime = new Runtime(),
     module = runtime.module();
 
 module.variable("#fooview").define("viewof foo", ["DOM"], DOM => DOM.range());

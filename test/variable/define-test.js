@@ -1,9 +1,9 @@
-import {runtime as createRuntime} from "../../";
+import {Runtime} from "../../";
 import tape from "../tape";
 import valueof from "./valueof";
 
 tape("variable.define(name, inputs, definition) can define a variable", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define("foo", [], () => 42);
   await new Promise(setImmediate);
@@ -11,7 +11,7 @@ tape("variable.define(name, inputs, definition) can define a variable", {html: "
 });
 
 tape("variable.define(inputs, function) can define an anonymous variable", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define([], () => 42);
   await new Promise(setImmediate);
@@ -19,7 +19,7 @@ tape("variable.define(inputs, function) can define an anonymous variable", {html
 });
 
 tape("variable.define(name, function) can define a named variable", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define("foo", () => 42);
   const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
@@ -29,7 +29,7 @@ tape("variable.define(name, function) can define a named variable", {html: "<div
 });
 
 tape("variable.define(function) can define an anonymous variable", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define(() => 42);
   await new Promise(setImmediate);
@@ -37,7 +37,7 @@ tape("variable.define(function) can define an anonymous variable", {html: "<div 
 });
 
 tape("variable.define(null, inputs, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define(null, [], 42);
   await new Promise(setImmediate);
@@ -45,7 +45,7 @@ tape("variable.define(null, inputs, value) can define an anonymous constant", {h
 });
 
 tape("variable.define(inputs, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define([], 42);
   await new Promise(setImmediate);
@@ -53,7 +53,7 @@ tape("variable.define(inputs, value) can define an anonymous constant", {html: "
 });
 
 tape("variable.define(null, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define(null, 42);
   await new Promise(setImmediate);
@@ -61,7 +61,7 @@ tape("variable.define(null, value) can define an anonymous constant", {html: "<d
 });
 
 tape("variable.define(value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define(42);
   await new Promise(setImmediate);
@@ -69,7 +69,7 @@ tape("variable.define(value) can define an anonymous constant", {html: "<div id=
 });
 
 tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo");
   const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
@@ -83,7 +83,7 @@ tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar
 });
 
 tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable("#foo").define("foo", 1);
   const bar = module.variable("#bar").define("foo", 2);
@@ -97,7 +97,7 @@ tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=ba
 });
 
 tape("variable.define recomputes reachability as expected", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const quux = module.define("quux", [], () => 42);
@@ -124,7 +124,7 @@ tape("variable.define recomputes reachability as expected", {html: "<div id=foo 
 
 tape("variable.define correctly detects reachability for unreachable cycles", {html: "<div id=foo />"}, async test => {
   let returned = false;
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const bar = module.define("bar", ["baz"], baz => `bar-${baz}`);
@@ -170,7 +170,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", {h
 
 tape("variable.define terminates previously reachable generators", {html: "<div id=foo />"}, async test => {
   let returned = false;
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const bar = module.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
@@ -187,7 +187,7 @@ tape("variable.define terminates previously reachable generators", {html: "<div 
 
 tape("variable.define does not terminate reachable generators", {html: "<div id=foo /><div id=baz />"}, async test => {
   let returned = false;
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const bar = module.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
@@ -208,7 +208,7 @@ tape("variable.define does not terminate reachable generators", {html: "<div id=
 });
 
 tape("variable.define detects duplicate declarations", {html: "<div id=foo /><div id=bar /><div id=baz />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const v1 = main.variable("#foo").define("foo", [], () => 1);
   const v2 = main.variable("#bar").define("foo", [], () => 2);
@@ -220,7 +220,7 @@ tape("variable.define detects duplicate declarations", {html: "<div id=foo /><di
 });
 
 tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const v1 = main.variable("#foo").define("foo", ["baz"], () => 1);
   const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
@@ -230,7 +230,7 @@ tape("variable.define detects missing inputs and erroneous inputs", {html: "<div
 });
 
 tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime({color: "red"});
+  const runtime = new Runtime({color: "red"});
   const main = runtime.module();
   const mask = main.define("color", "green");
   const foo = main.variable("#foo").define(null, ["color"], color => color);
@@ -242,7 +242,7 @@ tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, asy
 });
 
 tape("variable.define supports promises", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], () => new Promise(resolve => setImmediate(() => resolve(42))));
   await new Promise(setImmediate);
@@ -251,7 +251,7 @@ tape("variable.define supports promises", {html: "<div id=foo />"}, async test =
 
 tape("variable.define supports generators", {html: "<div id=foo />"}, async test => {
   let i = 0;
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], function*() { while (i < 3) yield ++i; });
   await new Promise(setImmediate);
@@ -264,7 +264,7 @@ tape("variable.define supports generators", {html: "<div id=foo />"}, async test
 
 tape("variable.define supports asynchronous generators", {html: "<div id=foo />"}, async test => {
   let i = 0;
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
   await new Promise(setImmediate);
@@ -276,7 +276,7 @@ tape("variable.define supports asynchronous generators", {html: "<div id=foo />"
 });
 
 tape("variable.define allows a variable to be redefined", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], () => 1);
   const bar = main.variable("#bar").define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
@@ -290,7 +290,7 @@ tape("variable.define allows a variable to be redefined", {html: "<div id=foo />
 });
 
 tape("variable.define ignores an asynchronous result from a redefined variable", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   await new Promise(setImmediate);
@@ -301,7 +301,7 @@ tape("variable.define ignores an asynchronous result from a redefined variable",
 });
 
 tape("variable.define ignores an asynchronous result from a redefined input", {html: "<div id=foo />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);

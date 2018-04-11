@@ -1,9 +1,9 @@
-import {runtime as createRuntime} from "../../";
+import {Runtime} from "../../";
 import tape from "../tape";
 import valueof from "./valueof";
 
 tape("variable.delete allows a variable to be deleted", {html: "<div id=foo /><div id=bar />"}, async test => {
-  const runtime = createRuntime();
+  const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable("#foo").define("foo", [], () => 1);
   const bar = main.variable("#bar").define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
