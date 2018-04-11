@@ -10,14 +10,14 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 A runtime represents the computational process of a notebook, and is responsible for evaluating [variables](#variables) in topological order whenever their input values change. A runtime typically has a "main" [module](#modules), and may use additional modules to scope these variables. Collectively, these variables represent a reactive program managed by the runtime. At a higher level, a notebook runtime can be defined as a list of [cells](#cells), each of which is responsible for defining one or more variables.
 
-<a href="#runtime" name="runtime">#</a> O.<b>runtime</b>(<i>builtins</i>)
+<a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
 Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
 For example, to create a runtime whose only builtin is `color`:
 
 ```js
-var runtime = O.runtime({color: "red"});
+var runtime = new Runtime({color: "red"});
 ```
 
 To refer to the `color` builtin from a variable:
@@ -36,10 +36,11 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 <a href="#standardRuntime" name="standardRuntime">#</a> O.<b>standardRuntime</b>()
 
-Observable comes with a [standard library](https://github.com/observablehq/notebook-stdlib), which provides the built-in functions and objects for the notebook interface. To create a new runtime with the Observable standard library as built-ins:
+Observable comes with a [standard library](https://github.com/observablehq/notebook-stdlib), which provides the built-in functions and objects for the notebook interface. If you choose not
+to pass a *builtins* object while creating a Runtime, the Observable standard library will be built-in.
 
 ```js
-var runtime = O.standardRuntime();
+var runtime = new Runtime();
 ```
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
@@ -140,7 +141,7 @@ The *definition* function may return a promise; derived variables will be comput
 For example, consider the following module that starts with a single undefined variable, *a*:
 
 ```js
-var runtime = O.runtime(builtins);
+var runtime = new Runtime(builtins);
 
 var module = runtime.module();
 
@@ -178,7 +179,7 @@ Note that the JavaScript symbols in the above example code (*a* and *b*) have no
 If more than one variable has the same *name* at the same time in the same module, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables *a* and *b* will throw a ReferenceError:
 
 ```js
-var module = O.runtime(builtins).module();
+var module = new Runtime(builtins).module();
 var a = module.variable("#a").define("foo", 1);
 var b = module.variable("#b").define("foo", 2);
 ```
@@ -196,7 +197,7 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
 ```js
-var runtime = O.runtime(builtins);
+var runtime = new Runtime(builtins);
 
 var module0 = runtime.module();
 
