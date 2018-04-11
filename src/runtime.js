@@ -1,4 +1,5 @@
 import {runtimeLibrary} from "@observablehq/notebook-stdlib";
+import Cell from "./cell";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
@@ -40,10 +41,11 @@ Object.defineProperties(Runtime.prototype, {
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   _main: {value: null, writable: true, configurable: true},
-  module: {value: runtime_module, writable: true, configurable: true},
-  main: {value: runtime_main, writable: true, configurable: true},
-  define: {value: cell_define, writable: true, configurable: true},
-  delete: {value: cell_delete, writable: true, configurable: true}
+  module: {value: runtime_module, writable: false},
+  main: {value: runtime_main, writable: false},
+  declare: {value: cell_declare, writable: false},
+  define: {value: cell_define, writable: false},
+  delete: {value: cell_delete, writable: false}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
@@ -60,11 +62,12 @@ function runtime_module(id) {
 
 function runtime_main(id) {
   if (id) {
-    if (this._main) throw new Error("already initialized");
+    if (this._main) throw new RuntimeError("already initialized");
     const main = this.module();
     this.modules.set(id, main);
     this._main = main;
   }
+  if (!this._main) throw new RuntimeError("runtime not initialized");
   return this._main;
 }
 
@@ -279,6 +282,10 @@ function variable_displayValue(variable, value) {
     }
   }
   dispatch(node, "update");
+}
+
+function cell_declare(id, node) {
+  return new Cell(this.main(), id, node);
 }
 
 function cell_define(cell, definition) {
