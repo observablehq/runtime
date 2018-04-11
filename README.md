@@ -47,12 +47,12 @@ var runtime = new Runtime();
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
-<a href="#runtime_declare" name="runtime_declare">#</a> <i>runtime</i>.<b>declare</b>(<i>id, node</i>)
+<a href="#runtime_cell" name="runtime_cell">#</a> <i>runtime</i>.<b>cell</b>(<i>node</i>)
 
-Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module. The cell must have an `id`, by which it may be referenced later, and may also optionally have a DOM `node`, which it will render its contents into.
+Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module. The cell may optionally have a DOM `node`, which it will render its contents into.
 
 ```js
-let cell = runtime.declare(42, document.createElement("div"));
+let cell = runtime.cell(document.createElement("div"));
 ```
 
 <a href="#runtime_cells" name="runtime_cells">#</a> <i>runtime</i>.<b>cells</b>

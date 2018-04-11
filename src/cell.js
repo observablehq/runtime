@@ -6,7 +6,6 @@ const compile = eval;
 
 export default function Cell(runtime, id, node) {
   Object.defineProperties(this, {
-    _id: {value: id},
     _node: {value: node},
     _runtime: {value: runtime},
     _error: {value: undefined, writable: true},
@@ -130,7 +129,6 @@ function cell_displayImport(definition) {
 }
 
 function cell_delete() {
-  this._runtime.cells.delete(this._id);
   cell_deleteImports(this);
   cell_deleteSource(this);
   this._variable.delete();
