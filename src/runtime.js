@@ -5,13 +5,10 @@ import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import Module from "./module";
-import Mutable from "./mutable";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
 const library = runtimeLibrary();
-const {input, observe} = library.Generators;
-const compile = eval;
 
 export default function runtime(builtins) {
   return new Runtime(builtins);
@@ -44,9 +41,7 @@ Object.defineProperties(Runtime.prototype, {
   _main: {value: null, writable: true, configurable: true},
   module: {value: runtime_module, writable: false},
   main: {value: runtime_main, writable: false},
-  declare: {value: cell_declare, writable: false},
-  define: {value: cell_define, writable: false},
-  delete: {value: cell_delete, writable: false}
+  declare: {value: cell_declare, writable: false}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
@@ -286,163 +281,8 @@ function variable_displayValue(variable, value) {
 }
 
 function cell_declare(id, node) {
-  if (this.cells.has(id)) throw new RuntimeError("duplicate cell");
-  const cell = new Cell(this.main(), id, node);
+  if (this.cells.has(id)) throw new RuntimeError("duplicate cell: " + id);
+  const cell = new Cell(this, id, node);
   this.cells.set(id, cell);
   return cell;
-}
-
-function cell_define(cell, definition) {
-  cell_deleteImports(cell);
-  if (definition.modules) {
-    const imports = [];
-    const module = this.module(definition.id);
-
-    definition.modules.forEach(definition => {
-      const module = this.module(definition.id);
-      definition.values.forEach(definition => {
-        let variable = module._scope.get(definition.name); // TODO Cleaner?
-        if (variable) {
-          variable._exdegree = (variable._exdegree || 0) + 1;
-        } else {
-          variable = module.variable();
-          variable._exdegree = 1;
-        }
-        if (definition.module) {
-          variable.import(
-            definition.remote,
-            definition.name,
-            this.module(definition.module)
-          );
-        } else if (definition.view) {
-          const view = module_variable(module, `viewof ${definition.name}`);
-          cell_defineView(definition, view, variable);
-          imports.push(view);
-        } else if (definition.mutable) {
-          const mutable = module_variable(module, `mutable ${definition.name}`);
-          cell_defineMutable(definition, mutable, variable);
-          imports.push(mutable);
-        } else {
-          variable.define(
-            definition.name,
-            definition.inputs,
-            cell_value(definition)
-          );
-        }
-        imports.push(variable);
-      });
-    });
-
-    definition.imports.forEach(definition => {
-      const variable = this._main.variable();
-      variable._exdegree = 1;
-      variable.import(definition.remote, definition.name, module);
-      imports.push(variable);
-    });
-
-    cell_deleteSource(cell);
-    cell._imports = imports;
-    cell._variable.define(cell_displayImport(definition));
-  } else if (definition.view) {
-    if (!cell._source) cell._source = this._main.variable();
-    cell_defineView(definition, cell._variable, cell._source);
-  } else if (definition.mutable) {
-    if (!cell._source) cell._source = this._main.variable();
-    cell_defineMutable(definition, cell._source, cell._variable);
-  } else {
-    cell_deleteSource(cell);
-    cell._variable.define(
-      definition.name,
-      definition.inputs,
-      cell_value(definition)
-    );
-  }
-}
-
-function module_variable(module, reference) {
-  let variable = module._scope.get(reference); // TODO Cleaner?
-  if (variable) {
-    variable._exdegree = (variable._exdegree || 0) + 1;
-  } else {
-    variable = module.variable();
-    variable._exdegree = 1;
-  }
-  return variable;
-}
-
-function cell_defineView(definition, view, value) {
-  const reference = `viewof ${definition.name}`;
-  view.define(reference, definition.inputs, cell_value(definition));
-  value.define(definition.name, [reference], input);
-}
-
-function cell_defineMutable(definition, initializer, value) {
-  let change,
-    observer = observe(_ => (change = _));
-  const reference = `mutable ${definition.name}`;
-  initializer.define(
-    reference,
-    definition.inputs,
-    variable_mutable(change, definition)
-  );
-  value.define(definition.name, [reference], observer);
-}
-
-function cell_displayImport(definition) {
-  const span = document.createElement("span");
-  span.className = "O--inspect O--import";
-  span.appendChild(document.createTextNode("import "));
-  const a = span.appendChild(document.createElement("a"));
-  a.href = `${definition.origin}/${definition.module.replace(/@[0-9]+(?=\?|$)/, "")}`;
-  a.textContent = definition.module;
-  return span;
-}
-
-function cell_delete(cell) {
-  this.cells.delete(cell._id);
-  cell_deleteImports(cell);
-  cell_deleteSource(cell);
-  cell._variable.delete();
-}
-
-// TODO Delete empty modules after detaching?
-function cell_deleteImports(cell) {
-  if (cell._imports) {
-    cell._imports.forEach(import_detach);
-    cell._imports = null;
-  }
-}
-
-function cell_deleteSource(cell) {
-  if (cell._source) {
-    cell._source.delete();
-    cell._source = null;
-  }
-}
-
-function import_detach(variable) {
-  if (--variable._exdegree === 0) {
-    variable.delete();
-  }
-}
-
-function variable_mutable(change, definition) {
-  definition = cell_value(definition);
-  return function() {
-    return new Mutable(change, definition.apply(this, arguments));
-  };
-}
-
-function cell_value(definition) {
-  try {
-    return compile(definition.body);
-  } catch (error) {
-    return rethrow(error);
-  }
-}
-
-function rethrow(error) {
-  return function() {
-    throw error;
-  };
 }
