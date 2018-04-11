@@ -22,7 +22,6 @@ export default function Runtime(builtins, mainId) {
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
     _builtin: {value: builtin},
-    cells: {value: new Map()},
     main: {value: main},
     modules: {value: modules},
   });
@@ -36,7 +35,7 @@ Object.defineProperties(Runtime.prototype, {
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   module: {value: runtime_module, writable: false},
-  declare: {value: cell_declare, writable: false}
+  cell: {value: cell_declare, writable: false}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
@@ -264,9 +263,6 @@ function variable_displayValue(variable, value) {
   dispatch(node, "update");
 }
 
-function cell_declare(id, node) {
-  if (this.cells.has(id)) throw new RuntimeError("duplicate cell: " + id);
-  const cell = new Cell(this, id, node);
-  this.cells.set(id, cell);
-  return cell;
+function cell_declare(node) {
+  return new Cell(this, node);
 }
