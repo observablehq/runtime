@@ -14,6 +14,7 @@ export default function Cell(runtime, id, node) {
     _loaded: {value: false, writable: true},
     _view: {value: null, writable: true},
     _imports: {value: null, writable: true},
+    _source: {value: null, writable: true}
   });
 }
 
