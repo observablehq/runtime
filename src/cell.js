@@ -4,7 +4,7 @@ import Mutable from "./mutable";
 const {input, observe} = Generators;
 const compile = eval;
 
-export default function Cell(runtime, id, node) {
+export default function Cell(runtime, node) {
   Object.defineProperties(this, {
     _node: {value: node},
     _runtime: {value: runtime},
