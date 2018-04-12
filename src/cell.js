@@ -26,10 +26,10 @@ function cell_define(definition) {
   cell_deleteImports(this);
   if (definition.modules) {
     const imports = [];
-    const module = this._notebook.module(definition.id);
+    const module = this._notebook._module(definition.id);
 
     definition.modules.forEach(definition => {
-      const module = this._notebook.module(definition.id);
+      const module = this._notebook._module(definition.id);
       definition.values.forEach(definition => {
         let variable = module._scope.get(definition.name); // TODO Cleaner?
         if (variable) {
@@ -42,7 +42,7 @@ function cell_define(definition) {
           variable.import(
             definition.remote,
             definition.name,
-            this._notebook.module(definition.module)
+            this._notebook._module(definition.module)
           );
         } else if (definition.view) {
           const view = module_variable(module, `viewof ${definition.name}`);
