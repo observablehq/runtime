@@ -20,7 +20,9 @@ let notebook = new Notebook("jenny/data-sketch@31");
 
 <a href="#notebook_cell" name="notebook_cell">#</a> <i>notebook</i>.<b>cell</b>(<i>node</i>)
 
-Declare a new, blank [cell](#cells) within the notebook’s main module. The cell may optionally be instantiated with a DOM *node*, which it will render its value into. Only cells with attached nodes will be eagerly evaluated by the runtime. Other cells won’t be evaluated until they become an input to a cell with a node.
+Declare a new, blank [cell](#cells) within the notebook’s main module. The cell may optionally be instantiated with a DOM *node*, which it will render its value into. The *node* can be a reference, or a [querySelector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector) string.
+
+Only cells with attached nodes will be eagerly evaluated by the runtime. Other cells won’t be evaluated until they become an input to a cell with a node.
 
 ### Cells
 

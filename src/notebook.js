@@ -26,6 +26,6 @@ function notebook_module(id) {
 }
 
 function notebook_cell(node) {
-  if (typeof node === "string") node = document.querySelector(node);
+  if (typeof node === "string" && !(node = document.querySelector(node))) throw new Error("node not found");
   return new Cell(this, node);
 }

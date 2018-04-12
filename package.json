@@ -27,6 +27,6 @@
     "rollup": "^0.52.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "tape": "^4.8.0",
-    "tape-await": "0.1.0"
+    "tape-await": "0.1.1"
   }
 }
