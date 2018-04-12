@@ -1,4 +1,3 @@
-import Library from "@observablehq/notebook-stdlib";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
@@ -8,7 +7,6 @@ import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
 export default function Runtime(builtins) {
-  if (builtins == null) builtins = new Library();
   var builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
