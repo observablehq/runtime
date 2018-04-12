@@ -3,17 +3,16 @@ import Runtime from "./runtime";
 
 export default function Notebook(builtins) {
   var runtime = new Runtime(builtins);
-  var modules = new Map();
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _main: {value: runtime.module()},
-    _modules: {value: modules}
+    _modules: {value: new Map()}
   });
 }
 
 Object.defineProperties(Notebook.prototype, {
-  _module: {value: notebook_module, writable: false},
-  cell: {value: notebook_cell, writable: false}
+  _module: {value: notebook_module, writable: true, configurable: true},
+  cell: {value: notebook_cell, writable: true, configurable: true}
 });
 
 function notebook_module(id) {
