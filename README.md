@@ -55,14 +55,6 @@ Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module.
 let cell = runtime.cell(document.createElement("div"));
 ```
 
-<a href="#runtime_cells" name="runtime_cells">#</a> <i>runtime</i>.<b>cells</b>
-
-Each runtime maintains a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of its defined [cells](#cells), keyed by the *id* that they were declared with.
-
-```js
-let cell = runtime.cells.get(42);
-```
-
 ### Cells
 
 <a href="#cell_define" name="cell_define">#</a> <i>cell</i>.<b>define</b>(<i>definition</i>)
