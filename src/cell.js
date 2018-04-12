@@ -18,8 +18,8 @@ export default function Cell(notebook, node) {
 }
 
 Object.defineProperties(Cell.prototype, {
-  define: {value: cell_define},
-  delete: {value: cell_delete}
+  define: {value: cell_define, writable: true, configurable: true},
+  delete: {value: cell_delete, writable: true, configurable: true}
 });
 
 function cell_define(definition) {
