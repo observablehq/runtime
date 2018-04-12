@@ -1,4 +1,4 @@
-import Generators from "@observablehq/notebook-stdlib/src/generators";
+import {Generators} from "@observablehq/notebook-stdlib";
 import Mutable from "./mutable";
 
 const {input, observe} = Generators;

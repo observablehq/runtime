@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@observablehq/notebook-stdlib@https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#8c85dae":
+"@observablehq/notebook-stdlib@https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#a6fdf9f":
   version "0.0.1"
-  resolved "https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#8c85dae9ab960846959e3ee56ebd7ee41b54d2ec"
+  resolved "https://0c089ec92fdb89c9f587908270c8287f2bcfdd97@github.com/observablehq/notebook-stdlib#a6fdf9f799e9f7207949c35accdb19d41daa1c53"
   dependencies:
     "@std/esm" "^0.16.0"
     d3-require "^0.6.6"
