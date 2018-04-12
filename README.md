@@ -44,7 +44,7 @@ cell.define({
 
 <a href="#cell_delete" name="cell_delete">#</a> <i>cell</i>.<b>delete</b>()
 
-As the counterpart to [define](#cell_define), [delete](#cell_delete) removes a cell from the runtime. This disposes of and disconnects the cell’s runtime *variable*, it’s *source* (if it has one), and also cleans up its *inputs* — if it happens to be the the final cell that holds a reference to them.
+As the counterpart to [define](#cell_define), [delete](#cell_delete) removes a cell from the runtime. This disposes of and disconnects the cell’s runtime *variable*, its *source* (if it has one), and also cleans up its *inputs* — if it happens to be the the final cell that holds a reference to them.
 
 ```js
 cell.delete();
