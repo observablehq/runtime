@@ -1,7 +1,9 @@
+import Library from "@observablehq/notebook-stdlib";
 import Cell from "./cell";
 import Runtime from "./runtime";
 
 export default function Notebook(mainId, builtins) {
+  if (builtins == null) builtins = new Library();
   var runtime = new Runtime(builtins);
   if (mainId == null) mainId = "main";
   var main = runtime.module();
