@@ -1,5 +1,4 @@
 import Library from "@observablehq/notebook-stdlib";
-import Cell from "./cell";
 import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
@@ -8,22 +7,14 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
 
-const library = new Library();
-
-export default function Runtime(builtins, mainId) {
-  if (builtins == null) builtins = library;
-  if (mainId == null) mainId = "main";
+export default function Runtime(builtins) {
+  if (builtins == null) builtins = new Library();
   var builtin = this.module();
-  var main = this.module();
-  var modules = new Map();
-  modules.set(mainId, main);
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _builtin: {value: builtin},
-    main: {value: main},
-    modules: {value: modules},
+    _builtin: {value: builtin}
   });
   if (builtins) for (var name in builtins) {
     (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);
@@ -34,20 +25,13 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
-  module: {value: runtime_module, writable: false},
-  cell: {value: cell_declare, writable: false}
+  module: {value: runtime_module, writable: true, configurable: true}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
 
-function runtime_module(id) {
-  if (id) {
-    let module = this.modules.get(id);
-    if (!module) this.modules.set(id, (module = this.module()));
-    return module;
-  } else {
-    return new Module(this);
-  }
+function runtime_module() {
+  return new Module(this);
 }
 
 function runtime_compute() {
@@ -261,9 +245,4 @@ function variable_displayValue(variable, value) {
     }
   }
   dispatch(node, "update");
-}
-
-function cell_declare(node) {
-  if (typeof node === "string") node = document.querySelector(node);
-  return new Cell(this, node);
 }
