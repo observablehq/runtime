@@ -133,7 +133,6 @@ function cell_delete() {
   cell_deleteImports(this);
   cell_deleteSource(this);
   this._variable.delete();
-  return this;
 }
 
 // TODO Delete empty modules after detaching?
