@@ -4,11 +4,9 @@ import Runtime from "./runtime";
 
 export default function Notebook(mainId, builtins) {
   if (builtins == null) builtins = new Library();
-  var runtime = new Runtime(builtins);
-  if (mainId == null) mainId = "main";
-  var main = runtime.module();
-  var modules = new Map();
-  modules.set(mainId, main);
+  const runtime = new Runtime(builtins);
+  const main = runtime.module();
+  const modules = new Map().set(mainId == null ? "__main__" : mainId, main);
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _main: {value: main},
