@@ -1,12 +1,16 @@
 import Cell from "./cell";
 import Runtime from "./runtime";
 
-export default function Notebook(builtins) {
+export default function Notebook(mainId, builtins) {
   var runtime = new Runtime(builtins);
+  if (mainId == null) mainId = "main";
+  var main = runtime.module();
+  var modules = new Map();
+  modules.set(mainId, main);
   Object.defineProperties(this, {
     _runtime: {value: runtime},
-    _main: {value: runtime.module()},
-    _modules: {value: new Map()}
+    _main: {value: main},
+    _modules: {value: modules}
   });
 }
 
@@ -17,7 +21,7 @@ Object.defineProperties(Notebook.prototype, {
 
 function notebook_module(id) {
   let module = this._modules.get(id);
-  if (!module) this._modules.set(id, module = this.module());
+  if (!module) this._modules.set(id, module = this._runtime.module());
   return module;
 }
 
