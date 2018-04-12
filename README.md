@@ -6,54 +6,21 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ## API Reference
 
-### Runtimes
+### Notebooks
 
-A runtime represents the computational process of a notebook, and is responsible for evaluating [variables](#variables) in topological order whenever their input values change. A runtime typically has a "main" [module](#modules), and may use additional modules to scope these variables. Collectively, these variables represent a reactive program managed by the runtime. At a higher level, a notebook runtime can be defined as a list of [cells](#cells), each of which is responsible for defining one or more variables.
+A Notebook represents the computational process of an Observable Notebook: a list of cells, some of which may be imports of multiple cells from other notebooks, some of which may be views, or mutable; into a live-updating graph of JavaScript functions that produce values and evaluate in topological order. A notebook has a [runtime](#runtimes), a "main" [module](#modules), and one or more [cells](#cells). The cells are each composed of one or more [variables](#variables).
 
-<a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
+<a href="#notebook" name="notebook">#</a> new <b>Notebook</b>(<i>mainId, builtins</i>)
 
-Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
-
-For example, to create a runtime whose only builtin is `color`:
+Create a new notebook (which, in turn, starts a new [runtime](#runtimes)). You can optionally pass a *mainId*, which will be used to identify the notebook's main module, otherwise the main id will be "main". You can optionally pass an object of built-in values, which will be used by the notebook's runtime. Otherwise, the Notebook will use Observable’s [standard library](https://github.com/observablehq/notebook-stdlib) for the notebook’s built-in functions and objects.
 
 ```js
-var runtime = new Runtime({color: "red"});
+let notebook = new Notebook("jenny/data-sketch@31");
 ```
 
-To refer to the `color` builtin from a variable:
+<a href="#notebook_cell" name="notebook_cell">#</a> <i>notebook</i>.<b>cell</b>(<i>node</i>)
 
-```js
-var module = runtime.module();
-
-module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
-```
-
-This would produce the following output:
-
-> Hello, red.
-
-Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
-
-<a href="#standardRuntime" name="standardRuntime">#</a> O.<b>standardRuntime</b>()
-
-Observable comes with a [standard library](https://github.com/observablehq/notebook-stdlib), which provides the built-in functions and objects for the notebook interface. If you choose not
-to pass a *builtins* object while creating a Runtime, the Observable standard library will be built-in.
-
-```js
-var runtime = new Runtime();
-```
-
-<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
-
-Returns a new [module](#modules) for this [runtime](#runtimes).
-
-<a href="#runtime_cell" name="runtime_cell">#</a> <i>runtime</i>.<b>cell</b>(<i>node</i>)
-
-Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module. The cell may optionally have a DOM `node`, which it will render its contents into.
-
-```js
-let cell = runtime.cell(document.createElement("div"));
-```
+Declare a new, blank [cell](#cells) within the notebook’s main module. The cell may optionally be instantiated with a DOM *node*, which it will render its value into. Only cells with attached nodes will be eagerly evaluated by the runtime. Other cells won’t be evaluated until they become an input to a cell with a node.
 
 ### Cells
 
@@ -79,6 +46,44 @@ As the counterpart to [define](#cell_define), [delete](#cell_delete) removes a c
 
 ```js
 cell.delete();
+```
+
+### Runtimes
+
+<a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
+
+Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
+
+For example, to create a runtime whose only builtin is `color`:
+
+```js
+var runtime = new Runtime({color: "red"});
+```
+
+To refer to the `color` builtin from a variable:
+
+```js
+var module = runtime.module();
+
+module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
+```
+
+This would produce the following output:
+
+> Hello, red.
+
+Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
+
+<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
+
+Returns a new [module](#modules) for this [runtime](#runtimes).
+
+<a href="#runtime_cell" name="runtime_cell">#</a> <i>runtime</i>.<b>cell</b>(<i>node</i>)
+
+Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module. The cell may optionally have a DOM `node`, which it will render its contents into.
+
+```js
+let cell = runtime.cell(document.createElement("div"));
 ```
 
 ### Modules
