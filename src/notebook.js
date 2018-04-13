@@ -1,8 +1,6 @@
-import Library from "@observablehq/notebook-stdlib";
 import Cell from "./cell";
 import Runtime from "./runtime";
-
-export const defaultLibrary = new Library();
+import {defaultLibrary} from "./library";
 
 export default function Notebook(mainId, builtins) {
   if (builtins == null) builtins = defaultLibrary;
