@@ -2,8 +2,10 @@ import Library from "@observablehq/notebook-stdlib";
 import Cell from "./cell";
 import Runtime from "./runtime";
 
+export const defaultLibrary = new Library();
+
 export default function Notebook(mainId, builtins) {
-  if (builtins == null) builtins = new Library();
+  if (builtins == null) builtins = defaultLibrary;
   const runtime = new Runtime(builtins);
   const main = runtime.module();
   const modules = new Map().set(mainId == null ? "__main__" : mainId, main);

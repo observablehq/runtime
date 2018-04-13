@@ -1,7 +1,6 @@
-import Library from "@observablehq/notebook-stdlib";
 import Mutable from "./mutable";
+import {defaultLibrary} from "./notebook";
 
-const {Generators: {input, observe}} = new Library();
 const compile = eval;
 
 export default function Cell(notebook, node) {
@@ -104,12 +103,12 @@ function module_variable(module, reference) {
 function cell_defineView(definition, view, value) {
   const reference = `viewof ${definition.name}`;
   view.define(reference, definition.inputs, cell_value(definition));
-  value.define(definition.name, [reference], input);
+  value.define(definition.name, [reference], defaultLibrary.Generators.input);
 }
 
 function cell_defineMutable(definition, initializer, value) {
   let change,
-    observer = observe(_ => (change = _));
+    observer = defaultLibrary.Generators.observe(_ => (change = _));
   const reference = `mutable ${definition.name}`;
   initializer.define(
     reference,
