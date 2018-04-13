@@ -1,7 +1,7 @@
-import {Generators} from "@observablehq/notebook-stdlib";
+import Library from "@observablehq/notebook-stdlib";
 import Mutable from "./mutable";
 
-const {input, observe} = Generators;
+const {Generators: {input, observe}} = new Library();
 const compile = eval;
 
 export default function Cell(notebook, node) {
