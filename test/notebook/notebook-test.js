@@ -5,7 +5,7 @@ tape("new Notebook() can define basic cells with values", {html: "<div id=hi />"
   const notebook = new Notebook();
   const hi = notebook.cell("#hi").define({
     inputs: [],
-    body: `"use strict";(function(){return "hi";})`
+    value: () => "hi"
   });
   await new Promise(setImmediate);
   test.deepEqual(await hi._variable._promise, "hi");
@@ -15,7 +15,7 @@ tape("new Notebook() uses the Observable standard library as built-ins", {html: 
   const notebook = new Notebook();
   const hi = notebook.cell("#hi").define({
     inputs: ["html"],
-    body: `"use strict";(function(html){return html\`<h1>hi</h1>\`;})`
+    value: html => html`<h1>hi</h1>`
   });
   await new Promise(setImmediate);
   const value = await hi._variable._promise;

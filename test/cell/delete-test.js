@@ -5,12 +5,12 @@ tape("Cells can be deleted, removing them from the runtime graph.", {html: "<div
   const notebook = new Notebook();
   const cell = notebook.cell("#cell").define({
     inputs: ["inputCell"],
-    body: `(function(inputCell){return inputCell;})`
+    value: inputCell => inputCell
   });
   const input = notebook.cell().define({
     name: "inputCell",
     inputs: [],
-    body: `(function(){return "value";})`
+    value: () => "value"
   });
   await new Promise(setImmediate);
   test.deepEqual(await cell._variable._promise, "value");

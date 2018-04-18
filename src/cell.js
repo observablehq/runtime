@@ -2,7 +2,6 @@ import Mutable from "./mutable";
 import {defaultLibrary} from "./library";
 
 const {Generators: {input, observe}} = defaultLibrary;
-const compile = eval;
 
 export default function Cell(notebook, node) {
   Object.defineProperties(this, {
@@ -56,7 +55,7 @@ function cell_define(definition) {
           variable.define(
             definition.name,
             definition.inputs,
-            cell_value(definition)
+            definition.value
           );
         }
         imports.push(variable);
@@ -84,7 +83,7 @@ function cell_define(definition) {
     this._variable.define(
       definition.name,
       definition.inputs,
-      cell_value(definition)
+      definition.value
     );
   }
   return this;
@@ -103,7 +102,7 @@ function module_variable(module, reference) {
 
 function cell_defineView(definition, view, value) {
   const reference = `viewof ${definition.name}`;
-  view.define(reference, definition.inputs, cell_value(definition));
+  view.define(reference, definition.inputs, definition.value);
   value.define(definition.name, [reference], input);
 }
 
@@ -114,7 +113,7 @@ function cell_defineMutable(definition, initializer, value) {
   initializer.define(
     reference,
     definition.inputs,
-    variable_mutable(change, definition)
+    variable_mutable(change, definition.value)
   );
   value.define(definition.name, [reference], observer);
 }
@@ -156,23 +155,8 @@ function import_detach(variable) {
   }
 }
 
-function variable_mutable(change, definition) {
-  definition = cell_value(definition);
+function variable_mutable(change, value) {
   return function() {
-    return new Mutable(change, definition.apply(this, arguments));
-  };
-}
-
-function cell_value(definition) {
-  try {
-    return compile(definition.body);
-  } catch (error) {
-    return rethrow(error);
-  }
-}
-
-function rethrow(error) {
-  return function() {
-    throw error;
+    return new Mutable(change, value.apply(this, arguments));
   };
 }
