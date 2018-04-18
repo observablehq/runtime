@@ -12,6 +12,7 @@ export default function Runtime(builtins) {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
+    _stopped: {value: false, writable: true},
     _builtin: {value: builtin}
   });
   if (builtins) for (var name in builtins) {
@@ -23,7 +24,8 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
-  module: {value: runtime_module, writable: true, configurable: true}
+  module: {value: runtime_module, writable: true, configurable: true},
+  stop: {value: runtime_stop, writable: true, configurable: true}
 });
 
 var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
@@ -47,6 +49,8 @@ function runtime_computeSoon() {
 }
 
 function runtime_computeNow() {
+  if (this._stopped) return;
+  
   var queue = [],
       variables,
       variable;
@@ -106,6 +110,10 @@ function runtime_computeNow() {
   function postqueue(variable) {
     --variable._indegree || queue.push(variable);
   }
+}
+
+function runtime_stop() {
+  this._stopped = true;
 }
 
 function variable_increment(variable) {
