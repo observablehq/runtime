@@ -16,7 +16,8 @@ export default function Notebook(mainId, builtins) {
 
 Object.defineProperties(Notebook.prototype, {
   _module: {value: notebook_module, writable: true, configurable: true},
-  cell: {value: notebook_cell, writable: true, configurable: true}
+  cell: {value: notebook_cell, writable: true, configurable: true},
+  delete: {value: notebook_delete, writable: true, configurable: true}
 });
 
 function notebook_module(id) {
@@ -28,4 +29,11 @@ function notebook_module(id) {
 function notebook_cell(node) {
   if (typeof node === "string" && !(node = document.querySelector(node))) throw new Error("node not found");
   return new Cell(this, node);
+}
+
+function notebook_delete() {
+  this._runtime.stop();
+  this._main._scope.forEach(variable => {
+    variable.delete();
+  });
 }
