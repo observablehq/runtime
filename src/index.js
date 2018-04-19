@@ -6,15 +6,9 @@ export const Notebook = _Notebook;
 
 export function load(definition, elements) {
   const notebook = new _Notebook(`${definition.slug}@${definition.version}`);
-  definition.modules.forEach(module => {
-    if (module.name === "__main__") {
-      module.cells.forEach(cell => {
-        if (cell.name in elements) cell.node = elements[cell.name];
-      });
-    }
-    module.cells.forEach(cell => {
-      notebook.cell(cell.node).define(cell);
-    });
+  definition.cells.forEach(cell => {
+    if (cell.name in elements) cell.node = elements[cell.name];
+    notebook.cell(cell.node).define(cell);
   });
   return notebook;
 }
