@@ -1,4 +1,5 @@
 import Cell from "./cell";
+import {RuntimeError} from "./errors";
 import Runtime from "./runtime";
 import {defaultLibrary} from "./library";
 
@@ -7,7 +8,9 @@ export default function Notebook(mainId, builtins) {
   const runtime = new Runtime(builtins);
   const main = runtime.module();
   const modules = new Map().set(mainId == null ? "__main__" : mainId, main);
+  const reachable = new Map();
   Object.defineProperties(this, {
+    _reachable: {value: reachable},
     _runtime: {value: runtime},
     _main: {value: main},
     _modules: {value: modules}
@@ -20,17 +23,30 @@ Object.defineProperties(Notebook, {
 
 Object.defineProperties(Notebook.prototype, {
   _module: {value: notebook_module, writable: true, configurable: true},
+  attach: {value: notebook_attach, writable: true, configurable: true},
+  detach: {value: notebook_detach, writable: true, configurable: true},
   cell: {value: notebook_cell, writable: true, configurable: true},
   delete: {value: notebook_delete, writable: true, configurable: true}
 });
 
-function notebook_load(definition, elements) {
+function notebook_load(definition) {
   const notebook = new Notebook(`${definition.slug}@${definition.version}`);
-  definition.cells.forEach(cell => {
-    if (cell.name in elements) cell.node = elements[cell.name];
-    notebook.cell(cell.node).define(cell);
-  });
+  definition.cells.forEach(d => notebook.cell().define(d));
   return notebook;
+}
+
+function notebook_attach(name, element) {
+  const variable = this._reachable.get(name);
+  if (!variable) throw new RuntimeError(`cell "${name}" not found`);
+  variable.attach(element);
+  return this;
+}
+
+function notebook_detach(name) {
+  const variable = this._reachable.get(name);
+  if (!variable) throw new RuntimeError(`cell "${name}" not found`);
+  variable.detach();
+  return this;
 }
 
 function notebook_module(id) {
