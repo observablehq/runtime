@@ -128,11 +128,12 @@ function variable_compute(variable) {
   if (variable._node) variable._node.classList.add("O--running");
   var value0 = variable._value,
       version = ++variable._version,
+      invalidate = null,
       promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
 
     // Replace any reference to invalidation with the promise, lazily.
-    for (var i = 0, n = inputs.length, invalidate = null; i < n; ++i) {
+    for (var i = 0, n = inputs.length; i < n; ++i) {
       if (inputs[i] === variable_invalidate) {
         inputs[i] = invalidate = variable_invalidator(variable);
         break;
@@ -140,14 +141,14 @@ function variable_compute(variable) {
     }
 
     // Compute the initial value of the variable.
+    return variable._definition.apply(value0, inputs);
+  }).then(function(value) {
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
-    var value = variable._definition.apply(value0, inputs);
     if (generatorish(value)) {
       (invalidate || variable_invalidator(variable)).then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
-
     return value;
   });
   promise.then(function(value) {
