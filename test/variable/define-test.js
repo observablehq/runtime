@@ -249,7 +249,7 @@ tape("variable.define supports promises", {html: "<div id=foo />"}, async test =
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define supports generators", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports generator cells", {html: "<div id=foo />"}, async test => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
@@ -262,7 +262,33 @@ tape("variable.define supports generators", {html: "<div id=foo />"}, async test
   test.deepEqual(await valueof(foo), {value: 3});
 });
 
-tape("variable.define supports asynchronous generators", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports generator objects", {html: "<div id=foo />"}, async test => {
+  function* range(n) { for (let i = 0; i < n; ++i) yield i; }
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const foo = main.variable("#foo").define("foo", [], () => range(3));
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 0});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 2});
+});
+
+tape("variable.define supports a promise that resolves to a generator object", {html: "<div id=foo />"}, async test => {
+  function* range(n) { for (let i = 0; i < n; ++i) yield i; }
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const foo = main.variable("#foo").define("foo", [], async () => range(3));
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 0});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 2});
+});
+
+tape("variable.define supports generators that yield promises", {html: "<div id=foo />"}, async test => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
