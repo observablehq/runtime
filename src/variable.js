@@ -60,9 +60,10 @@ function variable_attach_node(node) {
 
 function variable_detach_node() {
   const runtime = this._module._runtime;
+  this._node.removeChild(this._node.firstChild);
   this._node = null;
   this._reachable = false;
-  runtime._updates.add(this);
+  runtime._dirty.add(this);
   runtime._compute();
 }
 
