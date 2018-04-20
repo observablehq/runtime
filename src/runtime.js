@@ -50,7 +50,7 @@ function runtime_computeSoon() {
 
 function runtime_computeNow() {
   if (this._stopped) return;
-  
+
   var queue = [],
       variables,
       variable;

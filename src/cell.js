@@ -23,6 +23,7 @@ Object.defineProperties(Cell.prototype, {
 });
 
 function cell_define(definition) {
+  const reachable = this._notebook._reachable;
   cell_deleteImports(this);
   if (definition.modules) {
     const imports = [];
@@ -68,6 +69,7 @@ function cell_define(definition) {
       variable._exdegree = 1;
       variable.import(definition.remote, definition.name, module);
       imports.push(variable);
+      reachable.set(definition.name, variable);
     });
 
     cell_deleteSource(this);
@@ -87,6 +89,7 @@ function cell_define(definition) {
       definition.value
     );
   }
+  if (definition.name) reachable.set(definition.name, this._variable);
   return this;
 }
 
