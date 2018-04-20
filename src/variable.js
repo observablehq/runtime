@@ -34,7 +34,6 @@ export default function Variable(type, module, node) {
 Object.defineProperties(Variable.prototype, {
   _resolve: {value: variable_resolve, writable: true, configurable: true},
   attach: {value: variable_attach_node, writable: true, configurable: true},
-  detach: {value: variable_detach_node, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
@@ -55,14 +54,6 @@ function variable_attach_node(node) {
   this._node = node;
   this._reachable = true;
   runtime._updates.add(this);
-  runtime._compute();
-}
-
-function variable_detach_node() {
-  const runtime = this._module._runtime;
-  this._node = null;
-  this._reachable = false;
-  runtime._dirty.add(this);
   runtime._compute();
 }
 

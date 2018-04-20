@@ -24,7 +24,6 @@ Object.defineProperties(Notebook, {
 Object.defineProperties(Notebook.prototype, {
   _module: {value: notebook_module, writable: true, configurable: true},
   attach: {value: notebook_attach, writable: true, configurable: true},
-  detach: {value: notebook_detach, writable: true, configurable: true},
   cell: {value: notebook_cell, writable: true, configurable: true},
   delete: {value: notebook_delete, writable: true, configurable: true}
 });
@@ -39,13 +38,6 @@ function notebook_attach(name, element) {
   const variable = this._reachable.get(name);
   if (!variable) throw new RuntimeError(`cell "${name}" not found`);
   variable.attach(element);
-  return this;
-}
-
-function notebook_detach(name) {
-  const variable = this._reachable.get(name);
-  if (!variable) throw new RuntimeError(`cell "${name}" not found`);
-  variable.detach();
   return this;
 }
 
