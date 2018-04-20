@@ -20,7 +20,7 @@ export default function Variable(type, module, node) {
     _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
-    _node: {value: node},
+    _node: {value: node, writable: true},
     _outputs: {value: new Set, writable: true},
     _promise: {value: undefined, writable: true},
     _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
@@ -33,6 +33,8 @@ export default function Variable(type, module, node) {
 
 Object.defineProperties(Variable.prototype, {
   _resolve: {value: variable_resolve, writable: true, configurable: true},
+  attach: {value: variable_attach_node, writable: true, configurable: true},
+  detach: {value: variable_detach_node, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
@@ -46,6 +48,22 @@ function variable_attach(variable) {
 function variable_detach(variable) {
   variable._module._runtime._dirty.add(variable);
   variable._outputs.delete(this);
+}
+
+function variable_attach_node(node) {
+  const runtime = this._module._runtime;
+  this._node = node;
+  this._reachable = true;
+  runtime._updates.add(this);
+  runtime._compute();
+}
+
+function variable_detach_node() {
+  const runtime = this._module._runtime;
+  this._node = null;
+  this._reachable = false;
+  runtime._updates.add(this);
+  runtime._compute();
 }
 
 function variable_resolve(name) {
