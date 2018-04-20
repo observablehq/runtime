@@ -14,11 +14,24 @@ export default function Notebook(mainId, builtins) {
   });
 }
 
+Object.defineProperties(Notebook, {
+  load: {value: notebook_load, writable: true, configurable: true}
+});
+
 Object.defineProperties(Notebook.prototype, {
   _module: {value: notebook_module, writable: true, configurable: true},
   cell: {value: notebook_cell, writable: true, configurable: true},
   delete: {value: notebook_delete, writable: true, configurable: true}
 });
+
+function notebook_load(definition, elements) {
+  const notebook = new Notebook(`${definition.slug}@${definition.version}`);
+  definition.cells.forEach(cell => {
+    if (cell.name in elements) cell.node = elements[cell.name];
+    notebook.cell(cell.node).define(cell);
+  });
+  return notebook;
+}
 
 function notebook_module(id) {
   let module = this._modules.get(id);
