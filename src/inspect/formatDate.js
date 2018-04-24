@@ -13,12 +13,12 @@ export default function formatDate(date) {
           + pad(date.getMinutes(), 2) + ":"
           + pad(date.getSeconds(), 2) + "."
           + pad(date.getMilliseconds(), 4)
-        : date.getSeconds() ? "T"
+      : date.getSeconds() ? "T"
           + pad(date.getHours(), 2) + ":"
           + pad(date.getMinutes(), 2) + ":"
           + pad(date.getSeconds(), 2)
-        : date.getMinutes() || date.getHours() ? "T"
+      : date.getMinutes() || date.getHours() ? "T"
           + pad(date.getHours(), 2) + ":"
           + pad(date.getMinutes(), 2)
-        : "");
+      : "");
 }
