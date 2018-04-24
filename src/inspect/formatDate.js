@@ -4,8 +4,8 @@ function pad(value, width) {
 }
 
 export default function formatDate(date) {
-  if (isNaN(date)) return "Invalid Date";
-  return pad(date.getFullYear(), 4) + "-"
+  return isNaN(date) ? "Invalid Date"
+      : pad(date.getFullYear(), 4) + "-"
       + pad(date.getMonth() + 1, 2) + "-"
       + pad(date.getDate(), 2)
       + (date.getMilliseconds() ? "T"
