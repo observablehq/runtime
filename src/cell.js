@@ -1,7 +1,8 @@
-import Mutable from "./mutable";
+import {Mutable} from "@observablehq/notebook-stdlib";
 import {defaultLibrary} from "./library";
 
-const {Generators: {input, observe}} = defaultLibrary;
+const mutable_value = Mutable.value;
+const {Generators: {input}} = defaultLibrary;
 
 export default function Cell(notebook, node) {
   Object.defineProperties(this, {
@@ -107,15 +108,9 @@ function cell_defineView(definition, view, value) {
 }
 
 function cell_defineMutable(definition, initializer, value) {
-  let change,
-    observer = observe(_ => (change = _));
   const reference = `mutable ${definition.name}`;
-  initializer.define(
-    reference,
-    definition.inputs,
-    variable_mutable(change, definition.value)
-  );
-  value.define(definition.name, [reference], observer);
+  initializer.define(reference, definition.inputs, mutable_value(definition.value));
+  value.define(definition.name, [reference], mutable_generator);
 }
 
 function cell_displayImport(definition) {
@@ -155,8 +150,6 @@ function import_detach(variable) {
   }
 }
 
-function variable_mutable(change, value) {
-  return function() {
-    return new Mutable(change, value.apply(this, arguments));
-  };
+function mutable_generator(mutable) {
+  return mutable.generator;
 }
