@@ -4,8 +4,8 @@ export {default as Notebook} from "./notebook";
 import {default as Runtime} from "./runtime";
 export {Library, Runtime};
 
-export function load(notebookModule, nodes = {}) {
-  const {modules} = notebookModule;
+export function load(notebook, nodes = {}) {
+  const {modules} = notebook;
   const library = new Library();
   const runtime = new Runtime(library);
   const moduleMap = new Map();
@@ -17,7 +17,7 @@ export function load(notebookModule, nodes = {}) {
     const module = moduleMap.get(m.id);
 
     function module_variable(name) {
-      const node = m.id === notebookModule.main ? nodes[name] : null;
+      const node = m.id === notebook.id ? nodes[name] : null;
       return module.variable(node);
     }
 
