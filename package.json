@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "esm": "^3.0.5",
-    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#38f091d"
+    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#7ac5fa3"
   },
   "devDependencies": {
     "eslint": "^4.12.1",
