@@ -14,7 +14,7 @@ export function load(notebookModule, nodes = {}) {
   modules.forEach(m => {
     const module = moduleMap.get(m.id);
     m.variables.forEach(v => {
-      const node = m.id === "__main__" ? nodes[v.name] : null;
+      const node = m.id === notebookModule.main ? nodes[v.name] : null;
       const variable = module.variable(node);
       if (v.from) {
         variable.import(v.name, v.remote, moduleMap.get(v.from));
