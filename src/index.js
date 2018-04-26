@@ -1,5 +1,5 @@
 export {RuntimeError} from "./errors";
-import {default as Library} from "./library";
+import {default as Library, Mutable} from "./library";
 export {default as Notebook} from "./notebook";
 import {default as Runtime} from "./runtime";
 export {Library, Runtime};
@@ -9,7 +9,7 @@ export function load(notebookModule, nodes = {}) {
   const library = new Library();
   const runtime = new Runtime(library);
   const moduleMap = new Map();
-  const {Generators, Mutable} = library;
+  const {Generators} = library;
 
   modules.forEach(m =>  moduleMap.set(m.id, runtime.module()));
 
