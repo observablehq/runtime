@@ -6,8 +6,10 @@ export {Library, Runtime};
 
 export function load(notebookModule, nodes = {}) {
   const {modules} = notebookModule;
-  const runtime = new Runtime(new Library());
+  const library = new Library();
+  const runtime = new Runtime(library);
   const moduleMap = new Map();
+  const {Generators, Mutable} = library;
 
   modules.forEach(m =>  moduleMap.set(m.id, runtime.module()));
 
@@ -16,6 +18,9 @@ export function load(notebookModule, nodes = {}) {
     m.variables.forEach(v => {
       const node = m.id === notebookModule.main ? nodes[v.name] : null;
       const variable = module.variable(node);
+      if (v.flag) {
+        v.value = flag_value(v.flag, v.value);
+      }
       if (v.from) {
         variable.import(v.name, v.remote, moduleMap.get(v.from));
       } else {
@@ -23,4 +28,12 @@ export function load(notebookModule, nodes = {}) {
       }
     });
   });
+
+  function flag_value(flag, value) {
+    switch (flag) {
+      case "view-value": return Generators.input;
+      case "mutable": return Mutable.value(value);
+      case "mutable-value": return _ => _.generator;
+    }
+  }
 }
