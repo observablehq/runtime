@@ -1,6 +1,5 @@
+import {Library, Mutable} from "@observablehq/notebook-stdlib";
 export {RuntimeError} from "./errors";
-import {default as Library, Mutable} from "./library";
-export {default as Notebook} from "./notebook";
 import {default as Runtime} from "./runtime";
 export {Library, Runtime};
 
