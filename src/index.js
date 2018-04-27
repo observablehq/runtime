@@ -1,7 +1,8 @@
 import {Library, Mutable} from "@observablehq/notebook-stdlib";
-export {RuntimeError} from "./errors";
 import {default as Runtime} from "./runtime";
-export {Library, Runtime};
+
+export {RuntimeError} from "./errors";
+export {Library, Runtime, Mutable};
 
 export function load(notebook, nodes = {}) {
   const {modules} = notebook;
@@ -16,7 +17,8 @@ export function load(notebook, nodes = {}) {
     const module = moduleMap.get(m.id);
 
     function module_variable(name) {
-      const node = m.id === notebook.id ? nodes[name] : null;
+      let node = m.id === notebook.id ? nodes[name] : null;
+      if (typeof node === "string") node = document.querySelector(node);
       return module.variable(node);
     }
 
