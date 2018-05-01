@@ -1,8 +1,8 @@
 import {Library} from "@observablehq/notebook-stdlib";
+import {RuntimeError} from "./errors";
 import {default as Runtime} from "./runtime";
 
-export {RuntimeError} from "./errors";
-export {Library, Runtime};
+export {Library, Runtime, RuntimeError};
 
 export function load(notebook, nodes = {}) {
   const {modules} = notebook;
@@ -24,7 +24,9 @@ export function load(notebook, nodes = {}) {
     m.variables.forEach(v => {
       const variable = module_variable(v.name);
       if (v.from) {
-        variable.import(v.name, v.remote, moduleMap.get(v.from));
+        const importedModule = moduleMap.get(v.from);
+        if (!importedModule) throw new RuntimeError(`unable to load module "${v.from}"`);
+        variable.import(v.name, v.remote, importedModule);
       } else {
         variable.define(v.name, v.inputs, v.value);
       }
