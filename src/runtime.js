@@ -101,7 +101,7 @@ function runtime_computeNow() {
     var error = new RuntimeError("circular definition");
     variable._value = undefined;
     (variable._promise = Promise.reject(error)).catch(noop);
-    variable_outputRejected(variable, error);
+    variable._rejected(error);
   });
 
   function postqueue(variable) {
@@ -126,7 +126,7 @@ function variable_invalidator(variable) {
 function variable_compute(variable) {
   variable._invalidate();
   variable._invalidate = noop;
-  variable_outputPending(variable);
+  variable._pending();
   var value0 = variable._value,
       version = ++variable._version,
       invalidate = null,
@@ -155,11 +155,11 @@ function variable_compute(variable) {
   promise.then(function(value) {
     if (variable._version !== version) return;
     variable._value = value;
-    variable_outputFulfilled(variable, value);
+    variable._fulfilled(value);
   }, function(error) {
     if (variable._version !== version) return;
     variable._value = undefined;
-    variable_outputRejected(variable, error);
+    variable._rejected(error);
   });
 }
 
@@ -171,14 +171,14 @@ function variable_precompute(variable, version, promise, generator) {
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
         if (variable._version !== version) return;
         variable_postrecompute(variable, value, promise).then(recompute);
-        variable_outputFulfilled(variable, value);
+        variable._fulfilled(value);
         return value;
       });
     });
     promise.catch(function(error) {
       if (variable._version !== version) return;
       variable_postrecompute(variable, undefined, promise);
-      variable_outputRejected(variable, error);
+      variable._rejected(error);
     });
   }
   return new Promise(function(resolve) {
@@ -205,23 +205,11 @@ function variable_return(generator) {
 }
 
 function variable_reachable(variable) {
-  if (variable._output) return true; // Directly reachable.
+  if (variable._observer) return true; // Directly reachable.
   var outputs = new Set(variable._outputs);
   for (const output of outputs) {
-    if (output._output) return true;
+    if (output._observer) return true;
     output._outputs.forEach(outputs.add, outputs);
   }
   return false;
-}
-
-function variable_outputPending({_output}) {
-  if (_output && _output.pending) _output.pending();
-}
-
-function variable_outputFulfilled({_output}, value) {
-  if (_output && _output.fulfilled) _output.fulfilled(value);
-}
-
-function variable_outputRejected({_output}, error) {
-  if (_output && _output.rejected) _output.rejected(error);
 }

@@ -8,9 +8,9 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtime
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>outputs</i>])
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>observer</i>])
 
-Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to output callbacks according to the specified *outputs* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
+Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to "pending", "fulfilled" and "rejected" callbacks according to the specified *observer* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
 
 ```js
 const notebook = {
@@ -62,7 +62,7 @@ const notebook = {
 };
 ```
 
-The *outputs* function returns optional output functions for variable definitions in the main module. For example:
+The *observer* function returns optional "pending", "fulfilled" and "rejected" callback functions for variable definitions in the main module. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
@@ -102,7 +102,7 @@ new Library,
 });
 ```
 
-Variables in the notebook which are not associated with an *output* (or aren’t indirectly depended on by any variable that is associated with an *output*), will not be evaluated.
+Variables in the notebook which are not associated with an *observer* (or aren’t indirectly depended on by any variable that is associated with an *observer*) will not be evaluated.
 
 <a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
