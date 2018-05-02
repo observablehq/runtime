@@ -1,7 +1,7 @@
 import Runtime from "./runtime";
 import noop from "./noop";
 
-export default function load(library, {modules, id}, nodes = noop) {
+export default function load(library, {modules, id}, outputs = noop) {
   const map = new Map;
   const runtime = new Runtime(library);
   const main = runtime_module(id);
@@ -16,7 +16,7 @@ export default function load(library, {modules, id}, nodes = noop) {
     const module = runtime_module(m.id);
     let i = -1;
     for (const v of m.variables) {
-      const variable = module.variable(module === main ? nodes(v, ++i, m.variables) : null);
+      const variable = module.variable(module === main ? outputs(v, ++i, m.variables) : null);
       if (v.from) variable.import(v.remote, v.name, runtime_module(v.from));
       else variable.define(v.name, v.inputs, v.value);
     }

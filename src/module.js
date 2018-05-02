@@ -30,9 +30,8 @@ function module_import() {
   return v.import.apply(v, arguments);
 }
 
-function module_variable(node) {
-  if (typeof node === "string" && !(node = document.querySelector(node))) throw new Error("node not found");
-  return new Variable(TYPE_NORMAL, this, node);
+function module_variable(output) {
+  return new Variable(TYPE_NORMAL, this, output);
 }
 
 function module_derive(injects, injectModule) {
