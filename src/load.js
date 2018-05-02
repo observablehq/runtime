@@ -14,9 +14,7 @@ export default function load(library, {modules, id}, nodes = {}) {
   for (const m of modules) {
     const module = runtime_module(m.id);
     for (const v of m.variables) {
-      let node = module === main ? nodes[v.name] : null;
-      if (typeof node === "string") node = document.querySelector(node);
-      const variable = module.variable(node);
+      const variable = module.variable(module === main ? nodes[v.name] : null);
       if (v.from) variable.import(v.name, v.remote, runtime_module(v.from));
       else variable.define(v.name, v.inputs, v.value);
     }
