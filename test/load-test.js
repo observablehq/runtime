@@ -4,7 +4,7 @@ import tape from "./tape";
 
 tape("basic notebook as module loading", {html: "<div id=foo />"}, async test => {
   let result = null;
-  load({}, {
+  load({
     id: "notebook@1",
     modules: [
       {
@@ -17,7 +17,7 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
         ]
       }
     ]
-  }, ({name}) => {
+  }, null, ({name}) => {
     if (name == "foo") return {fulfilled: (value) => result = value};
   });
   await sleep(10);
@@ -26,7 +26,7 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
 
 tape("notebooks as modules with variables depending on other variables", {html: "<div id=foo />"}, async test => {
   let result = null;
-  load({}, {
+  load({
     id: "notebook@1",
     modules: [
       {
@@ -44,7 +44,7 @@ tape("notebooks as modules with variables depending on other variables", {html: 
         ]
       }
     ]
-  }, ({name}) => {
+  }, null, ({name}) => {
     if (name == "foo") return {fulfilled: (value) => result = value};
   });
   await sleep(10);
@@ -53,7 +53,7 @@ tape("notebooks as modules with variables depending on other variables", {html: 
 
 tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test => {
   let result = null;
-  load({}, {
+  load({
     id: "notebook@1",
     modules: [
       {
@@ -81,7 +81,7 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
         ]
       }
     ]
-  }, ({name}) => {
+  }, null, ({name}) => {
     if (name == "foo") return {fulfilled: (value) => result = value};
   });
   await sleep(10);
@@ -90,7 +90,7 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
 
 tape("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
   let failure, result;
-  load({}, {
+  load({
     id: "notebook@1",
     modules: [
       {
@@ -108,7 +108,7 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
         ]
       }
     ]
-  }, ({name}) => {
+  }, null, ({name}) => {
     return {
       fulfilled: (value) => result = {name, value},
       rejected: (error) => failure = {name, error}
@@ -125,8 +125,6 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
 tape("notebook as modules with the standard library", {html: "<div id=foo /><div id=bar />"}, async test => {
   let result = null;
   load({
-    bar: 42
-  }, {
     id: "notebook@1",
     modules: [
       {
@@ -140,6 +138,8 @@ tape("notebook as modules with the standard library", {html: "<div id=foo /><div
         ]
       }
     ]
+  }, {
+    bar: 42
   }, ({name}) => {
     if (name == "foo") return {fulfilled: (value) => result = value};
   });
