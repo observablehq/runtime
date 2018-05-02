@@ -8,11 +8,9 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtime
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>builtins</i>, <i>notebook</i>[, <i>nodes</i>])
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>builtins</i>, <i>notebook</i>[, <i>node</i>])
 
-Returns a new *runtime* for the given *builtins* object and *notebook* definition, possibly attaching variables in the main module to DOM elements in the specified *nodes*. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
-
-The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
+Returns a new *runtime* for the given *builtins* object and *notebook* definition, possibly attaching variables in the main module to DOM elements according to the specified *node* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
 
 ```js
 const notebook = {
@@ -33,7 +31,7 @@ const notebook = {
 }
 ```
 
-The *notebook* may contain multiple modules as when the main module contains imports. For example:
+The *notebook* may contain multiple modules, as when the main module contains imports. For example:
 
 ```js
 const notebook = {
@@ -64,7 +62,7 @@ const notebook = {
 };
 ```
 
-The *nodes* object that maps from variable names in the main module to DOM elements or DOM element selectors.
+The *node* function maps from variable definitions in the main module to DOM elements. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
@@ -85,12 +83,10 @@ Runtime.load(new Library, {
       ]
     }
   ]
-}, {
-  foo: "#foo"
-});
+}, ({name}) => document.querySelector(`#{name}`));
 ```
 
-Variables in the notebook which are not associated with a DOM node (or aren’t indirectly depended on by any variable that is associated with a DOM node), will not be evaluated.
+Variables in the notebook which are not associated with a DOM element (or aren’t indirectly depended on by any variable that is associated with a DOM element), will not be evaluated.
 
 <a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
