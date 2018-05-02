@@ -17,17 +17,19 @@ The *notebook* is an object with *notebook*.id and *notebook*.modules properties
 ```js
 const notebook = {
   id: "7d0eb6673a55a7c@3",
-  modules: [{
-    id: "7d0eb6673a55a7c@3",
-    variables: [
-      {
-        name: "title",
-        value: function() {
-          return "Hello, world!"
+  modules: [
+    {
+      id: "7d0eb6673a55a7c@3",
+      variables: [
+        {
+          name: "title",
+          value: function() {
+            return "Hello, world!"
+          }
         }
-      }
-    ]
-  }]
+      ]
+    }
+  ]
 }
 ```
 
@@ -62,13 +64,33 @@ const notebook = {
 };
 ```
 
-The *nodes* object that maps from variable names in the main module to DOM elements or DOM element selectors. Variables in the notebook which are not associated with a DOM node (or aren’t indirectly depended on by any variable that is associated with a DOM node), will not be evaluated.
+The *nodes* object that maps from variable names in the main module to DOM elements or DOM element selectors.
 
 ```js
-Runtime.load({}, notebook, {
-  "foo": "#foo"
+import {Runtime} from "@observablehq/notebook-runtime";
+import {Library} from "@observablehq/notebook-stdlib";
+
+Runtime.load(new Library, {
+  id: "7d0eb6673a55a7c@3",
+  modules: [
+    {
+      id: "7d0eb6673a55a7c@3",
+      variables: [
+        {
+          name: "foo",
+          value: function() {
+            return "Hello, world!"
+          }
+        }
+      ]
+    }
+  ]
+}, {
+  foo: "#foo"
 });
 ```
+
+Variables in the notebook which are not associated with a DOM node (or aren’t indirectly depended on by any variable that is associated with a DOM node), will not be evaluated.
 
 <a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
