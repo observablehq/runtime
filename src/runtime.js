@@ -2,6 +2,7 @@ import dispatch from "./dispatch";
 import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
+import load from "./load";
 import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
@@ -18,6 +19,10 @@ export default function Runtime(builtins) {
     (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);
   }
 }
+
+Object.defineProperties(Runtime, {
+  load: {value: load, writable: true, configurable: true}
+});
 
 Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
