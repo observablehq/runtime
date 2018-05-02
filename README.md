@@ -8,9 +8,9 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtime
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>builtins</i>, <i>notebook</i>[, <i>node</i>])
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>outputs</i>])
 
-Returns a new *runtime* for the given *builtins* object and *notebook* definition, possibly attaching variables in the main module to DOM elements according to the specified *node* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
+Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to output callbacks according to the specified *outputs* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
 
 ```js
 const notebook = {
@@ -62,13 +62,13 @@ const notebook = {
 };
 ```
 
-The *node* function maps from variable definitions in the main module to DOM elements. For example:
+The *outputs* function returns optional output functions for variable definitions in the main module. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
 import {Library} from "@observablehq/notebook-stdlib";
 
-Runtime.load(new Library, {
+Runtime.load({
   id: "7d0eb6673a55a7c@3",
   modules: [
     {
@@ -83,10 +83,26 @@ Runtime.load(new Library, {
       ]
     }
   ]
-}, ({name}) => document.querySelector(`#{name}`));
+},
+new Library,
+(variable) => {
+  let node = document.getElementById(variable.name);
+  return {
+    pending: () => node.classList.add("running")
+    fulfilled: (value) => {
+      node.classList.remove("running");
+      node.appendChild(value.firstChild);
+    }
+    rejected: (error) => {
+      node.classList.remove("running");
+      node.classList.add("error");
+      node.innerText = error.message;
+    }
+  };
+});
 ```
 
-Variables in the notebook which are not associated with a DOM element (or aren’t indirectly depended on by any variable that is associated with a DOM element), will not be evaluated.
+Variables in the notebook which are not associated with an *output* (or aren’t indirectly depended on by any variable that is associated with an *output*), will not be evaluated.
 
 <a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
