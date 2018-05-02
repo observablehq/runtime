@@ -1,7 +1,8 @@
 import Runtime from "./runtime";
 import noop from "./noop";
 
-export default function load(library, {modules, id}, outputs = noop) {
+export default function load(notebook, library = {}, outputs = noop) {
+  const {modules, id} = notebook;
   const map = new Map;
   const runtime = new Runtime(library);
   const main = runtime_module(id);
