@@ -65,7 +65,7 @@ const notebook = {
 The *nodes* object that maps from variable names in the main module to DOM elements or DOM element selectors. Variables in the notebook which are not associated with a DOM node (or aren’t indirectly depended on by any variable that is associated with a DOM node), will not be evaluated.
 
 ```js
-Runtime.load(notebook, {
+Runtime.load({}, notebook, {
   "foo": "#foo"
 });
 ```
