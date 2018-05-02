@@ -10,21 +10,24 @@ export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export var variable_invalidate = {};
 
-export default function Variable(type, module, output) {
+export default function Variable(type, module, observer) {
   Object.defineProperties(this, {
+    _observer: {value: observer, writable: true},
     _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
+    _fulfilled: {value: (observer && observer.fulfilled) || noop, writable: true},
     _indegree: {value: 0, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
     _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
-    _output: {value: output, writable: true},
     _outputs: {value: new Set, writable: true},
+    _pending: {value: (observer && observer.pending) || noop, writable: true},
     _promise: {value: undefined, writable: true},
-    _reachable: {value: output != null, writable: true}, // Is this variable transitively visible?
+    _reachable: {value: observer != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
+    _rejected: {value: (observer && observer.rejected) || noop, writable: true},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _version: {value: 0, writable: true}
