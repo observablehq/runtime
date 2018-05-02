@@ -4,22 +4,21 @@
 
 This library implements the reactive runtime for Observable notebooks. It lets you publish your interactive notebooks wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand how the Observable runtime works.
 
-## API Reference: High Level
+## API Reference
 
-### load()
+### Runtime
 
-<a href="#load" name="load">#</a> <b>load</b>(<i>notebook, nodes</i>)
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>builtins</i>, <i>notebook</i>[, <i>nodes</i>])
 
-The `load` function provides a convenient interface for wiring up an entire reactive notebook and attaching specific live variables to DOM nodes. Pass it a notebook specification, and an object mapping variable names to DOM nodes, and watch it go.
+Returns a new *runtime* for the given *builtins* object and *notebook* definition, possibly attaching variables in the main module to DOM elements in the specified *nodes*.  Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
-The notebook specification is a JavaScript object, and may be downloaded as an ES module for any published notebook on [beta.observablehq.com](https://beta.observablehq.com). It looks like this:
+The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
 
 ```js
-const helloWorldNotebook = {
-  id: "hello-world@17",
-  runtimeVersion: 1,
+const notebook = {
+  id: "7d0eb6673a55a7c@3",
   modules: [{
-    id: "hello-world@17",
+    id: "7d0eb6673a55a7c@3",
     variables: [
       {
         name: "title",
@@ -32,31 +31,29 @@ const helloWorldNotebook = {
 }
 ```
 
-The notebook object may contain multiple modules, which may import variables between them. For example:
+The *notebook* may contain multiple modules as when the main module contains imports. For example:
 
 ```js
-const importNotebook = {
-  id: "importing@30",
-  runtimeVersion: 1,
+const notebook = {
+  id: "2710b07ba2cc1a8a@5",
   modules: [
     {
-      id: "importing@30",
+      id: "2710b07ba2cc1a8a@5",
       variables: [
         {
-          name: "viewof slider",
-          from: "@mbostock/simple-input-slider",
-          remote: "viewof input"
+          from: "904bc713463f843@7",
+          name: "foo",
+          remote: "foo"
         }
       ]
     {
-      id: "@mbostock/simple-input-slider",
+      id: "904bc713463f843@7",
       variables: [
         {
-          name: "input",
-          inputs: ["DOM"],
-          view: true,
-          value: function(DOM) {
-            return DOM.range(0, 100);
+          name: "foo",
+          inputs: [],
+          value: function() {
+            return 42;
           }
         }
       ]
@@ -65,23 +62,17 @@ const importNotebook = {
 };
 ```
 
-The *nodes* argument to load is an object that maps from main module variable names to DOM nodes, or to query selector strings which can look up DOM nodes. Variables in the notebook which aren't associated with a DOM node (or aren't indirectly depended on by any variable that is associated with a DOM node),  will not be evaluated.
+The *nodes* object that maps from variable names in the main module to DOM elements or DOM element selectors. Variables in the notebook which are not associated with a DOM node (or aren’t indirectly depended on by any variable that is associated with a DOM node), will not be evaluated.
 
 ```js
-const nodes = {"viewof slider", "#article .slider"};
-
-// And finally:
-
-load(importNotebook, nodes);
+Runtime.load(notebook, {
+  "foo": "#foo"
+});
 ```
-
-## API Reference: Low Level
-
-### Runtime
 
 <a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
-Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
+Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
 For example, to create a runtime whose only builtin is `color`:
 

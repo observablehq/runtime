@@ -1,9 +1,9 @@
 import {RuntimeError} from "../src/errors";
-import {load} from "../src/index";
+import load from "../src/load";
 import tape from "./tape";
 
 tape("basic notebook as module loading", {html: "<div id=foo />"}, async test => {
-  load({id: "notebook@1", modules: [{
+  load({}, {id: "notebook@1", modules: [{
     id: "notebook@1",
     variables: [{
       name: "foo",
@@ -15,7 +15,7 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
 });
 
 tape("notebooks as modules with variables depending on other variables", {html: "<div id=foo />"}, async test => {
-  load({id: "notebook@1", modules: [{
+  load({}, {id: "notebook@1", modules: [{
     id: "notebook@1",
     variables: [{
       name: "foo",
@@ -32,7 +32,7 @@ tape("notebooks as modules with variables depending on other variables", {html: 
 
 tape("throws an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
   try {
-    load({id: "notebook@1", modules: [{
+    load({}, {id: "notebook@1", modules: [{
       id: "notebook@1",
       variables: [{
         name: "foo",
@@ -52,7 +52,7 @@ tape("throws an error when trying to import from a nonexistent module", {html: "
 });
 
 // tape.only("notebook as modules with the standard library and views", {html: "<div id=foo /><div id=bar />"}, async test => {
-//   load({id: "notebook@1", modules: [{
+//   load({}, {id: "notebook@1", modules: [{
 //     id: "notebook@1",
 //     variables: [{
 //       name: "foo",
