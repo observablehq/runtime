@@ -10,7 +10,7 @@ export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export var variable_invalidate = {};
 
-export default function Variable(type, module, node) {
+export default function Variable(type, module, output) {
   Object.defineProperties(this, {
     _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
@@ -20,10 +20,10 @@ export default function Variable(type, module, node) {
     _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
-    _node: {value: node, writable: true},
+    _output: {value: output, writable: true},
     _outputs: {value: new Set, writable: true},
     _promise: {value: undefined, writable: true},
-    _reachable: {value: node != null, writable: true}, // Is this variable transitively visible?
+    _reachable: {value: output != null, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
     _value: {value: undefined, writable: true},

@@ -1,5 +1,3 @@
-import dispatch from "./dispatch";
-import inspect from "./inspect/index";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import load from "./load";
@@ -30,8 +28,6 @@ Object.defineProperties(Runtime.prototype, {
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   module: {value: runtime_module, writable: true, configurable: true}
 });
-
-var LOCATION_MATCH = /\s+\(\d+:\d+\)$/m;
 
 function runtime_module() {
   return new Module(this);
@@ -105,7 +101,7 @@ function runtime_computeNow() {
     var error = new RuntimeError("circular definition");
     variable._value = undefined;
     (variable._promise = Promise.reject(error)).catch(noop);
-    variable_displayError(variable, error);
+    variable_outputRejected(variable, error);
   });
 
   function postqueue(variable) {
@@ -130,7 +126,7 @@ function variable_invalidator(variable) {
 function variable_compute(variable) {
   variable._invalidate();
   variable._invalidate = noop;
-  if (variable._node) variable._node.classList.add("O--running");
+  variable_outputPending(variable);
   var value0 = variable._value,
       version = ++variable._version,
       invalidate = null,
@@ -159,11 +155,11 @@ function variable_compute(variable) {
   promise.then(function(value) {
     if (variable._version !== version) return;
     variable._value = value;
-    variable_displayValue(variable, value);
+    variable_outputFulfilled(variable, value);
   }, function(error) {
     if (variable._version !== version) return;
     variable._value = undefined;
-    variable_displayError(variable, error);
+    variable_outputRejected(variable, error);
   });
 }
 
@@ -175,14 +171,14 @@ function variable_precompute(variable, version, promise, generator) {
       return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
         if (variable._version !== version) return;
         variable_postrecompute(variable, value, promise).then(recompute);
-        variable_displayValue(variable, value);
+        variable_outputFulfilled(variable, value);
         return value;
       });
     });
     promise.catch(function(error) {
       if (variable._version !== version) return;
       variable_postrecompute(variable, undefined, promise);
-      variable_displayError(variable, error);
+      variable_outputRejected(variable, error);
     });
   }
   return new Promise(function(resolve) {
@@ -209,44 +205,23 @@ function variable_return(generator) {
 }
 
 function variable_reachable(variable) {
-  if (variable._node) return true; // Directly reachable.
+  if (variable._output) return true; // Directly reachable.
   var outputs = new Set(variable._outputs);
   for (const output of outputs) {
-    if (output._node) return true;
+    if (output._output) return true;
     output._outputs.forEach(outputs.add, outputs);
   }
   return false;
 }
 
-function variable_displayError(variable, error) {
-  var node = variable._node;
-  if (!node) return;
-  node.className = "O O--error";
-  while (node.lastChild) node.removeChild(node.lastChild);
-  var span = document.createElement("span");
-  span.className = "O--inspect";
-  span.textContent = (error + "").replace(LOCATION_MATCH, "");
-  node.appendChild(span);
-  dispatch(node, "error", {error: error});
+function variable_outputPending({_output}) {
+  if (_output && _output.pending) _output.pending();
 }
 
-function variable_displayValue(variable, value) {
-  var node = variable._node;
-  if (!node) return;
-  if (!(value instanceof Element || value instanceof Text) || (value.parentNode && value.parentNode !== node)) {
-    value = inspect(value, false, node.firstChild // TODO Do this better.
-        && node.firstChild.classList
-        && node.firstChild.classList.contains("O--expanded"));
-    value.classList.add("O--inspect");
-  }
-  node.className = "O";
-  if (node.firstChild !== value) {
-    if (node.firstChild) {
-      while (node.lastChild !== node.firstChild) node.removeChild(node.lastChild);
-      node.replaceChild(value, node.firstChild);
-    } else {
-      node.appendChild(value);
-    }
-  }
-  dispatch(node, "update");
+function variable_outputFulfilled({_output}, value) {
+  if (_output && _output.fulfilled) _output.fulfilled(value);
+}
+
+function variable_outputRejected({_output}, error) {
+  if (_output && _output.rejected) _output.rejected(error);
 }
