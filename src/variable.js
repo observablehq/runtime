@@ -33,7 +33,6 @@ export default function Variable(type, module, node) {
 
 Object.defineProperties(Variable.prototype, {
   _resolve: {value: variable_resolve, writable: true, configurable: true},
-  attach: {value: variable_attach_node, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
@@ -47,14 +46,6 @@ function variable_attach(variable) {
 function variable_detach(variable) {
   variable._module._runtime._dirty.add(variable);
   variable._outputs.delete(this);
-}
-
-function variable_attach_node(node) {
-  const runtime = this._module._runtime;
-  this._node = node;
-  this._reachable = true;
-  runtime._updates.add(this);
-  runtime._compute();
 }
 
 function variable_resolve(name) {
@@ -181,9 +172,9 @@ function variable_defineImpl(name, inputs, definition) {
   return this;
 }
 
-function variable_import(name, alias, module) {
-  if (arguments.length < 3) module = alias, alias = name;
-  return variable_defineImpl.call(this, alias + "", [module._resolve(name + "")], identity);
+function variable_import(remote, name, module) {
+  if (arguments.length < 3) module = name, name = remote;
+  return variable_defineImpl.call(this, name + "", [module._resolve(remote + "")], identity);
 }
 
 function variable_delete() {
