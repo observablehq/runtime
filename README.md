@@ -6,7 +6,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ## API Reference
 
-### Runtime
+### Runtimes
 
 <a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>observer</i>])
 
@@ -62,7 +62,7 @@ const notebook = {
 };
 ```
 
-The *observer* function returns optional "pending", "fulfilled" and "rejected" callback functions for variable definitions in the main module. For example:
+The *observer* function is called for each variable defined in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*, returning optional "pending", "fulfilled" and "rejected" callback functions. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
@@ -85,7 +85,7 @@ Runtime.load({
   ]
 },
 new Library,
-(variable) => {
+(variable, index, variables) => {
   let node = document.getElementById(variable.name);
   return {
     pending: () => {
@@ -106,7 +106,7 @@ new Library,
 
 Variables in the notebook which are not associated with an *observer* (or aren’t indirectly depended on by any variable that is associated with an *observer*) will not be evaluated.
 
-<a href="#runtime" name="runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
+<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
 Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
@@ -142,7 +142,7 @@ Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module.
 let cell = runtime.cell(document.createElement("div"));
 ```
 
-### Module
+### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
@@ -181,7 +181,7 @@ module1.variable().import("c", module1_0);
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
 
-### Variable
+### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
