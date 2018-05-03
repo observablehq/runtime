@@ -3,7 +3,7 @@ import generatorish from "./generatorish";
 import load from "./load";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, variable_invalidate} from "./variable";
+import Variable, {TYPE_IMPLICIT, variable_invalidate, no_observer} from "./variable";
 
 export default function Runtime(builtins) {
   var builtin = this.module();
@@ -205,10 +205,10 @@ function variable_return(generator) {
 }
 
 function variable_reachable(variable) {
-  if (variable._observer) return true; // Directly reachable.
+  if (variable._observer !== no_observer) return true; // Directly reachable.
   var outputs = new Set(variable._outputs);
   for (const output of outputs) {
-    if (output._observer) return true;
+    if (output._observer !== no_observer) return true;
     output._outputs.forEach(outputs.add, outputs);
   }
   return false;

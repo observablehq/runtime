@@ -9,25 +9,24 @@ export var TYPE_IMPLICIT = 2; // created on reference
 export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export var variable_invalidate = {};
+export var no_observer = {};
 
 export default function Variable(type, module, observer) {
+  if (observer == null) observer = no_observer;
   Object.defineProperties(this, {
     _observer: {value: observer, writable: true},
     _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
-    _fulfilled: {value: (observer && observer.fulfilled) || noop, writable: true},
     _indegree: {value: 0, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
     _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
     _outputs: {value: new Set, writable: true},
-    _pending: {value: (observer && observer.pending) || noop, writable: true},
     _promise: {value: undefined, writable: true},
-    _reachable: {value: observer != null, writable: true}, // Is this variable transitively visible?
+    _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
-    _rejected: {value: (observer && observer.rejected) || noop, writable: true},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _version: {value: 0, writable: true}
@@ -35,6 +34,9 @@ export default function Variable(type, module, observer) {
 }
 
 Object.defineProperties(Variable.prototype, {
+  _pending: {value: variable_pending, writable: true, configurable: true},
+  _fulfilled: {value: variable_fulfilled, writable: true, configurable: true},
+  _rejected: {value: variable_rejected, writable: true, configurable: true},
   _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
@@ -182,4 +184,16 @@ function variable_import(remote, name, module) {
 
 function variable_delete() {
   return variable_defineImpl.call(this, null, [], noop);
+}
+
+function variable_pending() {
+  if (this._observer.pending) this._observer.pending();
+}
+
+function variable_fulfilled(value) {
+  if (this._observer.fulfilled) this._observer.fulfilled(value);
+}
+
+function variable_rejected(error) {
+  if (this._observer.rejected) this._observer.rejected(error);
 }
