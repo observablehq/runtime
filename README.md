@@ -88,11 +88,13 @@ new Library,
 (variable) => {
   let node = document.getElementById(variable.name);
   return {
-    pending: () => node.classList.add("running")
+    pending: () => {
+      node.classList.add("running")
+    },
     fulfilled: (value) => {
       node.classList.remove("running");
-      node.appendChild(value.firstChild);
-    }
+      node.innerText = value;
+    },
     rejected: (error) => {
       node.classList.remove("running");
       node.classList.add("error");
