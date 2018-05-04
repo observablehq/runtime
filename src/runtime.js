@@ -186,7 +186,7 @@ function variable_precompute(variable, version, promise, generator) {
   }).then(function(next) {
     if (next.done) return;
     promise.then(recompute);
-    return Promise.resolve(next.value);
+    return next.value;
   });
 }
 
