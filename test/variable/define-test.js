@@ -351,3 +351,21 @@ tape("variable.define evaluates output variables before recomputing generators",
   await new Promise(requestAnimationFrame);
   test.deepEqual(await valueof(foo), {value: [3, 3]});
 });
+
+tape("variable.define evaluates nested output variables before recomputing generators", {html: "<div id=foo /><div id=bar />"}, async test => {
+ let i = 0;
+ const runtime = new Runtime();
+ const main = runtime.module();
+ main.variable().define("i", [], function*() { while (i < 3) yield ++i; });
+ const foo = main.variable("#foo").define("foo", ["i"], input => [i, input]);
+ const bar = main.variable("#bar").define("bar", ["i", "foo"], (input, foo) => [i, input, foo]);
+ await new Promise(requestAnimationFrame);
+ test.deepEqual(await valueof(foo), {value: [1, 1]});
+ test.deepEqual(await valueof(bar), {value: [1, 1, [1, 1]]});
+ await new Promise(requestAnimationFrame);
+ test.deepEqual(await valueof(foo), {value: [2, 2]});
+ test.deepEqual(await valueof(bar), {value: [2, 2, [2, 2]]});
+ await new Promise(requestAnimationFrame);
+ test.deepEqual(await valueof(foo), {value: [3, 3]});
+ test.deepEqual(await valueof(bar), {value: [3, 3, [3, 3]]});
+});
