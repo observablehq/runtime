@@ -3,7 +3,7 @@ import load from "../src/load";
 import tape from "./tape";
 
 tape("basic notebook as module loading", {html: "<div id=foo />"}, async test => {
-  let result = null;
+  let resolve, value = new Promise(_ => resolve = _);
   load({
     id: "notebook@1",
     modules: [
@@ -18,14 +18,14 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name == "foo") return {fulfilled: resolve};
   });
-  await sleep(10);
-  test.equals(result, 101);
+  await new Promise(requestAnimationFrame);
+  test.equals(await value, 101);
 });
 
 tape("notebooks as modules with variables depending on other variables", {html: "<div id=foo />"}, async test => {
-  let result = null;
+  let resolve, value = new Promise(_ => resolve = _);
   load({
     id: "notebook@1",
     modules: [
@@ -45,14 +45,14 @@ tape("notebooks as modules with variables depending on other variables", {html: 
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name == "foo") return {fulfilled: resolve};
   });
-  await sleep(10);
-  test.equals(result, 202);
+  await new Promise(requestAnimationFrame);
+  test.equals(await value, 202);
 });
 
 tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test => {
-  let result = null;
+  let resolve, value = new Promise(_ => resolve = _);
   load({
     id: "notebook@1",
     modules: [
@@ -82,14 +82,14 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name == "foo") return {fulfilled: resolve};
   });
-  await sleep(10);
-  test.equals(result, 202);
+  await new Promise(requestAnimationFrame);
+  test.equals(await value, 202);
 });
 
-tape("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
-  let failure, result;
+tape.skip("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
+  let resolve, reject, value = new Promise((y, n) => (resolve = y, reject = n));
   load({
     id: "notebook@1",
     modules: [
@@ -109,21 +109,15 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
       }
     ]
   }, null, ({name}) => {
-    return {
-      fulfilled: (value) => result = {name, value},
-      rejected: (error) => failure = {name, error}
-    };
+    return {fulfilled: resolve, rejected: reject};
   });
-  await sleep(10);
-  test.equals(failure.name, "nonexistent");
-  test.equals(failure.error.constructor, RuntimeError);
-  test.equals(failure.error.message, "nonexistent is not defined");
-  test.equals(result.name, "foo");
-  test.equals(result.value, 101);
+  await new Promise(requestAnimationFrame);
+  try { await value; test.fail(); }
+  catch (error) { test.equal(error.toString(), "RuntimeError: nonexistent is not defined"); }
 });
 
 tape("notebook as modules with the standard library", {html: "<div id=foo /><div id=bar />"}, async test => {
-  let result = null;
+  let resolve, value = new Promise(_ => resolve = _);
   load({
     id: "notebook@1",
     modules: [
@@ -141,12 +135,8 @@ tape("notebook as modules with the standard library", {html: "<div id=foo /><div
   }, {
     bar: 42
   }, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name == "foo") return {fulfilled: resolve};
   });
-  await sleep(10);
-  test.equals(result, 84);
+  await new Promise(requestAnimationFrame);
+  test.equals(await value, 84);
 });
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}

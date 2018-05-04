@@ -41,7 +41,7 @@ function runtime_computeSoon() {
   var runtime = this;
   return new Promise(function(resolve) {
     requestAnimationFrame(function() {
-      resolve();
+      setImmediate(resolve);
       runtime._computeNow();
     });
   });
@@ -74,6 +74,7 @@ function runtime_computeNow() {
     variable._outputs.forEach(variables.add, variables);
   });
 
+  this._postcompute = this._computing;
   this._computing = null;
   this._updates.clear();
   this._dirty.clear();
@@ -185,7 +186,7 @@ function variable_precompute(variable, version, promise, generator) {
     resolve(generator.next());
   }).then(function(next) {
     if (next.done) return;
-    promise.then(recompute);
+    variable._module._runtime._postcompute.then(recompute);
     return next.value;
   });
 }

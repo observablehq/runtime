@@ -16,11 +16,15 @@ tape.only = function(description, options, run) {
   return _.only(description, wrap(options, run));
 };
 
+function requestAnimationFrame(callback) {
+  return setTimeout(callback, 10);
+}
+
 function wrap({html = ""} = {}, run) {
   return async test => {
     const window = new JSDOM(html).window;
     const document = window.document;
-    global.requestAnimationFrame = setImmediate;
+    global.requestAnimationFrame = requestAnimationFrame;
     global.window = window;
     global.document = document;
     global.Element = window.Element;
