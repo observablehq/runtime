@@ -3,6 +3,7 @@ import generatorish from "./generatorish";
 import load from "./load";
 import Module from "./module";
 import noop from "./noop";
+import setImmediate from "./setImmediate";
 import Variable, {TYPE_IMPLICIT, variable_invalidate, no_observer} from "./variable";
 
 export default function Runtime(builtins) {

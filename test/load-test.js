@@ -1,4 +1,3 @@
-import {RuntimeError} from "../src/errors";
 import load from "../src/load";
 import tape from "./tape";
 
@@ -88,32 +87,37 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
   test.equals(await value, 202);
 });
 
-tape.skip("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
+tape("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
   let resolve, reject, value = new Promise((y, n) => (resolve = y, reject = n));
-  load({
-    id: "notebook@1",
-    modules: [
-      {
-        id: "notebook@1",
-        variables: [
-          {
-            name: "foo",
-            value: () => 101
-          },
-          {
-            name: "nonexistent",
-            remote: "nonexistent",
-            from: "nope"
-          }
-        ]
-      }
-    ]
-  }, null, ({name}) => {
-    return {fulfilled: resolve, rejected: reject};
-  });
-  await new Promise(requestAnimationFrame);
-  try { await value; test.fail(); }
-  catch (error) { test.equal(error.toString(), "RuntimeError: nonexistent is not defined"); }
+  try {
+    load({
+      id: "notebook@1",
+      modules: [
+        {
+          id: "notebook@1",
+          variables: [
+            {
+              name: "foo",
+              inputs: ["nonexistent"],
+              value: () => 101
+            },
+            {
+              name: "nonexistent",
+              remote: "nonexistent",
+              from: "nope"
+            }
+          ]
+        }
+      ]
+    }, null, () => {
+      return {fulfilled: resolve, rejected: reject};
+    });
+    await new Promise(requestAnimationFrame);
+    await value;
+    test.fail();
+  } catch (error) {
+    test.equal(error.toString(), "RuntimeError: nonexistent is not defined");
+  }
 });
 
 tape("notebook as modules with the standard library", {html: "<div id=foo /><div id=bar />"}, async test => {

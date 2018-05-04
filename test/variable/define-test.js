@@ -342,7 +342,7 @@ tape("variable.define evaluates output variables before recomputing generators",
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
-  const bar = main.variable().define("i", [], function*() { while (i < 3) yield ++i; });
+  main.variable().define("i", [], function*() { while (i < 3) yield ++i; });
   const foo = main.variable("#foo").define("foo", ["i"], bar => [i, bar]);
   await new Promise(requestAnimationFrame);
   test.deepEqual(await valueof(foo), {value: [1, 1]});
