@@ -200,7 +200,7 @@ function variable_postrecompute(variable, value, promise) {
 
 function variable_return(generator) {
   return function() {
-    generator.return();
+    generator.return({done: true});
   };
 }
 
