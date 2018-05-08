@@ -8,8 +8,8 @@ export default {
   output: {
     extend: true,
     banner: `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`,
-    file: "build/notebook-runtime.js",
+    file: "dist/notebook-runtime.js",
     format: "umd",
-    name: "O"
+    name: "Observable"
   }
 };
