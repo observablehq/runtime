@@ -9,7 +9,7 @@
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
     "precommit": "eslint . && yarn test",
-    "prepare": "rollup -c"
+    "prepublishOnly": "rollup -c"
   },
   "esm": {
     "mode": "all",

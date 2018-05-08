@@ -1,5 +1,5 @@
 *.sublime-*
 .DS_Store
 .esm-cache/
-build/*.zip
+dist/*.zip
 test/

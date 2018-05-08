@@ -3,7 +3,7 @@
     {
       "path": ".",
       "file_exclude_patterns": ["*.sublime-workspace"],
-      "folder_exclude_patterns": [".esm-cache", "build"]
+      "folder_exclude_patterns": [".esm-cache", "dist"]
     }
   ],
   "build_systems": [
