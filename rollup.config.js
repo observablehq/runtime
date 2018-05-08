@@ -6,6 +6,7 @@ export default {
     node()
   ],
   output: {
+    extend: true,
     banner: `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`,
     file: "build/notebook-runtime.js",
     format: "umd",
