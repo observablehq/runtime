@@ -3,6 +3,7 @@
   "name": "@observablehq/notebook-runtime",
   "version": "0.0.0",
   "main": "src/index",
+  "module": "dist/notebook-runtime.js",
   "author": {
     "name": "Observable, Inc."
   },
@@ -24,6 +25,7 @@
     "jsdom": "^11.5.1",
     "rollup": "^0.52.0",
     "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^3.0.0",
     "tape": "^4.8.0",
     "tape-await": "0.1.1"
   }
