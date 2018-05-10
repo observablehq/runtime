@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "main": "src/index",
   "module": "dist/notebook-runtime.js",
+  "unpkg": "dist/notebook-runtime.umd.js",
   "author": {
     "name": "Observable, Inc."
   },
