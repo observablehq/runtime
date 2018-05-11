@@ -1,12 +1,16 @@
 {
-  "private": true,
   "name": "@observablehq/notebook-runtime",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "license": "ISC",
   "main": "src/index",
   "module": "dist/notebook-runtime.js",
   "unpkg": "dist/notebook-runtime.umd.js",
   "author": {
     "name": "Observable, Inc."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/observablehq/notebook-runtime.git"
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
