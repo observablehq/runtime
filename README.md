@@ -122,14 +122,6 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
-<a href="#runtime_cell" name="runtime_cell">#</a> <i>runtime</i>.<b>cell</b>(<i>node</i>)
-
-Declare a new [cell](#cells), within the [runtime’s](#runtimes) "main" module. The cell may optionally have a DOM `node`, which it will render its contents into.
-
-```js
-let cell = runtime.cell(document.createElement("div"));
-```
-
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
