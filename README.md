@@ -10,7 +10,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 <a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>observer</i>])
 
-Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to "pending", "fulfilled" and "rejected" callbacks according to the specified *observer* function. Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties, such as:
+Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to "pending", "fulfilled" and "rejected" callbacks according to the specified *observer* function. Each property on the *builtins* object defines a built in variable for the runtime; these are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties:
 
 ```js
 const notebook = {
@@ -31,7 +31,7 @@ const notebook = {
 }
 ```
 
-The *notebook* may contain multiple modules, as when the main module contains imports. For example:
+The *notebook* may contain multiple modules, when the main module contains imports. For example:
 
 ```js
 const notebook = {
@@ -62,28 +62,16 @@ const notebook = {
 };
 ```
 
+In this way, a notebook bundles all of its resolved dependencies into a single value.
+
 The *observer* function is called for each variable defined in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*, returning optional "pending", "fulfilled" and "rejected" callback functions. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
 import {Library} from "@observablehq/notebook-stdlib";
+import notebook from "https://api.observablehq.com/document/@mbostock"
 
-Runtime.load({
-  id: "7d0eb6673a55a7c@3",
-  modules: [
-    {
-      id: "7d0eb6673a55a7c@3",
-      variables: [
-        {
-          name: "foo",
-          value: function() {
-            return "Hello, world!"
-          }
-        }
-      ]
-    }
-  ]
-},
+Runtime.load(notebook,
 new Library,
 (variable, index, variables) => {
   let node = document.getElementById(variable.name);
