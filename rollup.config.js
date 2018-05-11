@@ -24,7 +24,7 @@ export default [
   config({
     format: "umd",
     extend: true,
-    name: "Observable",
+    name: "observablehq",
     file: "dist/notebook-runtime.umd.js"
   })
 ];
