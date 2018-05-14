@@ -2,6 +2,19 @@
 # yarn lockfile v1
 
 
+"@observablehq/notebook-inspector@https://github.com/observablehq/notebook-inspector#6fe7a2f":
+  version "1.0.0"
+  resolved "https://github.com/observablehq/notebook-inspector#6fe7a2fb93c4af51a926387b0ef96404c0c55d5d"
+  dependencies:
+    esm "^3.0.5"
+
+"@observablehq/notebook-stdlib@https://github.com/observablehq/notebook-stdlib#e9f5392":
+  version "1.0.0"
+  resolved "https://github.com/observablehq/notebook-stdlib#e9f5392a5936bb9dcb40cd98abd7eb26962d98bc"
+  dependencies:
+    d3-require "^1.0.3"
+    esm "^3.0.5"
+
 "@types/node@*":
   version "8.0.53"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.53.tgz#396b35af826fa66aad472c8cb7b8d5e277f4e6d8"
@@ -281,6 +294,10 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-0.2.37.tgz#541097234cb2513c83ceed3acddc27ff27987d54"
   dependencies:
     cssom "0.3.x"
+
+d3-require@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.0.3.tgz#7ce736aa8f9642fa950808a394464b43d7a69c45"
 
 dashdash@^1.12.0:
   version "1.14.1"

@@ -122,7 +122,7 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
   test.equals(result.value, 101);
 });
 
-tape("notebook as modules with the standard library", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("notebook as modules with builtins", {html: "<div id=foo /><div id=bar />"}, async test => {
   let result = null;
   load({
     id: "notebook@1",
@@ -145,6 +145,29 @@ tape("notebook as modules with the standard library", {html: "<div id=foo /><div
   });
   await sleep(10);
   test.equals(result, 84);
+});
+
+tape("notebook with the default standard library", {html: "<div id=foo /><div id=bar />"}, async test => {
+  let result = null;
+  load({
+    id: "notebook@1",
+    modules: [
+      {
+        id: "notebook@1",
+        variables: [
+          {
+            name: "foo",
+            inputs: ["html"],
+            value: html => html`<div>`
+          }
+        ]
+      }
+    ]
+  }, null, ({name}) => {
+    if (name == "foo") return {fulfilled: (value) => result = value};
+  });
+  await sleep(10);
+  test.equals(result.outerHTML, '<div></div>');
 });
 
 function sleep(ms) {
