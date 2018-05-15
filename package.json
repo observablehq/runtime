@@ -2,9 +2,8 @@
   "name": "@observablehq/notebook-runtime",
   "version": "1.0.0",
   "license": "ISC",
-  "main": "src/index",
+  "main": "dist/notebook-runtime.umd.js",
   "module": "dist/notebook-runtime.js",
-  "unpkg": "dist/notebook-runtime.umd.js",
   "author": {
     "name": "Observable, Inc."
   },
@@ -15,15 +14,15 @@
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
     "precommit": "eslint . && yarn test",
-    "prepublishOnly": "rollup -c"
+    "prepare": "rollup -c"
   },
   "esm": {
     "mode": "all",
     "cjs": true
   },
   "dependencies": {
-    "@observablehq/notebook-inspector": "https://github.com/observablehq/notebook-inspector#6fe7a2f",
-    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#e9f5392",
+    "@observablehq/notebook-inspector": "https://github.com/observablehq/notebook-inspector#a11288d",
+    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#dad0186",
     "esm": "^3.0.5"
   },
   "devDependencies": {
@@ -31,7 +30,6 @@
     "husky": "^0.14.3",
     "jsdom": "^11.5.1",
     "rollup": "^0.52.0",
-    "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^3.0.0",
     "tape": "^4.8.0",
