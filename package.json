@@ -21,8 +21,8 @@
     "cjs": true
   },
   "dependencies": {
-    "@observablehq/notebook-inspector": "https://github.com/observablehq/notebook-inspector#a11288d",
-    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#dad0186",
+    "@observablehq/notebook-inspector": "https://github.com/observablehq/notebook-inspector#6a7e65b",
+    "@observablehq/notebook-stdlib": "https://github.com/observablehq/notebook-stdlib#40fb177",
     "esm": "^3.0.5"
   },
   "devDependencies": {

@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@observablehq/notebook-inspector@https://github.com/observablehq/notebook-inspector#a11288d":
+"@observablehq/notebook-inspector@https://github.com/observablehq/notebook-inspector#6a7e65b":
   version "1.0.0"
-  resolved "https://github.com/observablehq/notebook-inspector#a11288dd429ec2e68d2c204e6e07258a59aeb015"
+  resolved "https://github.com/observablehq/notebook-inspector#6a7e65b533e92ee9419308f821230786b021cd71"
   dependencies:
     esm "^3.0.5"
 
-"@observablehq/notebook-stdlib@https://github.com/observablehq/notebook-stdlib#dad0186":
+"@observablehq/notebook-stdlib@https://github.com/observablehq/notebook-stdlib#40fb177":
   version "1.0.0"
-  resolved "https://github.com/observablehq/notebook-stdlib#dad018646af3f0e286ca8aa963e9ced828dfd4f1"
+  resolved "https://github.com/observablehq/notebook-stdlib#40fb177c23debc1b6ff3c784d22330a2ed150a03"
   dependencies:
     d3-require "^1.0.3"
     esm "^3.0.5"
