@@ -64,15 +64,15 @@ const notebook = {
 
 In this way, a notebook bundles all of its resolved dependencies into a single value.
 
+The *builtins* object defaults to the [Observable standard library](https://github.com/observablehq/notebook-stdlib) if omitted.
+
 The *observer* function is called for each variable defined in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*, returning optional "pending", "fulfilled" and "rejected" callback functions. For example:
 
 ```js
 import {Runtime} from "@observablehq/notebook-runtime";
-import {Library} from "@observablehq/notebook-stdlib";
 import notebook from "https://api.observablehq.com/document/@mbostock"
 
 Runtime.load(notebook,
-new Library,
 (variable, index, variables) => {
   let node = document.getElementById(variable.name);
   return {
