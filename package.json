@@ -5,7 +5,8 @@
   "main": "dist/notebook-runtime.umd.js",
   "module": "dist/notebook-runtime.js",
   "author": {
-    "name": "Observable, Inc."
+    "name": "Observable, Inc.",
+    "url": "https://observablehq.com"
   },
   "repository": {
     "type": "git",
