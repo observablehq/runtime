@@ -31,6 +31,7 @@
     "husky": "^0.14.3",
     "jsdom": "^11.5.1",
     "rollup": "^0.52.0",
+    "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^3.0.0",
     "tape": "^4.8.0",
