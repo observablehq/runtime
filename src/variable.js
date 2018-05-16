@@ -24,7 +24,7 @@ export default function Variable(type, module, observer) {
     _module: {value: module},
     _name: {value: null, writable: true},
     _outputs: {value: new Set, writable: true},
-    _promise: {value: undefined, writable: true},
+    _promise: {value: Promise.resolve(undefined), writable: true},
     _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _type: {value: type},
