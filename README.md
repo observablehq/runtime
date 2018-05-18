@@ -89,6 +89,8 @@ Runtime.load(notebook, variable => {
 });
 ```
 
+See the [standard inspector](https://github.com/observablehq/notebook-inspector) for reference.
+
 Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
 
 <a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
