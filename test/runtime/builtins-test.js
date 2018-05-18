@@ -1,4 +1,4 @@
-import {Runtime} from "../../";
+import {Runtime} from "../../src/";
 import tape from "../tape";
 import valueof from "../variable/valueof";
 

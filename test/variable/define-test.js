@@ -1,4 +1,4 @@
-import {Runtime} from "../../";
+import {Runtime} from "../../src/";
 import tape from "../tape";
 import valueof from "./valueof";
 
@@ -336,4 +336,16 @@ tape("variable.define ignores an asynchronous result from a redefined input", {h
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
   test.deepEqual(foo._value, "success");
+});
+
+tape("variable.define does not try to compute unreachable variables", {html: "<div id=foo /><div id=bar />"}, async test => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  let evaluated = false;
+  const foo = main.variable("#foo").define("foo", [], () => 1);
+  const bar = main.variable().define("bar", ["foo"], (foo) => evaluated = foo);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: undefined});
+  test.equals(evaluated, false);
 });
