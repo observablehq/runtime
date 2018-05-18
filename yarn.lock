@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@observablehq/notebook-inspector@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-inspector/-/notebook-inspector-1.0.1.tgz#54f125237df367b663ea9c08119adc97bd72e73b"
+"@observablehq/notebook-inspector@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/notebook-inspector/-/notebook-inspector-1.0.2.tgz#dfe5d10ddccf8cd9b339c1caf82732fe76e218d2"
   dependencies:
     esm "^3.0.5"
 
