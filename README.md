@@ -69,11 +69,10 @@ The *builtins* object defaults to the [Observable standard library](https://gith
 The *observer* function is called for each variable defined in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*, returning optional "pending", "fulfilled" and "rejected" callback functions. For example:
 
 ```js
-import {Runtime} from "@observablehq/notebook-runtime";
-import notebook from "https://api.observablehq.com/document/@mbostock"
+import {Runtime} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
+import notebook from "https://api.observablehq.com/@mbostock/hello-world.js?key=9dd17e8d814f8b5"
 
-Runtime.load(notebook,
-(variable, index, variables) => {
+Runtime.load(notebook, (variable, index, variables) => {
   let node = document.getElementById(variable.name);
   return {
     pending: () => {
