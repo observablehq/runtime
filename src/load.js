@@ -19,11 +19,12 @@ export default function load(notebook, library, observer) {
 
   for (const m of modules) {
     const module = runtime_module(m.id);
-    let i = -1;
+    let i = 0;
     for (const v of m.variables) {
-      const variable = module.variable(module === main ? observer(v, ++i, m.variables) : null);
-      if (v.from) variable.import(v.remote, v.name, runtime_module(v.from));
-      else variable.define(v.name, v.inputs, v.value);
+      if (v.from) module.import(v.remote, v.name, runtime_module(v.from));
+      else if (module === main) module.variable(observer(v, i, m.variables)).define(v.name, v.inputs, v.value);
+      else module.define(v.name, v.inputs, v.value);
+      ++i;
     }
   }
 

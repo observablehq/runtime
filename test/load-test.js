@@ -1,4 +1,3 @@
-import {RuntimeError} from "../src/errors";
 import load from "../src/load";
 import tape from "./tape";
 
@@ -89,7 +88,7 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
 });
 
 tape("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
-  let failure, result;
+  const failures = [];
   load({
     id: "notebook@1",
     modules: [
@@ -98,7 +97,8 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
         variables: [
           {
             name: "foo",
-            value: () => 101
+            inputs: ["nonexistent"],
+            value: nonexistent => nonexistent
           },
           {
             name: "nonexistent",
@@ -110,16 +110,13 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
     ]
   }, null, ({name}) => {
     return {
-      fulfilled: (value) => result = {name, value},
-      rejected: (error) => failure = {name, error}
+      rejected: (error) => failures.push({name, type: error.constructor.name, message: error.message})
     };
   });
   await sleep(10);
-  test.equals(failure.name, "nonexistent");
-  test.equals(failure.error.constructor, RuntimeError);
-  test.equals(failure.error.message, "nonexistent is not defined");
-  test.equals(result.name, "foo");
-  test.equals(result.value, 101);
+  test.deepEquals(failures, [
+    {name: "foo", type: "RuntimeError", message: "nonexistent could not be resolved"}
+  ]);
 });
 
 tape("notebook as modules with builtins", {html: "<div id=foo /><div id=bar />"}, async test => {
