@@ -18,7 +18,7 @@ export default function Variable(type, module, observer) {
     _definition: {value: variable_undefined, writable: true},
     _duplicate: {value: undefined, writable: true},
     _duplicates: {value: undefined, writable: true},
-    _indegree: {value: 0, writable: true}, // The number of computing inputs.
+    _indegree: {value: -1, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
     _invalidate: {value: noop, writable: true},
     _module: {value: module},

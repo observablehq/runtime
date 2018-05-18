@@ -67,11 +67,16 @@ function runtime_computeNow() {
     variable._reachable = reachable;
   }, this);
 
-  // Compute the transitive closure of updating variables.
+  // Compute the transitive closure of updating, reachable variables.
   variables = new Set(this._updates);
   variables.forEach(function(variable) {
-    variable._indegree = 0;
-    variable._outputs.forEach(variables.add, variables);
+    if (variable._reachable) {
+      variable._indegree = 0;
+      variable._outputs.forEach(variables.add, variables);
+    } else {
+      variable._indegree = -1;
+      variables.delete(variable);
+    }
   });
 
   this._computing = null;
@@ -85,8 +90,9 @@ function runtime_computeNow() {
 
   // Identify the root variables (those with no updating inputs).
   variables.forEach(function(variable) {
-    if (!variable._reachable) variables.delete(variable);
-    else if (variable._indegree === 0) queue.push(variable);
+    if (variable._indegree === 0) {
+      queue.push(variable);
+    }
   });
 
   // Compute the variables in topological order.
@@ -105,7 +111,9 @@ function runtime_computeNow() {
   });
 
   function postqueue(variable) {
-    --variable._indegree || queue.push(variable);
+    if (--variable._indegree === 0) {
+      queue.push(variable);
+    }
   }
 }
 
