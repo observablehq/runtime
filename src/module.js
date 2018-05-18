@@ -30,8 +30,8 @@ function module_import() {
   return v.import.apply(v, arguments);
 }
 
-function module_variable(output) {
-  return new Variable(TYPE_NORMAL, this, output);
+function module_variable(observer) {
+  return new Variable(TYPE_NORMAL, this, observer);
 }
 
 function module_derive(injects, injectModule) {

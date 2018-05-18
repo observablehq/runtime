@@ -8,9 +8,9 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtimes
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>], <i>observer</i>)
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>], <i>observer</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
 
-Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to "pending", "fulfilled" and "rejected" callbacks according to the specified *observer* function. Each property on the *builtins* object defines a built in variable for the runtime; these are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties:
+Returns a new *runtime* for the given *notebook* definition. The *notebook* is an object with *notebook*.id and *notebook*.modules properties:
 
 ```js
 const notebook = {
@@ -28,10 +28,10 @@ const notebook = {
       ]
     }
   ]
-}
+};
 ```
 
-The *notebook* may contain multiple modules, when the main module contains imports. For example:
+The *notebook* may contain multiple modules, when the main module contains imports; a notebook bundles all of its resolved dependencies. For example:
 
 ```js
 const notebook = {
@@ -62,18 +62,16 @@ const notebook = {
 };
 ```
 
-In this way, a notebook bundles all of its resolved dependencies into a single value.
+If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md).
 
-The *builtins* object defaults to the [Observable standard library](https://github.com/observablehq/notebook-stdlib) if omitted.
-
-The *observer* function is called for each variable defined in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*, returning optional "pending", "fulfilled" and "rejected" callback functions. For example:
+The *observer* function is called for each (non-import) variable in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*. The returned [observer](#observers) may implement [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
 
 ```js
 import {Runtime} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
 import notebook from "https://api.observablehq.com/@mbostock/hello-world.js?key=9dd17e8d814f8b5"
 
-Runtime.load(notebook, (variable, index, variables) => {
-  let node = document.getElementById(variable.name);
+Runtime.load(notebook, variable => {
+  const node = document.getElementById(variable.name);
   return {
     pending: () => {
       node.classList.add("running")
@@ -91,7 +89,7 @@ Runtime.load(notebook, (variable, index, variables) => {
 });
 ```
 
-Variables in the notebook which are not associated with an *observer* (or aren’t indirectly depended on by any variable that is associated with an *observer*) will not be evaluated.
+Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
 
 <a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
 
@@ -100,13 +98,13 @@ Returns a new [runtime](#runtimes). Each property on the *builtins* object defin
 For example, to create a runtime whose only builtin is `color`:
 
 ```js
-var runtime = new Runtime({color: "red"});
+const runtime = new Runtime({color: "red"});
 ```
 
 To refer to the `color` builtin from a variable:
 
 ```js
-var module = runtime.module();
+const module = runtime.module();
 
 module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
 ```
@@ -125,13 +123,13 @@ Returns a new [module](#modules) for this [runtime](#runtimes).
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
-<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>element</i>])
+<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>observer</i>])
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
-If *element* is specified, the value of this variable will be displayed in the specified DOM *element*. If *element* is specified as a string, the *element* is selected from the current document using [*document*.querySelector](https://developer.mozilla.org/docs/Web/API/Document/querySelector). If the variable’s value is a DOM node, this node replaces the content of the specified *element*; if the variable’s current value is not a DOM node, the object inspector will automatically generate a suitable display for the current value.
+If *observer* is specified, the specified [observer](#observer) will be notified when the returned variable changes state, via the [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods. See the [standard inspector](https://github.com/observablehq/notebook-inspector/blob/master/README.md) for a convenient default observer implementation.
 
-A variable without an associated *element* is only computed if any transitive output of the variable has an *element*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
+A variable without an associated *observer* is only computed if any transitive output of the variable has an *observer*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
 <a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>)
 
@@ -143,7 +141,7 @@ Returns a derived copy of this [module](#modules), where each variable in *speci
 If *specifier*.alias is not specified, it defaults to *specifier*.name. A *specifier* may also be specified as a string, in which case the string is treated as both the name and the alias. For example, consider the following module which defines two constants *a* and *b*, and a variable *c* that represents their sum:
 
 ```js
-var module0 = runtime.module();
+const module0 = runtime.module();
 module0.variable().define("a", 1);
 module0.variable().define("b", 2);
 module0.variable().define("c", ["a", "b"], (a, b) => a + b);
@@ -152,8 +150,8 @@ module0.variable().define("c", ["a", "b"], (a, b) => a + b);
 To derive a new module that redefines *b*:
 
 ```js
-var module1 = runtime.module(),
-    module1_0 = module0.derive(["b"], module1);
+const module1 = runtime.module();
+const module1_0 = module0.derive(["b"], module1);
 module1.variable().define("b", 3);
 module1.variable().import("c", module1_0);
 ```
@@ -173,11 +171,11 @@ The *definition* function may return a promise; derived variables will be comput
 For example, consider the following module that starts with a single undefined variable, *a*:
 
 ```js
-var runtime = new Runtime(builtins);
+const runtime = new Runtime(builtins);
 
-var module = runtime.module();
+const module = runtime.module();
 
-var a = module.variable("#a");
+const a = module.variable();
 ```
 
 To define variable *a* with the name `foo` and the constant value 42:
@@ -195,7 +193,7 @@ a.define("foo", [], () => 42);
 To define an anonymous variable *b* that takes `foo` as input:
 
 ```js
-var b = module.variable("#b");
+const b = module.variable();
 
 b.define(["foo"], foo => foo * 2);
 ```
@@ -211,9 +209,9 @@ Note that the JavaScript symbols in the above example code (*a* and *b*) have no
 If more than one variable has the same *name* at the same time in the same module, these variables’ definitions are temporarily overridden to throw a ReferenceError. When and if the duplicate variables are [deleted](#variable_delete), or are redefined to have unique names, the original definition of the remaining variable (if any) is restored. For example, here variables *a* and *b* will throw a ReferenceError:
 
 ```js
-var module = new Runtime(builtins).module();
-var a = module.variable("#a").define("foo", 1);
-var b = module.variable("#b").define("foo", 2);
+const module = new Runtime(builtins).module();
+const a = module.variable().define("foo", 1);
+const b = module.variable().define("foo", 2);
 ```
 
 If *a* or *b* is redefined to have a different name, both *a* and *b* will subsequently resolve to their desired values:
@@ -229,9 +227,9 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
 ```js
-var runtime = new Runtime(builtins);
+const runtime = new Runtime(builtins);
 
-var module0 = runtime.module();
+const module0 = runtime.module();
 
 module0.variable().define("foo", 42);
 ```
@@ -239,7 +237,7 @@ module0.variable().define("foo", 42);
 To import `foo` into another module:
 
 ```js
-var module1 = runtime.module();
+const module1 = runtime.module();
 
 module1.variable().import("foo", module0);
 ```
@@ -247,7 +245,7 @@ module1.variable().import("foo", module0);
 Now the variable `foo` is available to other variables in module *b*:
 
 ```js
-module1.variable("#hello").define(["foo"], foo => `Hello, ${foo}.`);
+module1.variable().define(["foo"], foo => `Hello, ${foo}.`);
 ```
 
 This would produce the following output:
@@ -263,3 +261,19 @@ module1.variable().import("foo", "bar", module0);
 <a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
+
+### Observers
+
+An observer watches a [variable](#variable), being notified via callback when the variable changes state.
+
+<a href="#observer_pending" name="observer_pending">#</a> <i>observer</i>.<b>pending</b>()
+
+Called shortly before the variable is computed. For a generator variable, this occurs only before the generator is constructed, not before each value is pulled from the generator.
+
+<a href="#observer_fulfilled" name="observer_fulfilled">#</a> <i>observer</i>.<b>fulfilled</b>(<i>value</i>)
+
+Called shortly after the variable is fulfilled with a new *value*.
+
+<a href="#observer_rejected" name="observer_rejected">#</a> <i>observer</i>.<b>rejected</b>(<i>error</i>)
+
+Called shortly after the variable is rejected with the given *error*.
