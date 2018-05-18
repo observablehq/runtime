@@ -8,7 +8,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtimes
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>, <i>observer</i>])
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>], <i>observer</i>)
 
 Returns a new *runtime* for the given *notebook* definition with the given *builtins* object, possibly attaching variables in the main module to "pending", "fulfilled" and "rejected" callbacks according to the specified *observer* function. Each property on the *builtins* object defines a built in variable for the runtime; these are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. The *notebook* is an object with *notebook*.id and *notebook*.modules properties:
 

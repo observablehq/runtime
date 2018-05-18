@@ -1,14 +1,11 @@
 import {Library} from "@observablehq/notebook-stdlib";
 import Runtime from "./runtime";
-import noop from "./noop";
 
 export default function load(notebook, library, observer) {
-  if (typeof library == "function") {
-    observer = library;
-    library = null;
-  }
+  if (typeof library == "function") observer = library, library = null;
+  if (typeof observer !== "function") throw new Error("invalid observer");
   if (library == null) library = new Library();
-  if (observer == null) observer = noop;
+
   const {modules, id} = notebook;
   const map = new Map;
   const runtime = new Runtime(library);
