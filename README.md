@@ -282,11 +282,11 @@ Deletes this variable’s current definition and name, if any. Any variable in t
 
 ### Observers
 
-An observer watches a [variable](#variable), being notified via callback when the variable changes state.
+An observer watches a [variable](#variable), being notified via asynchronous callback whenever the variable changes state.
 
 <a href="#observer_pending" name="observer_pending">#</a> <i>observer</i>.<b>pending</b>()
 
-Called shortly before the variable is computed. For a generator variable, this occurs only before the generator is constructed, not before each value is pulled from the generator.
+Called shortly before the variable is computed. For a generator variable, this occurs before the generator is constructed, but not before each subsequent value is pulled from the generator.
 
 <a href="#observer_fulfilled" name="observer_fulfilled">#</a> <i>observer</i>.<b>fulfilled</b>(<i>value</i>)
 
