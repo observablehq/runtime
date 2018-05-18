@@ -91,7 +91,7 @@ Runtime.load(notebook, variable => {
 
 Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
 
-<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>)
+<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
 
 Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
@@ -115,7 +115,7 @@ This would produce the following output:
 
 Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
 
-<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>()
+<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>() [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
@@ -123,7 +123,7 @@ Returns a new [module](#modules) for this [runtime](#runtimes).
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
-<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>observer</i>])
+<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>observer</i>]) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
@@ -131,7 +131,7 @@ If *observer* is specified, the specified [observer](#observer) will be notified
 
 A variable without an associated *observer* is only computed if any transitive output of the variable has an *observer*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
-<a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>)
+<a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
 
 Returns a derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#variable_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
 
@@ -158,11 +158,27 @@ module1.variable().import("c", module1_0);
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
 
+<a href="#module_define" name="module_define">#</a> <i>module</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+
+A convenience method for [*variable*.define](#variable_define); equivalent to:
+
+```js
+module.variable().define(name, inputs, definition)
+```
+
+<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>from</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+
+A convenience method for [*variable*.import](#variable_import); equivalent to:
+
+```js
+module.variable().import(name, alias, from)
+```
+
 ### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
-<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>)
+<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
 
 Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array. If *definition* is not a function, the variable is defined to have the constant value of *definition*.
 
@@ -222,7 +238,7 @@ b.define("bar", 2);
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
-<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>)
+<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
 
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
@@ -258,7 +274,7 @@ To import `foo` into under the alias `bar`:
 module1.variable().import("foo", "bar", module0);
 ```
 
-<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>()
+<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>() [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
 
