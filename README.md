@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/observablehq/notebook-runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/notebook-runtime/tree/master)
 
-This library implements the reactive runtime for Observable notebooks. It lets you publish your interactive notebooks wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand how the Observable runtime works.
+This library implements the reactive runtime for Observable notebooks. It lets you [publish your interactive notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand [how the Observable runtime works](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js).
 
 ## API Reference
 
@@ -10,57 +10,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 <a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>], <i>observer</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
 
-Returns a new *runtime* for the given *notebook* definition. The *notebook* is an object with *notebook*.id and *notebook*.modules properties:
-
-```js
-const notebook = {
-  id: "7d0eb6673a55a7c@3",
-  modules: [
-    {
-      id: "7d0eb6673a55a7c@3",
-      variables: [
-        {
-          name: "title",
-          value: function() {
-            return "Hello, world!"
-          }
-        }
-      ]
-    }
-  ]
-};
-```
-
-The *notebook* may contain multiple modules, when the main module contains imports; a notebook bundles all of its resolved dependencies. For example:
-
-```js
-const notebook = {
-  id: "2710b07ba2cc1a8a@5",
-  modules: [
-    {
-      id: "2710b07ba2cc1a8a@5",
-      variables: [
-        {
-          from: "904bc713463f843@7",
-          name: "foo",
-          remote: "foo"
-        }
-      ]
-    {
-      id: "904bc713463f843@7",
-      variables: [
-        {
-          name: "foo",
-          inputs: [],
-          value: function() {
-            return 42;
-          }
-        }
-      ]
-    }
-  ]
-};
-```
+Creates, initializes and returns a new *runtime* for the given *notebook* definition.
 
 If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md).
 
@@ -92,6 +42,60 @@ Runtime.load(notebook, variable => {
 See the [standard inspector](https://github.com/observablehq/notebook-inspector) for reference.
 
 Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
+
+#### The notebook format
+
+Notebooks passed to `Runtime.load()` are objects with *notebook*.id and *notebook*.modules properties:
+
+```js
+const notebook = {
+  id: "7d0eb6673a55a7c@3",
+  modules: [
+    {
+      id: "7d0eb6673a55a7c@3",
+      variables: [
+        {
+          name: "title",
+          value: function() {
+            return "Hello, world!"
+          }
+        }
+      ]
+    }
+  ]
+};
+```
+
+The *notebook* may contain multiple modules, each defining reactive variables. When the main module contains imports, the notebook bundles all of its resolved dependencies. For example:
+
+```js
+const notebook = {
+  id: "2710b07ba2cc1a8a@5",
+  modules: [
+    {
+      id: "2710b07ba2cc1a8a@5",
+      variables: [
+        {
+          from: "904bc713463f843@7",
+          name: "foo",
+          remote: "foo"
+        }
+      ]
+    {
+      id: "904bc713463f843@7",
+      variables: [
+        {
+          name: "foo",
+          inputs: [],
+          value: function() {
+            return 42;
+          }
+        }
+      ]
+    }
+  ]
+};
+```
 
 <a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
 
