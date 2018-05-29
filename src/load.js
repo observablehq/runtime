@@ -9,7 +9,7 @@ export default function load(notebook, library, observer) {
   const {modules, id} = notebook;
   const map = new Map;
   const runtime = new Runtime(library);
-  const main = runtime_module(id);
+  runtime.main = runtime_module(id);
 
   function runtime_module(id) {
     let module = map.get(id);
@@ -22,7 +22,7 @@ export default function load(notebook, library, observer) {
     let i = 0;
     for (const v of m.variables) {
       if (v.from) module.import(v.remote, v.name, runtime_module(v.from));
-      else if (module === main) module.variable(observer(v, i, m.variables)).define(v.name, v.inputs, v.value);
+      else if (module === runtime.main) module.variable(observer(v, i, m.variables)).define(v.name, v.inputs, v.value);
       else module.define(v.name, v.inputs, v.value);
       ++i;
     }

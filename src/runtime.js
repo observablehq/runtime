@@ -11,7 +11,8 @@ export default function Runtime(builtins) {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _builtin: {value: builtin}
+    _builtin: {value: builtin},
+    main: {value: null, writable: true}
   });
   if (builtins) for (var name in builtins) {
     (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);

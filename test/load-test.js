@@ -3,7 +3,7 @@ import tape from "./tape";
 
 tape("basic notebook as module loading", {html: "<div id=foo />"}, async test => {
   let result = null;
-  load({
+  const runtime = load({
     id: "notebook@1",
     modules: [
       {
@@ -21,6 +21,7 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
   });
   await sleep(10);
   test.equals(result, 101);
+  test.equals(runtime.main._resolve("foo")._value, 101);
 });
 
 tape("notebooks as modules with variables depending on other variables", {html: "<div id=foo />"}, async test => {
