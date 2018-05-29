@@ -121,6 +121,14 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
+<a href="#runtime_main" name="runtime_main">#</a> <i>runtime</i>.<b>main</b> [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
+
+If the runtime was loaded with [Runtime.load()](#Runtime_load), `runtime.main` becomes available as a reference to the runtime’s main [module](#modules). The main module can then be used to [redefine](#module_redefine) variables:
+
+```js
+runtime.main.redefine("hello", ["color"], color => `My favorite color is: ${color}.`);
+```
+
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
@@ -166,6 +174,15 @@ A convenience method for [*variable*.define](#variable_define); equivalent to:
 
 ```js
 module.variable().define(name, inputs, definition)
+```
+
+<a href="#module_redefine" name="module_redefine">#</a> <i>module</i>.<b>redefine</b>(<i>name</i>, \[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+
+A convenience method to redefine an existing, named variable in the module. Given a module with defined `"hello"` and `"a"` variables:
+
+```js
+module.redefine("hello", [name], (name) => `Hello, ${name}`);
+module.redefine("a", () => 2);
 ```
 
 <a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>from</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")

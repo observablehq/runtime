@@ -168,6 +168,34 @@ tape("notebook with the default standard library", {html: "<div id=foo /><div id
   test.equals(result.outerHTML, '<div></div>');
 });
 
+tape("after Runtime.load, the main module can be used to redefine variables with new definitions", {html: "<div id=foo />"}, async test => {
+  let result = null;
+  const runtime = load({
+    id: "notebook@1",
+    modules: [
+      {
+        id: "notebook@1",
+        variables: [
+          {
+            name: "foo",
+            value: () => 101
+          }
+        ]
+      }
+    ]
+  }, null, ({name}) => {
+    if (name == "foo") return {fulfilled: (value) => result = value};
+  });
+  await sleep(10);
+  test.equals(result, 101);
+  test.equals(runtime.main._resolve("foo")._value, 101);
+
+  runtime.main.redefine("foo", [], () => 202);
+  await sleep(10);
+  test.equals(result, 202);
+  test.equals(runtime.main._resolve("foo")._value, 202);
+});
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

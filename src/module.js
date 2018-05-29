@@ -1,4 +1,5 @@
 import {forEach} from "./array";
+import {RuntimeError} from "./errors";
 import identity from "./identity";
 import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
 
@@ -17,6 +18,7 @@ Object.defineProperties(Module.prototype, {
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
   import: {value: module_import, writable: true, configurable: true},
+  redefine: {value: module_redefine, writable: true, configurable: true},
   variable: {value: module_variable, writable: true, configurable: true}
 });
 
@@ -32,6 +34,12 @@ function module_import() {
 
 function module_variable(observer) {
   return new Variable(TYPE_NORMAL, this, observer);
+}
+
+function module_redefine(name) {
+  var v = this._scope.get(name);
+  if (!v) throw new RuntimeError(name + " is not defined", name);
+  return v.define.apply(v, arguments);
 }
 
 function module_derive(injects, injectModule) {
