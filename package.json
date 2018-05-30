@@ -15,7 +15,8 @@
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
     "precommit": "eslint . && yarn test",
-    "prepare": "rollup -c"
+    "prepare": "rollup -c",
+    "postpublish": "git push && git push --tags"
   },
   "esm": {
     "mode": "all",
