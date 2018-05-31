@@ -1,18 +1,16 @@
 import node from "rollup-plugin-node-resolve";
 import uglify from "rollup-plugin-uglify";
 
-const defaultOutput = {
-  banner: `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`,
-};
+const copyright = `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`;
 
 function config(output) {
   return {
     input: "src/index.js",
     plugins: [
       node(),
-      uglify()
+      uglify({output: {preamble: copyright}})
     ],
-    output: Object.assign(output, defaultOutput)
+    output
   };
 }
 
