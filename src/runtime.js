@@ -1,5 +1,4 @@
 import {RuntimeError} from "./errors";
-import constant from "./constant";
 import generatorish from "./generatorish";
 import load from "./load";
 import Module from "./module";
@@ -133,13 +132,13 @@ function variable_invalidator(variable) {
 }
 
 function variable_intersector(element) {
-  return constant(function(value) {
+  return function(value) {
     return new Promise(resolve => {
       const observed = ([entry]) => entry.isIntersecting && (observer.disconnect(), resolve(value));
       const observer = new IntersectionObserver(observed);
       observer.observe(element);
     });
-  });
+  };
 }
 
 function variable_compute(variable) {
