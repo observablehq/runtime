@@ -71,9 +71,9 @@ function module_resolve(name) {
     if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
     } else if (name === "invalidation") {
-      variable.define(variable_invalidate);
+      variable.define(name, variable_invalidate);
     } else if (name === "visible") {
-      variable.define(variable_visible);
+      variable.define(name, variable_visible);
     } else {
       this._scope.set(variable._name = name, variable);
     }
