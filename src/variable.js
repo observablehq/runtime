@@ -8,8 +8,6 @@ export var TYPE_NORMAL = 1; // a normal variable
 export var TYPE_IMPLICIT = 2; // created on reference
 export var TYPE_DUPLICATE = 3; // created on duplicate definition
 
-export var variable_invalidate = {};
-export var variable_visible = {};
 export var no_observer = {};
 
 export default function Variable(type, module, observer) {
@@ -38,7 +36,6 @@ Object.defineProperties(Variable.prototype, {
   _pending: {value: variable_pending, writable: true, configurable: true},
   _fulfilled: {value: variable_fulfilled, writable: true, configurable: true},
   _rejected: {value: variable_rejected, writable: true, configurable: true},
-  _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
@@ -52,14 +49,6 @@ function variable_attach(variable) {
 function variable_detach(variable) {
   variable._module._runtime._dirty.add(variable);
   variable._outputs.delete(this);
-}
-
-function variable_resolve(name) {
-  switch (name) {
-    case "invalidation": return new Variable(TYPE_IMPLICIT, this._module).define(variable_invalidate);
-    case "visible": return new Variable(TYPE_IMPLICIT, this._module).define(variable_visible);
-    default: return this._module._resolve(name);
-  }
 }
 
 function variable_undefined() {
@@ -94,7 +83,7 @@ function variable_define(name, inputs, definition) {
   }
   return variable_defineImpl.call(this,
     name == null ? null : name + "",
-    inputs == null ? [] : map.call(inputs, this._resolve, this),
+    inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
     typeof definition === "function" ? definition : constant(definition)
   );
 }
@@ -117,7 +106,7 @@ function variable_defineImpl(name, inputs, definition) {
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
         scope.delete(this._name);
-        found = this._resolve(this._name);
+        found = this._module._resolve(this._name);
         found._outputs = this._outputs, this._outputs = new Set;
         found._outputs.forEach(function(output) { output._inputs[output._inputs.indexOf(this)] = found; }, this);
         found._outputs.forEach(runtime._updates.add, runtime._updates);

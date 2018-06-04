@@ -3,7 +3,10 @@ import generatorish from "./generatorish";
 import load from "./load";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, variable_invalidate, variable_visible, no_observer} from "./variable";
+import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
+
+export var variable_invalidate = {};
+export var variable_visible = {};
 
 export default function Runtime(builtins) {
   var builtin = this.module();
@@ -131,10 +134,12 @@ function variable_invalidator(variable) {
   });
 }
 
-function variable_intersector(invalidate, element) {
+function variable_intersector(invalidate, variable) {
+  let node = variable._observer && variable._observer._node;
+  if (!node) return Promise.resolve.bind(Promise);
   let visible = false, resolve = noop, reject = noop, promise;
   let observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting) && (promise = null, resolve()));
-  observer.observe(element);
+  observer.observe(node);
   invalidate.then(() => (observer.disconnect(), (observer = null), reject()));
   return function(value) {
     if (visible) return Promise.resolve(value);
@@ -163,7 +168,7 @@ function variable_compute(variable) {
         }
         case variable_visible: {
           if (!invalidate) invalidate = variable_invalidator(variable);
-          inputs[i] = variable_intersector(invalidate, variable._observer._node);
+          inputs[i] = variable_intersector(invalidate, variable);
           break;
         }
       }
