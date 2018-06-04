@@ -131,13 +131,16 @@ function variable_invalidator(variable) {
   });
 }
 
-function variable_intersector(element) {
+function variable_intersector(invalidate, element) {
+  let visible = false, resolve = noop, reject = noop, promise;
+  let observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting) && (promise = null, resolve()));
+  observer.observe(element);
+  invalidate.then(() => (observer.disconnect(), (observer = null), reject()));
   return function(value) {
-    return new Promise(resolve => {
-      const observed = ([entry]) => entry.isIntersecting && (observer.disconnect(), resolve(value));
-      const observer = new IntersectionObserver(observed);
-      observer.observe(element);
-    });
+    if (visible) return Promise.resolve(value);
+    if (!observer) return Promise.reject();
+    if (!promise) promise = new Promise((y, n) => (resolve = y, reject = n));
+    return promise.then(() => value);
   };
 }
 
@@ -154,8 +157,15 @@ function variable_compute(variable) {
     // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length; i < n; ++i) {
       switch (inputs[i]) {
-        case variable_invalidate: inputs[i] = invalidate = variable_invalidator(variable); break;
-        case variable_visible: inputs[i] = variable_intersector(variable._observer._node); break;
+        case variable_invalidate: {
+          inputs[i] = invalidate = variable_invalidator(variable);
+          break;
+        }
+        case variable_visible: {
+          if (!invalidate) invalidate = variable_invalidator(variable);
+          inputs[i] = variable_intersector(invalidate, variable._observer._node);
+          break;
+        }
       }
     }
 
