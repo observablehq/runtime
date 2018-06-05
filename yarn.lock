@@ -8,9 +8,9 @@
   dependencies:
     esm "^3.0.5"
 
-"@observablehq/notebook-stdlib@^1.0.1":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.0.2.tgz#45aa5a7467506f6e61edc3dbec23a40660c5a806"
+"@observablehq/notebook-stdlib@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.1.0.tgz#8ceafb3ecdc7e80ea4f18261c35f495e8bb0e2bb"
   dependencies:
     d3-require "^1.0.3"
     esm "^3.0.5"

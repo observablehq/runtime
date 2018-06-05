@@ -8,7 +8,10 @@ function config(output) {
     input: "src/index.js",
     plugins: [
       node(),
-      uglify({output: {preamble: copyright}})
+      uglify({
+        toplevel: output.format === "es",
+        output: {preamble: copyright}
+      })
     ],
     output
   };
