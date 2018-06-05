@@ -5,8 +5,8 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 
-export var variable_invalidate = {};
-export var variable_visible = {};
+export var variable_invalidation = {};
+export var variable_visibility = {};
 
 export default function Runtime(builtins) {
   var builtin = this.module();
@@ -134,13 +134,14 @@ function variable_invalidator(variable) {
   });
 }
 
-function variable_intersector(invalidate, variable) {
-  let node = variable._observer && variable._observer._node;
-  if (!node) return Promise.resolve.bind(Promise);
-  let visible = false, resolve = noop, reject = noop, promise;
-  let observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting) && (promise = null, resolve()));
-  observer.observe(node);
-  invalidate.then(() => (observer.disconnect(), (observer = null), reject()));
+function variable_intersector(invalidation, variable) {
+  let node = typeof IntersectionObserver === "function" && variable._observer && variable._observer._node;
+  let visible = !node, resolve = noop, reject = noop, promise, observer;
+  if (node) {
+    observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting) && (promise = null, resolve()));
+    observer.observe(node);
+    invalidation.then(() => (observer.disconnect(), observer = null, reject()));
+  }
   return function(value) {
     if (visible) return Promise.resolve(value);
     if (!observer) return Promise.reject();
@@ -155,20 +156,20 @@ function variable_compute(variable) {
   variable._pending();
   var value0 = variable._value,
       version = ++variable._version,
-      invalidate = null,
+      invalidation = null,
       promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
     if (variable._version !== version) return;
 
     // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length; i < n; ++i) {
       switch (inputs[i]) {
-        case variable_invalidate: {
-          inputs[i] = invalidate = variable_invalidator(variable);
+        case variable_invalidation: {
+          inputs[i] = invalidation = variable_invalidator(variable);
           break;
         }
-        case variable_visible: {
-          if (!invalidate) invalidate = variable_invalidator(variable);
-          inputs[i] = variable_intersector(invalidate, variable);
+        case variable_visibility: {
+          if (!invalidation) invalidation = variable_invalidator(variable);
+          inputs[i] = variable_intersector(invalidation, variable);
           break;
         }
       }
@@ -180,7 +181,7 @@ function variable_compute(variable) {
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
     if (generatorish(value)) {
-      (invalidate || variable_invalidator(variable)).then(variable_return(value));
+      (invalidation || variable_invalidator(variable)).then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
     return value;
