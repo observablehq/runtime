@@ -5,6 +5,7 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 
+export var variable_child = {};
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
@@ -150,6 +151,13 @@ function variable_intersector(invalidation, variable) {
   };
 }
 
+function variable_childer(invalidation, variable) {
+  return function(inputs, definition) {
+    const child = variable._module.variable(true).define(null, inputs, definition);
+    invalidation.then(() => child.delete());
+  };
+}
+
 function variable_compute(variable) {
   variable._invalidate();
   variable._invalidate = noop;
@@ -164,12 +172,18 @@ function variable_compute(variable) {
     for (var i = 0, n = inputs.length; i < n; ++i) {
       switch (inputs[i]) {
         case variable_invalidation: {
-          inputs[i] = invalidation = variable_invalidator(variable);
+          if (!invalidation) invalidation = variable_invalidator(variable);
+          inputs[i] = invalidation;
           break;
         }
         case variable_visibility: {
           if (!invalidation) invalidation = variable_invalidator(variable);
           inputs[i] = variable_intersector(invalidation, variable);
+          break;
+        }
+        case variable_child: {
+          if (!invalidation) invalidation = variable_invalidator(variable);
+          inputs[i] = variable_childer(invalidation, variable);
           break;
         }
       }
@@ -181,7 +195,8 @@ function variable_compute(variable) {
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
     if (generatorish(value)) {
-      (invalidation || variable_invalidator(variable)).then(variable_return(value));
+      if (!invalidation) invalidation = variable_invalidator(variable);
+      invalidation.then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
     return value;

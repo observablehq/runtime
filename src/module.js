@@ -1,6 +1,6 @@
 import {forEach} from "./array";
 import identity from "./identity";
-import {variable_invalidation, variable_visibility} from "./runtime";
+import {variable_child, variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
 
 var none = new Map;
@@ -74,6 +74,8 @@ function module_resolve(name) {
       variable.define(name, variable_invalidation);
     } else if (name === "visibility") {
       variable.define(name, variable_visibility);
+    } else if (name === "__variable__") {
+      variable.define(name, variable_child);
     } else {
       this._scope.set(variable._name = name, variable);
     }
