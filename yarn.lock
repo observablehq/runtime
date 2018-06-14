@@ -8,11 +8,11 @@
   dependencies:
     esm "^3.0.5"
 
-"@observablehq/notebook-stdlib@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.1.1.tgz#5ec337f927704f0a4f296edf213564e88a3dbcb0"
+"@observablehq/notebook-stdlib@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.1.2.tgz#3badef5d770878a38173d71628e53d89677eeb73"
   dependencies:
-    d3-require "^1.0.3"
+    d3-require "^1.1.0"
     esm "^3.0.5"
 
 "@types/node@*":
@@ -295,9 +295,9 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
-d3-require@^1.0.3:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.0.4.tgz#4fd8477479c7f77627ae688ee52998190c87871e"
+d3-require@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.1.0.tgz#bddbcca132049a09d0266f4e390fd505349af088"
 
 dashdash@^1.12.0:
   version "1.14.1"
