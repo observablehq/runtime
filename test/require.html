@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <body class="O--body">
 <div id="foo"></div>
-<script src="/dist/notebook-runtime.js"></script>
-<script>
+<script type=module>
+import {Runtime, Inspector, Library} from "/dist/notebook-runtime.js";
 
-var runtime = new Runtime(),
+var runtime = new Runtime(new Library),
     module = runtime.module();
 
 module.variable().define("d3", ["require"], require => require("d3-array"));
-module.variable("#foo").define(["d3"], d3 => d3.range(100));
+module.variable(new Inspector(document.querySelector("#foo"))).define(["d3"], d3 => d3.range(100));
 
 </script>
