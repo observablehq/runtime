@@ -14,7 +14,25 @@ Creates, initializes and returns a new *runtime* for the given *notebook* defini
 
 If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md).
 
-The *observer* function is called for each (non-import) variable in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*. The returned [observer](#observers) may implement [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
+The *observer* function is called for each (non-import) variable in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*.
+
+[Inspector](#inspector) is included as a ready-made observer. Inspectors display DOM elements “as-is”, and create interactive “devtools”-style inspectors for other arbitrary values such as numbers and objects.
+
+This example creates an inspector for each named cell in a [Hello world notebook](https://beta.observablehq.com/@tmcw/hello-world):
+
+```html
+<div id=hello></div>
+<script type=module>
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
+import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560"
+
+Runtime.load(notebook, variable => {
+  return new Inspector(document.getElementById(variable.name));
+});
+</script>
+```
+
+You can also create custom observers. The returned [observer](#observers) may implement [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
 
 ```js
 import {Runtime} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
@@ -38,8 +56,6 @@ Runtime.load(notebook, variable => {
   };
 });
 ```
-
-See the [standard inspector](https://github.com/observablehq/notebook-inspector) for reference.
 
 Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
 
@@ -101,7 +117,14 @@ const notebook = {
 
 Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
-For example, to create a runtime whose only builtin is `color`:
+Most notebooks created in Observable rely on the standard library builtins, which available as the [Library](#Library) class. For example, to create a runtime that includes standard library builtins like `now` and `width`:
+
+```js
+import {Runtime, Library} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
+const runtime = new Runtime(new Library);
+```
+
+You can instead specify an entirely custom set of builtins:
 
 ```js
 const runtime = new Runtime({color: "red"});
@@ -112,7 +135,8 @@ To refer to the `color` builtin from a variable:
 ```js
 const module = runtime.module();
 
-module.variable("#hello").define(["color"], color => `Hello, ${color}.`);
+const inspector = new Inspector(document.querySelector("#hello"));
+module.variable(inspector).define(["color"], color => `Hello, ${color}.`);
 ```
 
 This would produce the following output:
@@ -299,3 +323,26 @@ Called shortly after the variable is fulfilled with a new *value*.
 <a href="#observer_rejected" name="observer_rejected">#</a> <i>observer</i>.<b>rejected</b>(<i>error</i>)
 
 Called shortly after the variable is rejected with the given *error*.
+
+### Library
+
+For convenience, this module includes and exports the [Library](https://github.com/observablehq/notebook-stdlib#Library) class from notebook-stdlib, so that notebooks can easily use the standard library. Typically the Library class will be constructed and passed as the _builtins_ argument to [Runtime](#Runtime).
+
+_Refer to the [notebook-stdlib module](https://github.com/observablehq/notebook-stdlib) for full API documentation._
+
+### Inspector
+
+For convenience, this module includes and exports the [Inspector](https://github.com/observablehq/notebook-inspector#Inspector) class from notebook-inspector, so that notebooks can easily use the default inspector.
+
+A simple 'Hello world' example:
+
+```js
+import {Runtime, Inspector, Library} from "@observablehq/notebook-runtime";
+
+const runtime = new Runtime(new Library);
+const module = runtime.module();
+
+module.variable(new Inspector(document.querySelector("#hello"))).define(() => `Hello world`);
+```
+
+_Refer to the [notebook-inspector module](https://github.com/observablehq/notebook-inspector#api-reference) for full API documentation._
