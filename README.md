@@ -24,7 +24,7 @@ This example creates an inspector for each named cell in a [Hello world notebook
 <div id=hello></div>
 <script type=module>
 import {Runtime, Inspector} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
-import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560"
+import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560";
 
 Runtime.load(notebook, variable => {
   return new Inspector(document.getElementById(variable.name));
@@ -36,7 +36,7 @@ You can also create custom observers. The returned [observer](#observers) may im
 
 ```js
 import {Runtime} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
-import notebook from "https://api.observablehq.com/@mbostock/hello-world.js?key=9dd17e8d814f8b5"
+import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560";
 
 Runtime.load(notebook, variable => {
   const node = document.getElementById(variable.name);
