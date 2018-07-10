@@ -12,7 +12,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 Creates, initializes and returns a new *runtime* for the given *notebook* definition.
 
-If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md).
+If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md). Builtin values must be promises.
 
 The *observer* function is called for each (non-import) variable in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*.
 
