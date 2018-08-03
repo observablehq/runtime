@@ -97,6 +97,7 @@ const notebook = {
           remote: "foo"
         }
       ]
+    },
     {
       id: "904bc713463f843@7",
       variables: [
@@ -117,7 +118,7 @@ const notebook = {
 
 Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
 
-Most notebooks created in Observable rely on the standard library builtins, which available as the [Library](#Library) class. For example, to create a runtime that includes standard library builtins like `now` and `width`:
+Most notebooks created in Observable rely on the standard library builtins, which are available as the [Library](#Library) class. For example, to create a runtime that includes standard library builtins like `now` and `width`:
 
 ```js
 import {Runtime, Library} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
@@ -288,7 +289,7 @@ const module1 = runtime.module();
 module1.variable().import("foo", module0);
 ```
 
-Now the variable `foo` is available to other variables in module *b*:
+Now the variable `foo` is available to other variables in *module1*:
 
 ```js
 module1.variable().define(["foo"], foo => `Hello, ${foo}.`);
@@ -298,7 +299,7 @@ This would produce the following output:
 
 > Hello, 42.
 
-To import `foo` into under the alias `bar`:
+To import `foo` into *module1* under the alias `bar`:
 
 ```js
 module1.variable().import("foo", "bar", module0);
