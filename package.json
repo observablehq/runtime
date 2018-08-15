@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@observablehq/notebook-inspector": "^1.1.4",
-    "@observablehq/notebook-stdlib": "^1.1.3",
+    "@observablehq/notebook-stdlib": "^1.2.0",
     "esm": "^3.0.76"
   },
   "devDependencies": {
