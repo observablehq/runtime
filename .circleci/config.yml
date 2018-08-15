@@ -2,12 +2,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/node:10.8.0
     steps:
+      - run:
+          name: yarn
+          command: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.9.4
       - checkout
       - run:
           name: install
-          command: yarn --frozen-lockfile --network-concurrency 1
+          command: $HOME/.yarn/bin/yarn --frozen-lockfile
       - run:
           name: test
-          command: yarn test
+          command: $HOME/.yarn/bin/yarn test
