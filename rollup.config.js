@@ -1,5 +1,5 @@
 import node from "rollup-plugin-node-resolve";
-import uglify from "rollup-plugin-uglify";
+import {terser} from "rollup-plugin-terser";
 
 const copyright = `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`;
 
@@ -8,7 +8,7 @@ function config(output) {
     input: "src/index.js",
     plugins: [
       node(),
-      uglify({
+      terser({
         toplevel: output.format === "es",
         output: {preamble: copyright}
       })
