@@ -114,9 +114,9 @@ const notebook = {
 };
 ```
 
-<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
+<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>[, <i>global</i>]) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
 
-Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime.
+Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window object.
 
 Most notebooks created in Observable rely on the standard library builtins, which are available as the [Library](#Library) class. For example, to create a runtime that includes standard library builtins like `now` and `width`:
 
