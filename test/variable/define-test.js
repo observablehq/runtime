@@ -349,3 +349,65 @@ tape("variable.define does not try to compute unreachable variables", {html: "<d
   test.deepEqual(await valueof(bar), {value: undefined});
   test.equals(evaluated, false);
 });
+
+tape("variable.define can reference whitelisted globals", {html: "<div id=foo />"}, async test => {
+  try {
+    window.magic = 21;
+    const runtime = new Runtime(null, ["magic"]);
+    const module = runtime.module();
+    const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+    await new Promise(setImmediate);
+    test.deepEqual(await valueof(foo), {value: 42});
+  } finally {
+    delete window.magic;
+  }
+});
+
+tape("variable.define captures the value of whitelisted globals", {html: "<div id=foo />"}, async test => {
+  try {
+    window.magic = 1;
+    const runtime = new Runtime(null, ["magic"]);
+    const module = runtime.module();
+    const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+    await new Promise(setImmediate);
+    test.deepEqual(await valueof(foo), {value: 2});
+    window.magic = 2;
+    await new Promise(setImmediate);
+    test.deepEqual(await valueof(foo), {value: 2});
+  } finally {
+    delete window.magic;
+  }
+});
+
+tape("variable.define can override whitelisted globals", {html: "<div id=foo />"}, async test => {
+  const runtime = new Runtime(null, ["magic"]);
+  const module = runtime.module();
+  module.variable().define("magic", [], () => 2);
+  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 4});
+});
+
+tape("variable.define can dynamically override whitelisted globals", {html: "<div id=foo />"}, async test => {
+  try {
+    window.magic = 1;
+    const runtime = new Runtime(null, ["magic"]);
+    const module = runtime.module();
+    const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+    await new Promise(setImmediate);
+    test.deepEqual(await valueof(foo), {value: 2});
+    module.variable().define("magic", [], () => 2);
+    await new Promise(setImmediate);
+    test.deepEqual(await valueof(foo), {value: 4});
+  } finally {
+    delete window.magic;
+  }
+});
+
+tape("variable.define cannot reference non-whitelisted globals", {html: "<div id=foo />"}, async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {error: "RuntimeError: magic is not defined"});
+});

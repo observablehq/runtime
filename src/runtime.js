@@ -8,13 +8,14 @@ import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
-export default function Runtime(builtins) {
+export default function Runtime(builtins, globals) {
   var builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
-    _builtin: {value: builtin}
+    _builtin: {value: builtin},
+    _globals: {value: new Set(globals)}
   });
   if (builtins) for (var name in builtins) {
     (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);

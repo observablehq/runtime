@@ -70,6 +70,8 @@ function module_resolve(name) {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
+    } else if (this._runtime._globals.has(name)) {
+      variable.define(name, window_global(name));
     } else if (name === "invalidation") {
       variable.define(name, variable_invalidation);
     } else if (name === "visibility") {
@@ -83,4 +85,10 @@ function module_resolve(name) {
 
 function variable_name(variable) {
   return variable._name;
+}
+
+function window_global(name) {
+  return function() {
+    return window[name];
+  };
 }
