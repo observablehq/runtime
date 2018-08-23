@@ -1,4 +1,5 @@
 import {forEach} from "./array";
+import constant from "./constant";
 import identity from "./identity";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
@@ -65,13 +66,13 @@ function module_copy(injectByAlias, injectModule, map) {
 }
 
 function module_resolve(name) {
-  var variable = this._scope.get(name);
+  var variable = this._scope.get(name), value;
   if (!variable)  {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
-    } else if (this._runtime._globals.has(name)) {
-      variable.define(name, window_global(name));
+    } else if ((value = this._runtime._global(name)) !== undefined) {
+      variable.define(name, constant(value));
     } else if (name === "invalidation") {
       variable.define(name, variable_invalidation);
     } else if (name === "visibility") {
@@ -85,10 +86,4 @@ function module_resolve(name) {
 
 function variable_name(variable) {
   return variable._name;
-}
-
-function window_global(name) {
-  return function() {
-    return window[name];
-  };
 }
