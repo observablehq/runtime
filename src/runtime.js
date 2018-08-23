@@ -8,7 +8,7 @@ import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
-export default function Runtime(builtins, global = noop) {
+export default function Runtime(builtins, global = window_global) {
   var builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
@@ -247,4 +247,8 @@ function variable_reachable(variable) {
     output._outputs.forEach(outputs.add, outputs);
   }
   return false;
+}
+
+function window_global(name) {
+  return window[name];
 }

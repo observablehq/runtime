@@ -16,9 +16,9 @@ tape.only = function(description, options, run) {
   return _.only(description, wrap(options, run));
 };
 
-function wrap({html = ""} = {}, run) {
+function wrap(options, run) {
   return async test => {
-    const window = new JSDOM(html).window;
+    const window = new JSDOM().window;
     const document = window.document;
     global.requestAnimationFrame = setImmediate;
     global.window = window;

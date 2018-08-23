@@ -2,77 +2,77 @@ import {Runtime} from "../../src/";
 import tape from "../tape";
 import valueof from "./valueof";
 
-tape("variable.define(name, inputs, definition) can define a variable", {html: "<div id=foo />"}, async test => {
+tape("variable.define(name, inputs, definition) can define a variable", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define("foo", [], () => 42);
+  const foo = module.variable(true).define("foo", [], () => 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(inputs, function) can define an anonymous variable", {html: "<div id=foo />"}, async test => {
+tape("variable.define(inputs, function) can define an anonymous variable", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define([], () => 42);
+  const foo = module.variable(true).define([], () => 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(name, function) can define a named variable", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define(name, function) can define a named variable", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define("foo", () => 42);
-  const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
+  const foo = module.variable(true).define("foo", () => 42);
+  const bar = module.variable(true).define("bar", ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
   test.deepEqual(await valueof(bar), {value: 42});
 });
 
-tape("variable.define(function) can define an anonymous variable", {html: "<div id=foo />"}, async test => {
+tape("variable.define(function) can define an anonymous variable", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define(() => 42);
+  const foo = module.variable(true).define(() => 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(null, inputs, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
+tape("variable.define(null, inputs, value) can define an anonymous constant", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define(null, [], 42);
+  const foo = module.variable(true).define(null, [], 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(inputs, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
+tape("variable.define(inputs, value) can define an anonymous constant", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define([], 42);
+  const foo = module.variable(true).define([], 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(null, value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
+tape("variable.define(null, value) can define an anonymous constant", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define(null, 42);
+  const foo = module.variable(true).define(null, 42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(value) can define an anonymous constant", {html: "<div id=foo />"}, async test => {
+tape("variable.define(value) can define an anonymous constant", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define(42);
+  const foo = module.variable(true).define(42);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define detects missing inputs", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo");
-  const bar = module.variable("#bar").define("bar", ["foo"], foo => foo);
+  const foo = module.variable(true);
+  const bar = module.variable(true).define("bar", ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: undefined});
   test.deepEqual(await valueof(bar), {error: "RuntimeError: foo is not defined"});
@@ -82,11 +82,11 @@ tape("variable.define detects missing inputs", {html: "<div id=foo /><div id=bar
   test.deepEqual(await valueof(bar), {value: 1});
 });
 
-tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define detects duplicate names", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define("foo", 1);
-  const bar = module.variable("#bar").define("foo", 2);
+  const foo = module.variable(true).define("foo", 1);
+  const bar = module.variable(true).define("foo", 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(bar), {error: "RuntimeError: foo is defined more than once"});
@@ -96,14 +96,14 @@ tape("variable.define detects duplicate names", {html: "<div id=foo /><div id=ba
   test.deepEqual(await valueof(bar), {value: 2});
 });
 
-tape("variable.define recomputes reachability as expected", {html: "<div id=foo />"}, async test => {
+tape("variable.define recomputes reachability as expected", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const quux = module.define("quux", [], () => 42);
   const baz = module.define("baz", ["quux"], quux => `baz-${quux}`);
   const bar = module.define("bar", ["quux"], quux => `bar-${quux}`);
-  const foo = main.variable("#foo").define("foo", ["bar", "baz", "quux"], (bar, baz, quux) => [bar, baz, quux]);
+  const foo = main.variable(true).define("foo", ["bar", "baz", "quux"], (bar, baz, quux) => [bar, baz, quux]);
   main.variable().import("bar", module);
   main.variable().import("baz", module);
   main.variable().import("quux", module);
@@ -122,7 +122,7 @@ tape("variable.define recomputes reachability as expected", {html: "<div id=foo 
   test.deepEqual(await valueof(foo), {value: "foo"});
 });
 
-tape("variable.define correctly detects reachability for unreachable cycles", {html: "<div id=foo />"}, async test => {
+tape("variable.define correctly detects reachability for unreachable cycles", async test => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
@@ -141,7 +141,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", {h
   test.deepEqual(await valueof(quux), {value: undefined});
   test.deepEqual(await valueof(zapp), {value: undefined});
   main.variable().import("bar", module);
-  const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);
+  const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   await new Promise(setImmediate);
   test.equal(foo._reachable, true);
   test.equal(bar._reachable, true);
@@ -168,13 +168,13 @@ tape("variable.define correctly detects reachability for unreachable cycles", {h
   test.equal(returned, false); // Generator is never finalized because it has never run.
 });
 
-tape("variable.define terminates previously reachable generators", {html: "<div id=foo />"}, async test => {
+tape("variable.define terminates previously reachable generators", async test => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const bar = module.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
-  const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);
+  const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   main.variable().import("bar", module);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -185,14 +185,14 @@ tape("variable.define terminates previously reachable generators", {html: "<div 
   test.equal(returned, true);
 });
 
-tape("variable.define does not terminate reachable generators", {html: "<div id=foo /><div id=baz />"}, async test => {
+tape("variable.define does not terminate reachable generators", async test => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
   const bar = module.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
-  const baz = main.variable("#baz").define("baz", ["bar"], bar => bar);
-  const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);
+  const baz = main.variable(true).define("baz", ["bar"], bar => bar);
+  const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   main.variable().import("bar", module);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -207,33 +207,33 @@ tape("variable.define does not terminate reachable generators", {html: "<div id=
   test.equal(returned, true);
 });
 
-tape("variable.define detects duplicate declarations", {html: "<div id=foo /><div id=bar /><div id=baz />"}, async test => {
+tape("variable.define detects duplicate declarations", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
-  const v1 = main.variable("#foo").define("foo", [], () => 1);
-  const v2 = main.variable("#bar").define("foo", [], () => 2);
-  const v3 = main.variable("#baz").define(null, ["foo"], foo => foo);
+  const v1 = main.variable(true).define("foo", [], () => 1);
+  const v2 = main.variable(true).define("foo", [], () => 2);
+  const v3 = main.variable(true).define(null, ["foo"], foo => foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(v2), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(v3), {error: "RuntimeError: foo could not be resolved"});
 });
 
-tape("variable.define detects missing inputs and erroneous inputs", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define detects missing inputs and erroneous inputs", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
-  const v1 = main.variable("#foo").define("foo", ["baz"], () => 1);
-  const v2 = main.variable("#bar").define("bar", ["foo"], () => 2);
+  const v1 = main.variable(true).define("foo", ["baz"], () => 1);
+  const v2 = main.variable(true).define("bar", ["foo"], () => 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(v1), {error: "RuntimeError: baz is not defined"});
   test.deepEqual(await valueof(v2), {error: "RuntimeError: foo could not be resolved"});
 });
 
-tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, async test => {
+tape("variable.define allows masking of builtins", async test => {
   const runtime = new Runtime({color: "red"});
   const main = runtime.module();
   const mask = main.define("color", "green");
-  const foo = main.variable("#foo").define(null, ["color"], color => color);
+  const foo = main.variable(true).define(null, ["color"], color => color);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: "green"});
   mask.delete();
@@ -241,19 +241,19 @@ tape("variable.define allows masking of builtins", {html: "<div id=foo />"}, asy
   test.deepEqual(await valueof(foo), {value: "red"});
 });
 
-tape("variable.define supports promises", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports promises", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], () => new Promise(resolve => setImmediate(() => resolve(42))));
+  const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setImmediate(() => resolve(42))));
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define supports generator cells", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports generator cells", async test => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], function*() { while (i < 3) yield ++i; });
+  const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield ++i; });
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
   await new Promise(setImmediate);
@@ -262,11 +262,11 @@ tape("variable.define supports generator cells", {html: "<div id=foo />"}, async
   test.deepEqual(await valueof(foo), {value: 3});
 });
 
-tape("variable.define supports generator objects", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports generator objects", async test => {
   function* range(n) { for (let i = 0; i < n; ++i) yield i; }
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], () => range(3));
+  const foo = main.variable(true).define("foo", [], () => range(3));
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 0});
   await new Promise(setImmediate);
@@ -275,11 +275,11 @@ tape("variable.define supports generator objects", {html: "<div id=foo />"}, asy
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define supports a promise that resolves to a generator object", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports a promise that resolves to a generator object", async test => {
   function* range(n) { for (let i = 0; i < n; ++i) yield i; }
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], async () => range(3));
+  const foo = main.variable(true).define("foo", [], async () => range(3));
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 0});
   await new Promise(setImmediate);
@@ -288,11 +288,11 @@ tape("variable.define supports a promise that resolves to a generator object", {
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define supports generators that yield promises", {html: "<div id=foo />"}, async test => {
+tape("variable.define supports generators that yield promises", async test => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
+  const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
   await new Promise(setImmediate);
@@ -301,11 +301,11 @@ tape("variable.define supports generators that yield promises", {html: "<div id=
   test.deepEqual(await valueof(foo), {value: 3});
 });
 
-tape("variable.define allows a variable to be redefined", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define allows a variable to be redefined", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], () => 1);
-  const bar = main.variable("#bar").define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
+  const foo = main.variable(true).define("foo", [], () => 1);
+  const bar = main.variable(true).define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(bar), {value: 1});
@@ -315,10 +315,10 @@ tape("variable.define allows a variable to be redefined", {html: "<div id=foo />
   test.deepEqual(await valueof(bar), {value: 2});
 });
 
-tape("variable.define ignores an asynchronous result from a redefined variable", {html: "<div id=foo />"}, async test => {
+tape("variable.define ignores an asynchronous result from a redefined variable", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
-  const foo = main.variable("#foo").define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
+  const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   await new Promise(setImmediate);
   foo.define("foo", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
@@ -326,11 +326,11 @@ tape("variable.define ignores an asynchronous result from a redefined variable",
   test.deepEqual(foo._value, "success");
 });
 
-tape("variable.define ignores an asynchronous result from a redefined input", {html: "<div id=foo />"}, async test => {
+tape("variable.define ignores an asynchronous result from a redefined input", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
-  const foo = main.variable("#foo").define("foo", ["bar"], bar => bar);
+  const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   await new Promise(setImmediate);
   bar.define("bar", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
@@ -338,11 +338,11 @@ tape("variable.define ignores an asynchronous result from a redefined input", {h
   test.deepEqual(foo._value, "success");
 });
 
-tape("variable.define does not try to compute unreachable variables", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("variable.define does not try to compute unreachable variables", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   let evaluated = false;
-  const foo = main.variable("#foo").define("foo", [], () => 1);
+  const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable().define("bar", ["foo"], (foo) => evaluated = foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
@@ -350,38 +350,38 @@ tape("variable.define does not try to compute unreachable variables", {html: "<d
   test.equals(evaluated, false);
 });
 
-tape("variable.define can reference whitelisted globals", {html: "<div id=foo />"}, async test => {
+tape("variable.define can reference whitelisted globals", async test => {
   const runtime = new Runtime(null, name => name === "magic" ? 21 : undefined);
   const module = runtime.module();
-  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  const foo = module.variable(true).define(["magic"], magic => magic * 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define captures the value of whitelisted globals", {html: "<div id=foo />"}, async test => {
+tape("variable.define captures the value of whitelisted globals", async test => {
   let magic = 0;
   const runtime = new Runtime(null, name => name === "magic" ? ++magic : undefined);
   const module = runtime.module();
-  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  const foo = module.variable(true).define(["magic"], magic => magic * 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define can override whitelisted globals", {html: "<div id=foo />"}, async test => {
+tape("variable.define can override whitelisted globals", async test => {
   const runtime = new Runtime(null, name => name === "magic" ? 1 : undefined);
   const module = runtime.module();
   module.variable().define("magic", [], () => 2);
-  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  const foo = module.variable(true).define(["magic"], magic => magic * 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 4});
 });
 
-tape("variable.define can dynamically override whitelisted globals", {html: "<div id=foo />"}, async test => {
+tape("variable.define can dynamically override whitelisted globals", async test => {
   const runtime = new Runtime(null, name => name === "magic" ? 1 : undefined);
   const module = runtime.module();
-  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  const foo = module.variable(true).define(["magic"], magic => magic * 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
   module.variable().define("magic", [], () => 2);
@@ -389,10 +389,10 @@ tape("variable.define can dynamically override whitelisted globals", {html: "<di
   test.deepEqual(await valueof(foo), {value: 4});
 });
 
-tape("variable.define cannot reference non-whitelisted globals", {html: "<div id=foo />"}, async test => {
+tape("variable.define cannot reference non-whitelisted globals", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  const foo = module.variable("#foo").define(["magic"], magic => magic * 2);
+  const foo = module.variable(true).define(["magic"], magic => magic * 2);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {error: "RuntimeError: magic is not defined"});
 });

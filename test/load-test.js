@@ -1,7 +1,7 @@
 import load from "../src/load";
 import tape from "./tape";
 
-tape("basic notebook as module loading", {html: "<div id=foo />"}, async test => {
+tape("basic notebook as module loading", async test => {
   let result = null;
   load({
     id: "notebook@1",
@@ -23,7 +23,7 @@ tape("basic notebook as module loading", {html: "<div id=foo />"}, async test =>
   test.equals(result, 101);
 });
 
-tape("notebooks as modules with variables depending on other variables", {html: "<div id=foo />"}, async test => {
+tape("notebooks as modules with variables depending on other variables", async test => {
   let result = null;
   load({
     id: "notebook@1",
@@ -50,7 +50,7 @@ tape("notebooks as modules with variables depending on other variables", {html: 
   test.equals(result, 202);
 });
 
-tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test => {
+tape("notebooks as modules with imports", async test => {
   let result = null;
   load({
     id: "notebook@1",
@@ -87,7 +87,7 @@ tape("notebooks as modules with imports", {html: "<div id=foo />"}, async test =
   test.equals(result, 202);
 });
 
-tape("Rejects with an error when trying to import from a nonexistent module", {html: "<div id=foo />"}, async test => {
+tape("Rejects with an error when trying to import from a nonexistent module", async test => {
   const failures = [];
   load({
     id: "notebook@1",
@@ -119,7 +119,7 @@ tape("Rejects with an error when trying to import from a nonexistent module", {h
   ]);
 });
 
-tape("notebook as modules with builtins", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("notebook as modules with builtins", async test => {
   let result = null;
   load({
     id: "notebook@1",
@@ -144,7 +144,7 @@ tape("notebook as modules with builtins", {html: "<div id=foo /><div id=bar />"}
   test.equals(result, 84);
 });
 
-tape("notebook with the default standard library", {html: "<div id=foo /><div id=bar />"}, async test => {
+tape("notebook with the default standard library", async test => {
   let result = null;
   load({
     id: "notebook@1",
