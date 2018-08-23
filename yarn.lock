@@ -16,9 +16,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@observablehq/notebook-inspector@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-inspector/-/notebook-inspector-1.1.4.tgz#e4dad2339986d2f4bc39bcc1fef43f4883346bfe"
+"@observablehq/notebook-inspector@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/notebook-inspector/-/notebook-inspector-1.2.0.tgz#907a8b64c347b9ee201e5f1caa2fa7dd7a3a881b"
   dependencies:
     esm "^3.0.76"
 
