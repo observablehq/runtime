@@ -1,6 +1,6 @@
 {
   "name": "@observablehq/notebook-runtime",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "license": "ISC",
   "main": "dist/notebook-runtime.umd.js",
   "module": "dist/notebook-runtime.js",
