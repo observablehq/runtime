@@ -22,9 +22,9 @@
   dependencies:
     esm "^3.0.76"
 
-"@observablehq/notebook-stdlib@^1.2.1":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.2.3.tgz#2e5948735b5959985962481f7c8150e32e1cfcd6"
+"@observablehq/notebook-stdlib@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.3.0.tgz#daf2b51e8e70f0f04919b30a000e880df9040aad"
   dependencies:
     d3-require "^1.1.0"
     esm "^3.0.5"
