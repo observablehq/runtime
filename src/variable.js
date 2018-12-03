@@ -183,7 +183,7 @@ function variable_pending() {
 }
 
 function variable_fulfilled(value) {
-  if (this._observer.fulfilled) this._observer.fulfilled(value);
+  if (this._observer.fulfilled) this._observer.fulfilled(value, this._name);
 }
 
 function variable_rejected(error) {
