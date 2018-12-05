@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "license": "ISC",
   "main": "dist/notebook-runtime.umd.js",
-  "module": "dist/notebook-runtime.js",
+  "module": "src/index.js",
   "author": {
     "name": "Observable, Inc.",
     "url": "https://observablehq.com"
