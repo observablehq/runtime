@@ -22,11 +22,11 @@
   dependencies:
     esm "^3.0.76"
 
-"@observablehq/notebook-stdlib@^1.3.0":
+"@observablehq/notebook-stdlib@https://github.com/observablehq/notebook-stdlib#2c37107adba70bfa68b2cefc90c5b6d6d73df37d":
   version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/notebook-stdlib/-/notebook-stdlib-1.3.0.tgz#daf2b51e8e70f0f04919b30a000e880df9040aad"
+  resolved "https://github.com/observablehq/notebook-stdlib#2c37107adba70bfa68b2cefc90c5b6d6d73df37d"
   dependencies:
-    d3-require "^1.1.0"
+    d3-require "https://github.com/d3/d3-require#7969f63b095bd0bb45ad79faca735c1ea33b5d50"
     esm "^3.0.5"
 
 "@types/estree@0.0.39":
@@ -268,9 +268,9 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
-d3-require@^1.1.0:
+"d3-require@https://github.com/d3/d3-require#7969f63b095bd0bb45ad79faca735c1ea33b5d50":
   version "1.1.4"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.1.4.tgz#f5b229aaab5586bfcd67383c78652147d3def72b"
+  resolved "https://github.com/d3/d3-require#7969f63b095bd0bb45ad79faca735c1ea33b5d50"
 
 dashdash@^1.12.0:
   version "1.14.1"
