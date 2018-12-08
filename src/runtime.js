@@ -14,6 +14,7 @@ export default function Runtime(builtins, global = window_global) {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
+    _modules: {value: new Map},
     _builtin: {value: builtin},
     _global: {value: global}
   });
@@ -33,8 +34,12 @@ Object.defineProperties(Runtime.prototype, {
   module: {value: runtime_module, writable: true, configurable: true}
 });
 
-function runtime_module() {
-  return new Module(this);
+function runtime_module(define, observer = noop) {
+  if (define === undefined) return new Module(this);
+  let module = this._modules.get(define);
+  if (module) return module;
+  this._modules.set(define, module = define(this, observer));
+  return module;
 }
 
 function runtime_compute() {
