@@ -8,7 +8,7 @@ This library implements the reactive runtime for Observable notebooks. It lets y
 
 ### Runtimes
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i>], <i>observer</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
+<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i> = new Library], <i>observer</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
 
 Creates, initializes and returns a new *runtime* for the given *notebook* definition.
 
