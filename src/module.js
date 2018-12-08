@@ -16,11 +16,17 @@ export default function Module(runtime) {
 Object.defineProperties(Module.prototype, {
   _copy: {value: module_copy, writable: true, configurable: true},
   _resolve: {value: module_resolve, writable: true, configurable: true},
+  redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
   import: {value: module_import, writable: true, configurable: true},
   variable: {value: module_variable, writable: true, configurable: true}
 });
+
+function module_redefine(name) {
+  var v = this._scope.get(name) || this;
+  return v.define.apply(v, arguments);
+}
 
 function module_define() {
   var v = new Variable(TYPE_NORMAL, this);
