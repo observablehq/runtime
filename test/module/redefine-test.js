@@ -20,6 +20,17 @@ tape("module.redefine(name, inputs, definition) can redefine an implicit variabl
   test.deepEqual(await valueof(bar), {value: 44});
 });
 
+tape("module.redefine(name, inputs, definition) can’t redefine a duplicate definition", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const foo1 = module.variable(true).define("foo", [], () => 1);
+  const foo2 = module.variable(true).define("foo", [], () => 2);
+  module.redefine("foo", [], () => 3);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo1), {error: "RuntimeError: foo is defined more than once"});
+  test.deepEqual(await valueof(foo2), {error: "RuntimeError: foo is defined more than once"});
+});
+
 tape("module.redefine(name, inputs, definition) throws an error if the specified variable doesn’t exist", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
