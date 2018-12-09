@@ -1,5 +1,6 @@
 import {forEach} from "./array";
 import constant from "./constant";
+import {RuntimeError} from "./errors";
 import identity from "./identity";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
@@ -24,7 +25,8 @@ Object.defineProperties(Module.prototype, {
 });
 
 function module_redefine(name) {
-  var v = this._scope.get(name) || this;
+  var v = this._scope.get(name);
+  if (!v) throw new RuntimeError(name + " is not defined", name);
   return v.define.apply(v, arguments);
 }
 
