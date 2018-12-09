@@ -25,7 +25,12 @@ tape("module.redefine(name, inputs, definition) can’t redefine a duplicate def
   const module = runtime.module();
   const foo1 = module.variable(true).define("foo", [], () => 1);
   const foo2 = module.variable(true).define("foo", [], () => 2);
-  module.redefine("foo", [], () => 3);
+  try {
+    module.redefine("foo", [], () => 3);
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error, {message: "foo is defined more than once", input: undefined});
+  }
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo1), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(foo2), {error: "RuntimeError: foo is defined more than once"});
@@ -39,6 +44,6 @@ tape("module.redefine(name, inputs, definition) throws an error if the specified
     module.redefine("bar", [], () => 43, foo);
     test.fail();
   } catch (error) {
-    test.deepEqual(error, {message: "bar is not defined", input: "bar"});
+    test.deepEqual(error, {message: "bar is not defined", input: undefined});
   }
 });

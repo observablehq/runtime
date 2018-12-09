@@ -3,7 +3,7 @@ import constant from "./constant";
 import {RuntimeError} from "./errors";
 import identity from "./identity";
 import {variable_invalidation, variable_visibility} from "./runtime";
-import Variable, {TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
+import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
 
 var none = new Map;
 
@@ -26,7 +26,8 @@ Object.defineProperties(Module.prototype, {
 
 function module_redefine(name) {
   var v = this._scope.get(name);
-  if (!v) throw new RuntimeError(name + " is not defined", name);
+  if (!v) throw new RuntimeError(name + " is not defined");
+  if (v._type === TYPE_DUPLICATE) throw new RuntimeError(name + " is defined more than once");
   return v.define.apply(v, arguments);
 }
 
