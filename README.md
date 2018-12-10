@@ -12,18 +12,34 @@ This library implements the Observable dataflow runtime. It lets you [publish yo
 
 Defines a new [*module*](#modules) for the given *runtime*. If an *observer* function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
 
-For example, to render the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
+For example, to render the “hello” cell from the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
 
 ```html
-<div id=hello></div>
+<div id="hello"></div>
 <script type=module>
 
 import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
 import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
 
 define(new Runtime(), name => {
-  return new Inspector(document.getElementById(name));
+  if (name === "hello") {
+    return new Inspector(document.querySelector("#hello"));
+  }
 });
+
+</script>
+```
+
+To render the entire notebook into the body, use [Inspector.into](https://github.com/observablehq/inspector/blob/master/README.md#Inspector_into):
+
+```html
+<body>
+<script type=module>
+
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
+
+define(new Runtime(), Inspector.into(document.body);
 
 </script>
 ```
