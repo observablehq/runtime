@@ -1,6 +1,6 @@
 # @observablehq/notebook-runtime
 
-[![CircleCI](https://circleci.com/gh/observablehq/notebook-runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/notebook-runtime/tree/master)
+[![CircleCI](https://circleci.com/gh/observablehq/runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/runtime/tree/master)
 
 This library implements the reactive runtime for Observable notebooks. It lets you [publish your interactive notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand [how the Observable runtime works](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js).
 
