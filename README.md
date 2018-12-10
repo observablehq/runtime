@@ -39,7 +39,7 @@ To render the entire notebook into the body, use [Inspector.into](https://github
 import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
 import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
-define(new Runtime(), Inspector.into(document.body);
+define(new Runtime(), Inspector.into(document.body));
 
 </script>
 ```
