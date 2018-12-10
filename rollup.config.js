@@ -10,7 +10,8 @@ function config(output) {
       node(),
       terser({
         toplevel: output.format === "es",
-        output: {preamble: copyright}
+        output: {preamble: copyright},
+        mangle: {reserved: ["RequireError"]}
       })
     ],
     output
