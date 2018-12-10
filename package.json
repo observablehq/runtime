@@ -14,9 +14,13 @@
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
-    "precommit": "eslint . && yarn test",
     "prepare": "rollup -c",
     "postpublish": "git push && git push --tags"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "eslint . && yarn test"
+    }
   },
   "esm": {
     "mode": "all",
