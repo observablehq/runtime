@@ -18,8 +18,8 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 <div id="hello"></div>
 <script type=module>
 
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
 define(new Runtime(), name => {
   if (name === "hello") {
@@ -36,8 +36,8 @@ To render the entire notebook into the body, use [Inspector.into](https://github
 <body>
 <script type=module>
 
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
 define(new Runtime(), Inspector.into(document.body);
 
@@ -47,8 +47,8 @@ define(new Runtime(), Inspector.into(document.body);
 For more control, implement a [custom observer](#observers) in place of the standard inspector. The returned object may implement [*observer*.pending](#observer_pending), [*observer*.fulfilled](#observer_fulfilled) and [*observer*.rejected](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
 
 ```js
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
 define(new Runtime(), name => {
   const node = document.getElementById(name);
