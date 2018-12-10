@@ -1,4 +1,4 @@
-import {Library} from "@observablehq/notebook-stdlib";
+import {Library} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import load from "./load";

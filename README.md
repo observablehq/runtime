@@ -1,131 +1,65 @@
-# @observablehq/notebook-runtime
+# @observablehq/runtime
 
-[![CircleCI](https://circleci.com/gh/observablehq/notebook-runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/notebook-runtime/tree/master)
+[![CircleCI](https://circleci.com/gh/observablehq/runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/runtime/tree/master)
 
-This library implements the reactive runtime for Observable notebooks. It lets you [publish your interactive notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand [how the Observable runtime works](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js).
+This library implements the Observable dataflow runtime. It lets you [publish your Observable notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard — to any distant shore the web platform reaches. You can also use this library to author reactive programs by hand, to build new reactive editors, or simply to better understand [how the Observable runtime works](https://github.com/observablehq/runtime/blob/master/src/runtime.js).
 
 ## API Reference
 
 ### Runtimes
 
-<a href="#Runtime_load" name="Runtime_load">#</a> Runtime.<b>load</b>(<i>notebook</i>[, <i>builtins</i> = new Library], <i>observer</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/load.js "Source")
+<a href="#_define" name="_define">#</a> <i>define</i>(<i>runtime</i>[, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/load.js "Source")
 
-Creates, initializes and returns a new *runtime* for the given *notebook* definition.
+Defines a new [*module*](#modules) for the given *runtime*. If an *observer* function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
 
-If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. See [Runtime](#Runtime). If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/notebook-stdlib/blob/master/README.md).
-
-The *observer* function is called for each (non-import) variable in the main [module](#modules), being passed the *variable*, its *index*, and the list of *variables*.
-
-[Inspector](#inspector) is included as a ready-made observer. Inspectors display DOM elements “as-is”, and create interactive “devtools”-style inspectors for other arbitrary values such as numbers and objects.
-
-This example creates an inspector for each named cell in a [Hello world notebook](https://beta.observablehq.com/@tmcw/hello-world):
+For example, to render the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
 
 ```html
 <div id=hello></div>
 <script type=module>
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
-import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560";
 
-Runtime.load(notebook, variable => {
-  return new Inspector(document.getElementById(variable.name));
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
+
+define(new Runtime(), name => {
+  return new Inspector(document.getElementById(name));
 });
+
 </script>
 ```
 
-You can also create custom observers. The returned [observer](#observers) may implement [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
+For more control, implement a [custom observer](#observers) in place of the standard inspector. The returned object may implement [*observer*.pending](#observer_pending), [*observer*.fulfilled](#observer_fulfilled) and [*observer*.rejected](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
 
 ```js
-import {Runtime} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
-import notebook from "https://api.observablehq.com/@tmcw/hello-world.js?key=1fa3950f61d6e560";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@2?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=2";
 
-Runtime.load(notebook, variable => {
-  const node = document.getElementById(variable.name);
+define(new Runtime(), name => {
+  const node = document.getElementById(name);
   return {
-    pending: () => {
+    pending() {
       node.classList.add("running")
     },
-    fulfilled: (value) => {
+    fulfilled(value) {
       node.classList.remove("running");
       node.innerText = value;
     },
-    rejected: (error) => {
+    rejected(error) {
       node.classList.remove("running");
       node.classList.add("error");
-      node.innerText = error.message;
+      node.textContent = error.message;
     }
   };
 });
 ```
 
-Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. See [*module*.variable](#module_variable).
+Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. To force a variable to be evaluated, return true. See [*module*.variable](#module_variable).
 
-#### The notebook format
+<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i> = new Library[, <i>global</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
 
-Notebooks passed to `Runtime.load()` are objects with *notebook*.id and *notebook*.modules properties:
+Returns a new [runtime](#runtimes). If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/stdlib/blob/master/README.md). If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
 
-```js
-const notebook = {
-  id: "7d0eb6673a55a7c@3",
-  modules: [
-    {
-      id: "7d0eb6673a55a7c@3",
-      variables: [
-        {
-          name: "title",
-          value: function() {
-            return "Hello, world!"
-          }
-        }
-      ]
-    }
-  ]
-};
-```
-
-The *notebook* may contain multiple modules, each defining reactive variables. When the main module contains imports, the notebook bundles all of its resolved dependencies. For example:
-
-```js
-const notebook = {
-  id: "2710b07ba2cc1a8a@5",
-  modules: [
-    {
-      id: "2710b07ba2cc1a8a@5",
-      variables: [
-        {
-          from: "904bc713463f843@7",
-          name: "foo",
-          remote: "foo"
-        }
-      ]
-    },
-    {
-      id: "904bc713463f843@7",
-      variables: [
-        {
-          name: "foo",
-          inputs: [],
-          value: function() {
-            return 42;
-          }
-        }
-      ]
-    }
-  ]
-};
-```
-
-<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i>[, <i>global</i>]) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
-
-Returns a new [runtime](#runtimes). Each property on the *builtins* object defines a builtin variable for the runtime; these builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
-
-Most notebooks created in Observable rely on the standard library builtins, which are available as the [Library](#Library) class. For example, to create a runtime that includes standard library builtins like `now` and `width`:
-
-```js
-import {Runtime, Library} from "https://unpkg.com/@observablehq/notebook-runtime@1?module";
-const runtime = new Runtime(new Library);
-```
-
-You can instead specify an entirely custom set of builtins:
+Many Observable notebooks rely on the [standard library](https://github.com/observablehq/stdlib) builtins. To instead specify a custom set of builtins:
 
 ```js
 const runtime = new Runtime({color: "red"});
@@ -135,7 +69,6 @@ To refer to the `color` builtin from a variable:
 
 ```js
 const module = runtime.module();
-
 const inspector = new Inspector(document.querySelector("#hello"));
 module.variable(inspector).define(["color"], color => `Hello, ${color}.`);
 ```
@@ -144,25 +77,25 @@ This would produce the following output:
 
 > Hello, red.
 
-Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved. Variables may not override builtins.
+Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved.
 
-<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>() [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/runtime.js "Source")
+<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>([<i>define</i>][, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
 
-Returns a new [module](#modules) for this [runtime](#runtimes).
+Returns a new [module](#modules) for this [runtime](#runtimes). If *define* is specified, it is a [module definition function](#_define). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
 
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
-<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>observer</i>]) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+<a href="#module_variable" name="module_variable">#</a> <i>module</i>.<b>variable</b>([<i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
-If *observer* is specified, the specified [observer](#observer) will be notified when the returned variable changes state, via the [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods. See the [standard inspector](https://github.com/observablehq/notebook-inspector/blob/master/README.md) for a convenient default observer implementation.
+If *observer* is specified, the specified [observer](#observer) will be notified when the returned variable changes state, via the [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods. See the [standard inspector](https://github.com/observablehq/inspector/blob/master/README.md) for a convenient default observer implementation.
 
 A variable without an associated *observer* is only computed if any transitive output of the variable has an *observer*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
-<a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+<a href="#module_derive" name="module_derive">#</a> <i>module</i>.<b>derive</b>(<i>specifiers</i>, <i>source</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
 Returns a derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#variable_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
 
@@ -189,7 +122,7 @@ module1.variable().import("c", module1_0);
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
 
-<a href="#module_define" name="module_define">#</a> <i>module</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+<a href="#module_define" name="module_define">#</a> <i>module</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
 A convenience method for [*variable*.define](#variable_define); equivalent to:
 
@@ -197,7 +130,7 @@ A convenience method for [*variable*.define](#variable_define); equivalent to:
 module.variable().define(name, inputs, definition)
 ```
 
-<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>from</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/module.js "Source")
+<a href="#module_import" name="module_import">#</a> <i>module</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>from</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
 A convenience method for [*variable*.import](#variable_import); equivalent to:
 
@@ -205,11 +138,15 @@ A convenience method for [*variable*.import](#variable_import); equivalent to:
 module.variable().import(name, alias, from)
 ```
 
+<a href="#module_redefine" name="module_redefine">#</a> <i>module</i>.<b>redefine</b>(<i>name</i>[, <i>inputs</i>], <i>definition</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
+
+Redefines the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
+
 ### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
-<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
+<a href="#variable_define" name="variable_define">#</a> <i>variable</i>.<b>define</b>(\[<i>name</i>, \]\[<i>inputs</i>, \]<i>definition</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/variable.js "Source")
 
 Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array. If *definition* is not a function, the variable is defined to have the constant value of *definition*.
 
@@ -269,7 +206,7 @@ b.define("bar", 2);
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
-<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>) [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
+<a href="#variable_import" name="variable_import">#</a> <i>variable</i>.<b>import</b>(<i>name</i>, [<i>alias</i>, ]<i>module</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/variable.js "Source")
 
 Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
@@ -305,13 +242,13 @@ To import `foo` into *module1* under the alias `bar`:
 module1.variable().import("foo", "bar", module0);
 ```
 
-<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>() [<>](https://github.com/observablehq/notebook-runtime/blob/master/src/variable.js "Source")
+<a href="#variable_delete" name="variable_delete">#</a> <i>variable</i>.<b>delete</b>() [<>](https://github.com/observablehq/runtime/blob/master/src/variable.js "Source")
 
 Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
 
 ### Observers
 
-An observer watches a [variable](#variable), being notified via asynchronous callback whenever the variable changes state. See the [standard inspector](https://github.com/observablehq/notebook-inspector) for reference.
+An observer watches a [variable](#variable), being notified via asynchronous callback whenever the variable changes state. See the [standard inspector](https://github.com/observablehq/inspector) for reference.
 
 <a href="#observer_pending" name="observer_pending">#</a> <i>observer</i>.<b>pending</b>()
 
@@ -327,23 +264,8 @@ Called shortly after the variable is rejected with the given *error*.
 
 ### Library
 
-For convenience, this module includes and exports the [Library](https://github.com/observablehq/notebook-stdlib#Library) class from notebook-stdlib, so that notebooks can easily use the standard library. Typically the Library class will be constructed and passed as the _builtins_ argument to [Runtime](#Runtime).
-
-_Refer to the [notebook-stdlib module](https://github.com/observablehq/notebook-stdlib) for full API documentation._
+For convenience, this module re-exports the [Observable standard library](https://github.com/observablehq/stdlib#Library). See [@observablehq/stdlib](https://github.com/observablehq/stdlib) for more.
 
 ### Inspector
 
-For convenience, this module includes and exports the [Inspector](https://github.com/observablehq/notebook-inspector#Inspector) class from notebook-inspector, so that notebooks can easily use the default inspector.
-
-A simple 'Hello world' example:
-
-```js
-import {Runtime, Inspector, Library} from "@observablehq/notebook-runtime";
-
-const runtime = new Runtime(new Library);
-const module = runtime.module();
-
-module.variable(new Inspector(document.querySelector("#hello"))).define(() => `Hello world`);
-```
-
-_Refer to the [notebook-inspector module](https://github.com/observablehq/notebook-inspector#api-reference) for full API documentation._
+For convenience, this module re-exports the [Observable standard inspector](https://github.com/observablehq/inspector#Inspector). See [@observablehq/inspector](https://github.com/observablehq/inspector) for more.

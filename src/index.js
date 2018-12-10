@@ -1,5 +1,5 @@
-import {Inspector} from "@observablehq/notebook-inspector";
-import {Library} from "@observablehq/notebook-stdlib";
+import {Inspector} from "@observablehq/inspector";
+import {Library} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors";
 import Runtime from "./runtime";
 

@@ -1,16 +1,16 @@
 {
-  "name": "@observablehq/notebook-runtime",
+  "name": "@observablehq/runtime",
   "version": "2.0.0",
   "license": "ISC",
-  "main": "dist/notebook-runtime.umd.js",
-  "module": "dist/notebook-runtime.js",
+  "main": "dist/runtime.umd.js",
+  "module": "dist/runtime.js",
   "author": {
     "name": "Observable, Inc.",
     "url": "https://observablehq.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/observablehq/notebook-runtime.git"
+    "url": "https://github.com/observablehq/runtime.git"
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
@@ -26,8 +26,8 @@
     "cjs": true
   },
   "dependencies": {
-    "@observablehq/notebook-inspector": "^2.0.1",
-    "@observablehq/notebook-stdlib": "^1.3.0",
+    "@observablehq/inspector": "^2.0.1",
+    "@observablehq/stdlib": "^1.3.0",
     "esm": "^3.0.76"
   },
   "devDependencies": {

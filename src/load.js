@@ -1,4 +1,4 @@
-import {Library} from "@observablehq/notebook-stdlib";
+import {Library} from "@observablehq/stdlib";
 import Runtime from "./runtime";
 
 export default function load(notebook, library, observer) {
