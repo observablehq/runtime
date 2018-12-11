@@ -46,7 +46,7 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 <div id="hello"></div>
 <script type=module>
 
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3/dist/runtime.js";
 import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
 const runtime = new Runtime();
@@ -65,7 +65,7 @@ To render the entire notebook into the body, use [Inspector.into](https://github
 <body>
 <script type=module>
 
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3/dist/runtime.js";
 import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 
 const runtime = new Runtime();
