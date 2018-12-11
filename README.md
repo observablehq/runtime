@@ -8,69 +8,6 @@ The [Observable dataflow runtime](https://beta.observablehq.com/@mbostock/how-ob
 
 ### Runtimes
 
-<a href="#_define" name="_define">#</a> <i>define</i>(<i>runtime</i>[, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/load.js "Source")
-
-Defines a new [*module*](#modules) for the given *runtime*. If an *observer* function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
-
-For example, to render the “hello” cell from the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
-
-```html
-<div id="hello"></div>
-<script type=module>
-
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
-
-define(new Runtime(), name => {
-  if (name === "hello") {
-    return new Inspector(document.querySelector("#hello"));
-  }
-});
-
-</script>
-```
-
-To render the entire notebook into the body, use [Inspector.into](https://github.com/observablehq/inspector/blob/master/README.md#Inspector_into):
-
-```html
-<body>
-<script type=module>
-
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
-
-define(new Runtime(), Inspector.into(document.body));
-
-</script>
-```
-
-For more control, implement a [custom observer](#observers) in place of the standard inspector. The returned object may implement [*observer*.pending](#observer_pending), [*observer*.fulfilled](#observer_fulfilled) and [*observer*.rejected](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
-
-```js
-import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
-
-define(new Runtime(), name => {
-  const node = document.getElementById(name);
-  return {
-    pending() {
-      node.classList.add("running")
-    },
-    fulfilled(value) {
-      node.classList.remove("running");
-      node.innerText = value;
-    },
-    rejected(error) {
-      node.classList.remove("running");
-      node.classList.add("error");
-      node.textContent = error.message;
-    }
-  };
-});
-```
-
-Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. To force a variable to be evaluated, return true. See [*module*.variable](#module_variable).
-
 <a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i> = new Library[, <i>global</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
 
 Returns a new [runtime](#runtimes). If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/stdlib/blob/master/README.md). If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
@@ -97,7 +34,73 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>([<i>define</i>][, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
 
-Returns a new [module](#modules) for this [runtime](#runtimes). If *define* is specified, it is a [module definition function](#_define). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
+Returns a new [module](#modules) for this [runtime](#runtimes).
+
+If *define* is specified, it is a function which defines the new module’s [variables](#variables). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called, being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
+
+If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
+
+For example, to render the “hello” cell from the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
+
+```html
+<div id="hello"></div>
+<script type=module>
+
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
+
+const runtime = new Runtime();
+const main = runtime.module(define, name => {
+  if (name === "hello") {
+    return new Inspector(document.querySelector("#hello"));
+  }
+});
+
+</script>
+```
+
+To render the entire notebook into the body, use [Inspector.into](https://github.com/observablehq/inspector/blob/master/README.md#Inspector_into):
+
+```html
+<body>
+<script type=module>
+
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
+
+const runtime = new Runtime();
+const main = runtime.module(define, Inspector.into(document.body));
+
+</script>
+```
+
+For more control, implement a [custom observer](#observers) in place of the standard inspector. The returned object may implement [*observer*.pending](#observer_pending), [*observer*.fulfilled](#observer_fulfilled) and [*observer*.rejected](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
+
+```js
+import {Runtime, Inspector} from "https://unpkg.com/@observablehq/runtime@3?module";
+import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
+
+const runtime = new Runtime();
+const main = runtime.module(define, name => {
+  const node = document.getElementById(name);
+  return {
+    pending() {
+      node.classList.add("running")
+    },
+    fulfilled(value) {
+      node.classList.remove("running");
+      node.innerText = value;
+    },
+    rejected(error) {
+      node.classList.remove("running");
+      node.classList.add("error");
+      node.textContent = error.message;
+    }
+  };
+});
+```
+
+Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. To force a variable to be evaluated, return true. See [*module*.variable](#module_variable).
 
 ### Modules
 
