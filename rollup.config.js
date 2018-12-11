@@ -1,7 +1,8 @@
 import node from "rollup-plugin-node-resolve";
 import {terser} from "rollup-plugin-terser";
+import * as meta from "./package.json";
 
-const copyright = `// @observablehq/runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`;
+const copyright = `// @observablehq/runtime v${meta.version} Copyright ${(new Date).getFullYear()} Observable, Inc.`;
 
 function config(output) {
   return {

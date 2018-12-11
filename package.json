@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "license": "ISC",
   "main": "dist/runtime.umd.js",
-  "module": "dist/runtime.js",
+  "module": "src/index.js",
   "author": {
     "name": "Observable, Inc.",
     "url": "https://observablehq.com"
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
-    "prepare": "rollup -c",
+    "prepublishOnly": "rollup -c",
     "postpublish": "git push && git push --tags"
   },
   "husky": {
@@ -29,6 +29,10 @@
     ],
     "cjs": true
   },
+  "files": [
+    "src/**/*.js",
+    "dist/**/*.js"
+  ],
   "dependencies": {
     "@observablehq/inspector": "^3.0.0",
     "@observablehq/stdlib": "^2.0.0",
