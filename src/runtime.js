@@ -1,3 +1,4 @@
+import {Library} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import load from "./load";
@@ -8,12 +9,13 @@ import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
-export default function Runtime(builtins, global = window_global) {
+export default function Runtime(builtins = new Library, global = window_global) {
   var builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
+    _modules: {value: new Map},
     _builtin: {value: builtin},
     _global: {value: global}
   });
@@ -33,8 +35,12 @@ Object.defineProperties(Runtime.prototype, {
   module: {value: runtime_module, writable: true, configurable: true}
 });
 
-function runtime_module() {
-  return new Module(this);
+function runtime_module(define, observer = noop) {
+  if (define === undefined) return new Module(this);
+  let module = this._modules.get(define);
+  if (module) return module;
+  this._modules.set(define, module = define(this, observer));
+  return module;
 }
 
 function runtime_compute() {

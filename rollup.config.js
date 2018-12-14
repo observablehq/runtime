@@ -1,7 +1,8 @@
 import node from "rollup-plugin-node-resolve";
 import {terser} from "rollup-plugin-terser";
+import * as meta from "./package.json";
 
-const copyright = `// @observablehq/notebook-runtime Copyright ${(new Date).getFullYear()} Observable, Inc.`;
+const copyright = `// @observablehq/runtime v${meta.version} Copyright ${(new Date).getFullYear()} Observable, Inc.`;
 
 function config(output) {
   return {
@@ -10,7 +11,8 @@ function config(output) {
       node(),
       terser({
         toplevel: output.format === "es",
-        output: {preamble: copyright}
+        output: {preamble: copyright},
+        mangle: {reserved: ["RequireError"]}
       })
     ],
     output
@@ -20,12 +22,12 @@ function config(output) {
 export default [
   config({
     format: "es",
-    file: "dist/notebook-runtime.js"
+    file: "dist/runtime.js"
   }),
   config({
     format: "umd",
     extend: true,
     name: "observablehq",
-    file: "dist/notebook-runtime.umd.js"
+    file: "dist/runtime.umd.js"
   })
 ];
