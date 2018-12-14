@@ -4,42 +4,6 @@
 
 The [Observable dataflow runtime](https://beta.observablehq.com/@mbostock/how-observable-runs) lets you run Observable programs [and notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard—to any distant shore the web platform reaches.
 
-## API Reference
-
-### Runtimes
-
-<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i> = new Library[, <i>global</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
-
-Returns a new [runtime](#runtimes). If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/stdlib/blob/master/README.md). If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
-
-Many Observable notebooks rely on the [standard library](https://github.com/observablehq/stdlib) builtins. To instead specify a custom set of builtins:
-
-```js
-const runtime = new Runtime({color: "red"});
-```
-
-To refer to the `color` builtin from a variable:
-
-```js
-const module = runtime.module();
-const inspector = new Inspector(document.querySelector("#hello"));
-module.variable(inspector).define(["color"], color => `Hello, ${color}.`);
-```
-
-This would produce the following output:
-
-> Hello, red.
-
-Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved.
-
-<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>([<i>define</i>][, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
-
-Returns a new [module](#modules) for this [runtime](#runtimes).
-
-If *define* is specified, it is a function which defines the new module’s [variables](#variables). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called, being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
-
-If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
-
 For example, to render the “hello” cell from the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
 
 ```html
@@ -101,6 +65,42 @@ const main = runtime.module(define, name => {
 ```
 
 Variables which are not associated with an *observer*, or aren’t indirectly depended on by a variable that is associated with an *observer*, will not be evaluated. To force a variable to be evaluated, return true. See [*module*.variable](#module_variable).
+
+## API Reference
+
+### Runtimes
+
+<a href="#Runtime" name="Runtime">#</a> new <b>Runtime</b>(<i>builtins</i> = new Library[, <i>global</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
+
+Returns a new [runtime](#runtimes). If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If *builtins* is not specified, it defaults to the [standard library](https://github.com/observablehq/stdlib/blob/master/README.md). If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
+
+Many Observable notebooks rely on the [standard library](https://github.com/observablehq/stdlib) builtins. To instead specify a custom set of builtins:
+
+```js
+const runtime = new Runtime({color: "red"});
+```
+
+To refer to the `color` builtin from a variable:
+
+```js
+const module = runtime.module();
+const inspector = new Inspector(document.querySelector("#hello"));
+module.variable(inspector).define(["color"], color => `Hello, ${color}.`);
+```
+
+This would produce the following output:
+
+> Hello, red.
+
+Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved.
+
+<a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>([<i>define</i>][, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
+
+Returns a new [module](#modules) for this [runtime](#runtimes).
+
+If *define* is specified, it is a function which defines the new module’s [variables](#variables). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called, being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
+
+If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
 
 ### Modules
 
