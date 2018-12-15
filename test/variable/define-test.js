@@ -396,3 +396,11 @@ tape("variable.define cannot reference non-whitelisted globals", async test => {
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {error: "RuntimeError: magic is not defined"});
 });
+
+tape("variable.define correctly handles globals that throw", async test => {
+  const runtime = new Runtime(null, name => { if (name === "oops") throw new Error("oops"); });
+  const module = runtime.module();
+  const foo = module.variable(true).define(["oops"], oops => oops);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {error: "RuntimeError: oops could not be resolved"});
+});

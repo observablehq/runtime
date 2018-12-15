@@ -2,6 +2,7 @@ import {forEach} from "./array";
 import constant from "./constant";
 import {RuntimeError} from "./errors";
 import identity from "./identity";
+import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
 
@@ -80,14 +81,21 @@ function module_resolve(name) {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
-    } else if ((value = this._runtime._global(name)) !== undefined) {
-      variable.define(name, constant(value));
     } else if (name === "invalidation") {
       variable.define(name, variable_invalidation);
     } else if (name === "visibility") {
       variable.define(name, variable_visibility);
     } else {
-      this._scope.set(variable._name = name, variable);
+      try {
+        value = this._runtime._global(name);
+      } catch (error) {
+        return variable.define(name, rethrow(error));
+      }
+      if (value === undefined) {
+        this._scope.set(variable._name = name, variable);
+      } else {
+        variable.define(name, constant(value));
+      }
     }
   }
   return variable;
