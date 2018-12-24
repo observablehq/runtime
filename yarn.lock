@@ -17,14 +17,14 @@
     js-tokens "^4.0.0"
 
 "@observablehq/inspector@^3.0.0":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.0.2.tgz#61683c721f329242d50a8c7897f217f22efe69d5"
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.0.3.tgz#69bde1b99cd79cd6d5cdd6119d5e4db4583d69ff"
   dependencies:
     esm "^3.0.84"
 
 "@observablehq/stdlib@^2.0.0":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-2.0.3.tgz#82f2aaa707c78f4fc055b6af80ec4d7ebf8757ea"
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-2.0.5.tgz#99a4f2c12dc8a6877c1790cbdaed417db5fe895d"
   dependencies:
     d3-require "^1.2.0"
     esm "^3.0.84"
