@@ -23,8 +23,8 @@
     esm "^3.0.84"
 
 "@observablehq/stdlib@^2.0.0":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-2.0.6.tgz#469736ae891842cab349fd8073535197cc2f6a58"
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-2.0.7.tgz#1509b4869cf5c3c90bfae1ee6019fceeb593b2a6"
   dependencies:
     d3-require "^1.2.0"
     esm "^3.0.84"
@@ -278,8 +278,8 @@ cssstyle@^1.1.1:
     cssom "0.3.x"
 
 d3-require@^1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.2.1.tgz#cb486ae94768c19d818a5166b0b589ea00a1dcea"
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.2.2.tgz#1f7a3f8846ae3496140e0350299db0905cbeed35"
 
 dashdash@^1.12.0:
   version "1.14.1"
