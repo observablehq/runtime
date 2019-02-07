@@ -17,8 +17,8 @@
     js-tokens "^4.0.0"
 
 "@observablehq/inspector@^3.0.0":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.0.3.tgz#69bde1b99cd79cd6d5cdd6119d5e4db4583d69ff"
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.0.4.tgz#9a0c8bb6631aa51c2f3806275efa69f073c13192"
   dependencies:
     esm "^3.0.84"
 
