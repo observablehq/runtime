@@ -33,3 +33,15 @@ tape("variable.import(name, module) does not compute the imported variable unles
   await new Promise(setImmediate);
   test.equal(foo._reachable, false);
 });
+
+tape("variable.import(name, module) can import a variable that depends on a mutable from another module", async test => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const module = runtime.module();
+  module.define("mutable foo", [], () => 13);
+  module.define("bar", ["mutable foo"], (foo) => foo);
+  main.import("bar", module);
+  const baz = main.variable(true).define("baz", ["bar"], bar => `baz-${bar}`);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(baz), {value: "baz-13"});
+});
