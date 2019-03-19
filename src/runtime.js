@@ -6,6 +6,8 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 
+const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame : setImmediate;
+
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
@@ -50,7 +52,7 @@ function runtime_compute() {
 function runtime_computeSoon() {
   var runtime = this;
   return new Promise(function(resolve) {
-    requestAnimationFrame(function() {
+    frame(function() {
       resolve();
       runtime._computeNow();
     });

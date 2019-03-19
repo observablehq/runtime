@@ -20,7 +20,6 @@ function wrap(options, run) {
   return async test => {
     const window = new JSDOM().window;
     const document = window.document;
-    global.requestAnimationFrame = setImmediate;
     global.window = window;
     global.document = document;
     global.Element = window.Element;
@@ -30,7 +29,6 @@ function wrap(options, run) {
       await run(test);
       await new Promise(resolve => setTimeout(resolve, 20));
     } finally {
-      delete global.requestAnimationFrame;
       delete global.window;
       delete global.document;
       delete global.Element;
