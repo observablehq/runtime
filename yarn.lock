@@ -23,12 +23,12 @@
     esm "^3.0.84"
 
 "@observablehq/stdlib@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.0.0.tgz#46c85f972bc9c31a4cde4aeada8814f5cada5546"
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.0.1.tgz#1d8afbaf70b342f68fff77adace707d4ebcd7022"
   dependencies:
     d3-require "^1.2.0"
     esm "^3.0.84"
-    marked "https://github.com/observablehq/marked.git#e9c96e704cc6d8e2bdcbd23484db1ff8b72f03a1"
+    marked "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 "@types/estree@0.0.39":
   version "0.0.39"
@@ -899,9 +899,9 @@ lodash@^4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
-"marked@git+https://github.com/observablehq/marked.git#e9c96e704cc6d8e2bdcbd23484db1ff8b72f03a1":
-  version "0.6.1"
-  resolved "git+https://github.com/observablehq/marked.git#e9c96e704cc6d8e2bdcbd23484db1ff8b72f03a1"
+"marked@git+https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f":
+  version "0.3.12"
+  resolved "git+https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 merge-stream@^1.0.1:
   version "1.0.1"
