@@ -22,9 +22,9 @@
   dependencies:
     esm "^3.0.84"
 
-"@observablehq/stdlib@https://github.com/observablehq/stdlib#4b9a0a6490e6b904ab8dcc8775f17e60a37ae927":
+"@observablehq/stdlib@https://github.com/observablehq/stdlib#44e7a2e":
   version "3.0.1"
-  resolved "https://github.com/observablehq/stdlib#4b9a0a6490e6b904ab8dcc8775f17e60a37ae927"
+  resolved "https://github.com/observablehq/stdlib#44e7a2e1cf50c99142f7e6989f99bb4cc5c266c0"
   dependencies:
     d3-require "^1.2.0"
     esm "^3.0.84"
