@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "@observablehq/inspector": "^3.0.0",
-    "@observablehq/stdlib": "https://github.com/observablehq/stdlib#44e7a2e",
+    "@observablehq/stdlib": "^3.0.0",
     "esm": "^3.0.84"
   },
   "devDependencies": {
