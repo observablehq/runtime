@@ -267,7 +267,7 @@ Deletes this variable’s current definition and name, if any. Any variable in t
 
 ### Observers
 
-An observer watches a [variable](#variable), being notified via asynchronous callback whenever the variable changes state. See the [standard inspector](https://github.com/observablehq/inspector) for reference.
+An observer watches a [variable](#variables), being notified via asynchronous callback whenever the variable changes state. See the [standard inspector](https://github.com/observablehq/inspector) for reference.
 
 <a href="#observer_pending" name="observer_pending">#</a> <i>observer</i>.<b>pending</b>()
 
