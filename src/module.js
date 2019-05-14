@@ -48,7 +48,8 @@ function module_variable(observer) {
 }
 
 function module_evaluate(name) {
-  var v = this._resolve(name);
+  var v = this._scope.get(name);
+  if (!v) throw new RuntimeError(name + " is not defined");
   if (v._observer === no_observer) {
     v._observer = true;
     this._runtime._dirty.add(v);

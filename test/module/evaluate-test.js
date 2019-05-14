@@ -47,3 +47,15 @@ tape("module.evaluate(name) supports constants", async test => {
   module.variable().define("foo", [], 42);
   test.deepEqual(await module.evaluate("foo"), 42);
 });
+
+tape("module.evaluate(name) supports missing variables", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  module.variable().define("foo", [], 42);
+  try {
+    await module.evaluate("bar");
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error.message, "bar is not defined");
+  }
+});
