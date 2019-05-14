@@ -4,7 +4,7 @@ import {RuntimeError} from "./errors";
 import identity from "./identity";
 import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
-import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL} from "./variable";
+import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer} from "./variable";
 
 var none = new Map;
 
@@ -21,6 +21,7 @@ Object.defineProperties(Module.prototype, {
   redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
+  evaluate: {value: module_evaluate, writable: true, configurable: true},
   import: {value: module_import, writable: true, configurable: true},
   variable: {value: module_variable, writable: true, configurable: true}
 });
@@ -44,6 +45,15 @@ function module_import() {
 
 function module_variable(observer) {
   return new Variable(TYPE_NORMAL, this, observer);
+}
+
+function module_evaluate(name) {
+  var v = this._resolve(name);
+  if (v._observer === no_observer) {
+    v._observer = true;
+    this._runtime._dirty.add(v);
+  }
+  return this._runtime._compute().then(() => v._promise);
 }
 
 function module_derive(injects, injectModule) {

@@ -161,6 +161,10 @@ module.variable().import(name, alias, from)
 
 Redefines the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
 
+<a href="#module_evaluate" name="module_evaluate">#</a> <i>module</i>.<b>evaluate</b>(<i>name</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
+
+Evaluates the *variable* with the specified *name* on this module, returning a Promise representing its next value.
+
 ### Variables
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
