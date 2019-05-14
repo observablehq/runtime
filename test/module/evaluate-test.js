@@ -30,8 +30,11 @@ tape("module.evaluate(name) supports errors", async test => {
 tape("module.evaluate(name) supports generators", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.define("foo", [], function*() { yield 42; });
-  test.deepEqual(await module.evaluate("foo"), 42);
+  module.define("foo", [], function*() { yield 1; yield 2; yield 3; });
+  test.deepEqual(await module.evaluate("foo"), 1);
+  test.deepEqual(await module.evaluate("foo"), 2);
+  test.deepEqual(await module.evaluate("foo"), 3);
+  test.deepEqual(await module.evaluate("foo"), 3);
 });
 
 tape("module.evaluate(name) supports promises", async test => {
@@ -57,4 +60,14 @@ tape("module.evaluate(name) supports missing variables", async test => {
   } catch (error) {
     test.deepEqual(error.message, "bar is not defined");
   }
+});
+
+tape("module.evaluate(name) does not force recomputation", async test => {
+  let foo = 0;
+  const runtime = new Runtime();
+  const module = runtime.module();
+  module.define("foo", [], () => ++foo);
+  test.deepEqual(await module.evaluate("foo"), 1);
+  test.deepEqual(await module.evaluate("foo"), 1);
+  test.deepEqual(await module.evaluate("foo"), 1);
 });
