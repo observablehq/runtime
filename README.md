@@ -163,7 +163,7 @@ Redefines the *variable* with the specified *name* on this module. If no such va
 
 <a href="#module_evaluate" name="module_evaluate">#</a> <i>module</i>.<b>evaluate</b>(<i>name</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
-Evaluates the *variable* with the specified *name* on this module, returning a Promise representing its next value.
+Evaluates the *variable* with the specified *name* on this module, returning a promise of its next value.
 
 ### Variables
 
