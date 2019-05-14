@@ -11,14 +11,14 @@ tape("module.evaluate(name) returns a promise to the variable’s next value", a
 tape("module.evaluate(name) implicitly makes the variable reachable", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], () => 42);
+  module.define("foo", [], () => 42);
   test.deepEqual(await module.evaluate("foo"), 42);
 });
 
 tape("module.evaluate(name) supports errors", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], () => { throw new Error(42); });
+  module.define("foo", [], () => { throw new Error(42); });
   try {
     await module.evaluate("foo");
     test.fail();
@@ -30,28 +30,27 @@ tape("module.evaluate(name) supports errors", async test => {
 tape("module.evaluate(name) supports generators", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], function*() { yield 42; });
+  module.define("foo", [], function*() { yield 42; });
   test.deepEqual(await module.evaluate("foo"), 42);
 });
 
 tape("module.evaluate(name) supports promises", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], async () => { return await 42; });
+  module.define("foo", [], async () => { return await 42; });
   test.deepEqual(await module.evaluate("foo"), 42);
 });
 
 tape("module.evaluate(name) supports constants", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], 42);
+  module.define("foo", [], 42);
   test.deepEqual(await module.evaluate("foo"), 42);
 });
 
 tape("module.evaluate(name) supports missing variables", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
-  module.variable().define("foo", [], 42);
   try {
     await module.evaluate("bar");
     test.fail();
