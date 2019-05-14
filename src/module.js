@@ -21,8 +21,8 @@ Object.defineProperties(Module.prototype, {
   redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
-  evaluate: {value: module_evaluate, writable: true, configurable: true},
   import: {value: module_import, writable: true, configurable: true},
+  value: {value: module_value, writable: true, configurable: true},
   variable: {value: module_variable, writable: true, configurable: true}
 });
 
@@ -47,7 +47,7 @@ function module_variable(observer) {
   return new Variable(TYPE_NORMAL, this, observer);
 }
 
-function module_evaluate(name) {
+function module_value(name) {
   var v = this._scope.get(name);
   if (!v) throw new RuntimeError(name + " is not defined");
   if (v._observer === no_observer) {

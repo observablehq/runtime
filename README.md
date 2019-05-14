@@ -161,9 +161,9 @@ module.variable().import(name, alias, from)
 
 Redefines the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
 
-<a href="#module_evaluate" name="module_evaluate">#</a> <i>module</i>.<b>evaluate</b>(<i>name</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
+<a href="#module_value" name="module_value">#</a> <i>module</i>.<b>value</b>(<i>name</i>) [<>](https://github.com/observablehq/runtime/blob/master/src/module.js "Source")
 
-Evaluates the *variable* with the specified *name* on this module, returning a promise of its next value.
+Returns a promise to the next value of the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
 
 ### Variables
 
