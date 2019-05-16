@@ -2,12 +2,15 @@
 
 [![CircleCI](https://circleci.com/gh/observablehq/runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/runtime/tree/master)
 
-The [Observable dataflow runtime](https://beta.observablehq.com/@mbostock/how-observable-runs) lets you run Observable programs [and notebooks](https://beta.observablehq.com/@jashkenas/downloading-and-embedding-notebooks) wherever you want: on your website, integrated into your web application or interactive dashboard—to any distant shore the web platform reaches.
+The [Observable runtime](https://observablehq.com/@observablehq/how-observable-runs) lets you run Observable notebooks, as true reactive programs, [in any JavaScript environment](https://observablehq.com/@observablehq/downloading-and-embedding-notebooks): on your website, integrated into your web application or interactive dashboard—to any distant shore the web platform reaches.
 
-For example, to render the “hello” cell from the [“Hello World” notebook](https://beta.observablehq.com/@tmcw/hello-world):
+For example, to render the “hello” cell from the [“Hello World” notebook](https://observablehq.com/@tmcw/hello-world):
 
 ```html
-<div id="hello"></div>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@3/dist/inspector.css">
+<body>
 <script type=module>
 
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
@@ -16,7 +19,7 @@ import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
 const runtime = new Runtime();
 const main = runtime.module(define, name => {
   if (name === "hello") {
-    return new Inspector(document.querySelector("#hello"));
+    return new Inspector(document.body);
   }
 });
 
@@ -25,25 +28,14 @@ const main = runtime.module(define, name => {
 
 To render the entire notebook into the body, use [Inspector.into](https://github.com/observablehq/inspector/blob/master/README.md#Inspector_into):
 
-```html
-<body>
-<script type=module>
-
-import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
-
+```js
 const runtime = new Runtime();
 const main = runtime.module(define, Inspector.into(document.body));
-
-</script>
 ```
 
 For more control, implement a [custom observer](#observers) in place of the standard inspector. The returned object may implement [*observer*.pending](#observer_pending), [*observer*.fulfilled](#observer_fulfilled) and [*observer*.rejected](#observer_rejected) methods to be notified when the corresponding *variable* changes state. For example:
 
 ```js
-import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
-
 const runtime = new Runtime();
 const main = runtime.module(define, name => {
   const node = document.getElementById(name);
