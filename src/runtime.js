@@ -18,6 +18,8 @@ export default function Runtime(builtins = new Library, global = window_global) 
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
     _modules: {value: new Map},
+    _variables: {value: new Set},
+    _disposed: {value: false, writable: true},
     _builtin: {value: builtin},
     _global: {value: global}
   });
@@ -34,8 +36,18 @@ Object.defineProperties(Runtime.prototype, {
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
+  dispose: {value: runtime_dispose, writable: true, configurable: true},
   module: {value: runtime_module, writable: true, configurable: true}
 });
+
+function runtime_dispose() {
+  this._computing = Promise.resolve();
+  this._disposed = true;
+  this._variables.forEach(v => {
+    v._invalidate();
+    v._version = NaN;
+  });
+}
 
 function runtime_module(define, observer = noop) {
   if (define === undefined) return new Module(this);
@@ -54,7 +66,7 @@ function runtime_computeSoon() {
   return new Promise(function(resolve) {
     frame(function() {
       resolve();
-      runtime._computeNow();
+      runtime._disposed || runtime._computeNow();
     });
   });
 }
