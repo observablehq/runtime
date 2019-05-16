@@ -47,14 +47,15 @@ function module_variable(observer) {
   return new Variable(TYPE_NORMAL, this, observer);
 }
 
-function module_value(name) {
+async function module_value(name) {
   var v = this._scope.get(name);
   if (!v) throw new RuntimeError(name + " is not defined");
   if (v._observer === no_observer) {
     v._observer = true;
     this._runtime._dirty.add(v);
   }
-  return this._runtime._compute().then(() => v._promise);
+  await this._runtime._compute();
+  return v._promise;
 }
 
 function module_derive(injects, injectModule) {
