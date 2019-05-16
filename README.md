@@ -100,6 +100,10 @@ If *define* is specified, it is a function which defines the new module’s [var
 
 If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
 
+<a href="#runtime_dispose" name="runtime_dispose">#</a> <i>runtime</i>.<b>dispose</b>() [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
+
+Disposes this runtime, invalidating all active variables and disabling future computation.
+
 ### Modules
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.

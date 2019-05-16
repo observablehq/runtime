@@ -97,6 +97,10 @@ function variable_defineImpl(name, inputs, definition) {
   this._definition = definition;
   this._value = undefined;
 
+  // Is this an active variable (that may require disposal)?
+  if (definition === noop) runtime._variables.delete(this);
+  else runtime._variables.add(this);
+
   // Did the variable’s name change? Time to patch references!
   if (name == this._name && scope.get(name) === this) {
     this._outputs.forEach(runtime._updates.add, runtime._updates);
