@@ -11,7 +11,7 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@3/dist/inspector.css">
 <body>
-<script type=module>
+<script type="module">
 
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
 import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
