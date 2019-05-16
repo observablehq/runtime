@@ -72,6 +72,12 @@ Many Observable notebooks rely on the [standard library](https://github.com/obse
 const runtime = new Runtime({color: "red"});
 ```
 
+Or to define a new builtin, or override an existing one:
+
+```js
+const runtime = new Runtime(Object.assign(new Library, {color: "red"}));
+```
+
 To refer to the `color` builtin from a variable:
 
 ```js
