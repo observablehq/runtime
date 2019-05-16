@@ -62,6 +62,18 @@ tape("module.value(name) supports missing variables", async test => {
   }
 });
 
+tape("module.value(name) returns a promise on error", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const promise = module.value("bar");
+  try {
+    await promise;
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error.message, "bar is not defined");
+  }
+});
+
 tape("module.value(name) does not force recomputation", async test => {
   let foo = 0;
   const runtime = new Runtime();
