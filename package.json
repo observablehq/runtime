@@ -40,12 +40,12 @@
   },
   "devDependencies": {
     "eslint": "^5.10.0",
-    "husky": "^1.2.0",
-    "jsdom": "^13.0.0",
-    "rollup": "^0.67.4",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-terser": "^3.0.0",
+    "husky": "^2.3.0",
+    "jsdom": "^15.1.0",
+    "rollup": "^1.12.3",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-terser": "^4.0.4",
     "tape": "^4.9.1",
-    "tape-await": "0.1.1"
+    "tape-await": "0.1.2"
   }
 }
