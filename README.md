@@ -1,6 +1,6 @@
 # @observablehq/runtime
 
-[![CircleCI](https://circleci.com/gh/observablehq/runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/runtime/tree/master)
+[![CircleCI](https://circleci.com/gh/observablehq/runtime/tree/master.svg?style=svg&circle-token=765ad8079db8d24462864a9ed0ec5eab25404918)](https://circleci.com/gh/observablehq/runtime/tree/master) [![Greenkeeper badge](https://badges.greenkeeper.io/observablehq/runtime.svg)](https://greenkeeper.io/)
 
 The [Observable runtime](https://observablehq.com/@observablehq/how-observable-runs) lets you run Observable notebooks as true reactive programs [in any JavaScript environment](https://observablehq.com/@observablehq/downloading-and-embedding-notebooks): on your personal website, integrated into your web application or interactive dashboard. Take your notebook to any distant shore the web platform reaches.
 
