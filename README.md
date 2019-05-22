@@ -96,7 +96,7 @@ Builtins must have constant values; unlike [variables](#variables), they cannot 
 
 Returns a new [module](#modules) for this [runtime](#runtimes).
 
-If *define* is specified, it is a function which defines the new module’s [variables](#variables). If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called, being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
+If *define* is specified, it is a function which defines the new module’s [variables](#variables) by calling *runtime*.module (with no arguments) and then calling [*module*.variable](#module_variable) on the returned module as desired. If this runtime already has a module for the specified *define* function, the existing module is returned; otherwise, a new module is created, and the *define* function is called, being passed this runtime and the specified *observer* factory function. If *define* is not specified, a new module is created and returned.
 
 If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name. The [standard inspector](#inspector) is available as a ready-made observer: it displays DOM elements “as-is” and renders interactive displays for other arbitrary values such as numbers and objects.
 

@@ -17,6 +17,7 @@ export default function Runtime(builtins = new Library, global = window_global) 
     _dirty: {value: new Set},
     _updates: {value: new Set},
     _computing: {value: null, writable: true},
+    _init: {value: null, writable: true},
     _modules: {value: new Map},
     _variables: {value: new Set},
     _disposed: {value: false, writable: true},
@@ -50,10 +51,23 @@ function runtime_dispose() {
 }
 
 function runtime_module(define, observer = noop) {
-  if (define === undefined) return new Module(this);
-  let module = this._modules.get(define);
+  let module;
+  if (define === undefined) {
+    if (module = this._init) {
+      this._init = null;
+      return module;
+    }
+    return new Module(this);
+  }
+  module = this._modules.get(define);
   if (module) return module;
-  this._modules.set(define, module = define(this, observer));
+  this._init = module = new Module(this);
+  this._modules.set(define, module);
+  try {
+    define(this, observer);
+  } finally {
+    this._init = null;
+  }
   return module;
 }
 
