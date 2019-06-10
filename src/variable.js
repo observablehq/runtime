@@ -179,6 +179,7 @@ function variable_import(remote, name, module) {
 }
 
 function variable_delete() {
+  this._observer = no_observer;
   return variable_defineImpl.call(this, null, [], noop);
 }
 
