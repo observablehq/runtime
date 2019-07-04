@@ -34,7 +34,7 @@
     "dist/**/*.js"
   ],
   "dependencies": {
-    "@observablehq/inspector": "^3.0.0",
+    "@observablehq/inspector": "^3.1.0",
     "@observablehq/stdlib": "^3.0.0",
     "esm": "^3.0.84"
   },
