@@ -235,9 +235,7 @@ tape("variable.define supports generator cells", async test => {
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield ++i; });
   await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
 });
 
@@ -248,9 +246,7 @@ tape("variable.define supports generator objects", async test => {
   const foo = main.variable(true).define("foo", [], () => range(3));
   await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 0});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
@@ -261,9 +257,7 @@ tape("variable.define supports a promise that resolves to a generator object", a
   const foo = main.variable(true).define("foo", [], async () => range(3));
   await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 0});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
@@ -274,9 +268,7 @@ tape("variable.define supports generators that yield promises", async test => {
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
   await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
 });
 
