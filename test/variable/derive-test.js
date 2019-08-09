@@ -12,7 +12,6 @@ tape("module.derive(overrides, module) injects variables into a copied module", 
   const module1_0 = module0.derive([{name: "d", alias: "b"}], module1);
   const c1 = module1_0.variable(true).define(null, ["c"], c => c);
   const d1 = module1.define("d", [], () => 42);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(a0), {value: 1});
   test.deepEqual(await valueof(b0), {value: 2});
   test.deepEqual(await valueof(c0), {value: 3});

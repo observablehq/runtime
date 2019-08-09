@@ -9,7 +9,6 @@ tape("variable.import(name, module) imports a variable from another module", asy
   module.define("foo", [], () => 42);
   main.import("foo", module);
   const bar = main.variable(true).define("bar", ["foo"], foo => `bar-${foo}`);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(bar), {value: "bar-42"});
 });
 
@@ -20,7 +19,6 @@ tape("variable.import(name, alias, module) imports a variable from another modul
   module.define("foo", [], () => 42);
   main.import("foo", "baz", module);
   const bar = main.variable(true).define("bar", ["baz"], baz => `bar-${baz}`);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(bar), {value: "bar-42"});
 });
 
@@ -30,7 +28,7 @@ tape("variable.import(name, module) does not compute the imported variable unles
   const module = runtime.module();
   const foo = module.define("foo", [], () => test.fail());
   main.import("foo", module);
-  await new Promise(setImmediate);
+  await runtime._computing;
   test.equal(foo._reachable, false);
 });
 
@@ -42,6 +40,5 @@ tape("variable.import(name, module) can import a variable that depends on a muta
   module.define("bar", ["mutable foo"], (foo) => foo);
   main.import("bar", module);
   const baz = main.variable(true).define("baz", ["bar"], bar => `baz-${bar}`);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(baz), {value: "baz-13"});
 });

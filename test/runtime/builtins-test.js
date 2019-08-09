@@ -6,7 +6,6 @@ tape("new Runtime(builtins) allows builtins to be defined as promises", async te
   const runtime = new Runtime({color: Promise.resolve("red")});
   const main = runtime.module();
   const foo = main.variable(true).define(null, ["color"], color => color);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: "red"});
 });
 
@@ -14,7 +13,6 @@ tape("new Runtime(builtins) allows builtins to be defined as functions", async t
   const runtime = new Runtime({color: () => "red"});
   const main = runtime.module();
   const foo = main.variable(true).define(null, ["color"], color => color);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: "red"});
 });
 
@@ -22,7 +20,6 @@ tape("new Runtime(builtins) allows builtins to be defined as async functions", a
   const runtime = new Runtime({color: async () => "red"});
   const main = runtime.module();
   const foo = main.variable(true).define(null, ["color"], color => color);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: "red"});
 });
 
@@ -31,10 +28,7 @@ tape("new Runtime(builtins) allows builtins to be defined as generators", async 
   const runtime = new Runtime({i: function*() { while (i < 3) yield ++i; }});
   const main = runtime.module();
   const foo = main.variable(true).define(null, ["i"], i => i);
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 1});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 2});
-  await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 3});
 });
