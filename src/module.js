@@ -65,11 +65,12 @@ function module_derive(injects, injectModule) {
     if (inject.alias == null) inject.alias = inject.name;
     injectByAlias.set(inject.alias, inject);
   });
-  return this._copy(injectByAlias, injectModule, new Map);
+  var copy = new Module(this._runtime);
+  Promise.resolve().then(() => this._copy(copy, injectByAlias, injectModule, new Map));
+  return copy;
 }
 
-function module_copy(injectByAlias, injectModule, map) {
-  var copy = new Module(this._runtime);
+function module_copy(copy, injectByAlias, injectModule, map) {
   map.set(this, copy);
   this._scope.forEach(function(source, name) {
     var target = new Variable(source._type, copy), inject;
@@ -78,7 +79,7 @@ function module_copy(injectByAlias, injectModule, map) {
     } else if (source._definition === identity) { // import!
       var sourceInput = source._inputs[0],
           sourceModule = sourceInput._module,
-          targetModule = map.get(sourceModule) || sourceModule._copy(none, null, map);
+          targetModule = map.get(sourceModule) || sourceModule._copy(new Module(copy._runtime), none, null, map);
       target.import(sourceInput._name, name, targetModule);
     } else {
       target.define(name, source._inputs.map(variable_name), source._definition);
