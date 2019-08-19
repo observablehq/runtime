@@ -112,7 +112,7 @@ function runtime_computeNow() {
       variable._indegree = 0;
       variable._outputs.forEach(variables.add, variables);
     } else {
-      variable._indegree = -1;
+      variable._indegree = NaN;
       variables.delete(variable);
     }
   });
