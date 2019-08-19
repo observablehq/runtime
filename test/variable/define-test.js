@@ -320,6 +320,20 @@ tape("variable.define does not try to compute unreachable variables", async test
   test.equals(evaluated, false);
 });
 
+tape("variable.define does not try to compute unreachable variables that are outputs of reachable variables", async test => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  let evaluated = false;
+  const foo = main.variable(true).define("foo", [], () => 1);
+  const bar = main.variable(true).define("bar", [], () => 2);
+  const baz = main.variable().define("baz", ["foo", "bar"], (foo, bar) => evaluated = foo + bar);
+  await new Promise(setImmediate);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: 2});
+  test.deepEqual(await valueof(baz), {value: undefined});
+  test.equals(evaluated, false);
+});
+
 tape("variable.define can reference whitelisted globals", async test => {
   const runtime = new Runtime(null, name => name === "magic" ? 21 : undefined);
   const module = runtime.module();
