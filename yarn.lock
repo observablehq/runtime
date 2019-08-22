@@ -26,9 +26,9 @@
     esm "^3.0.84"
 
 "@observablehq/stdlib@^3.0.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.1.0.tgz#b98836c3cf204e0909761360b331ae00e7e051d8"
-  integrity sha512-pNWYE8WoWbD206vXQv39BroX9scKLkXnUlIVistVxFaGTwKdMSe0PlMKC3Kb+Pb8NGjYNctvFwZLestKqx2lqA==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.1.1.tgz#65e4368cba5920aa649c8c2a0c9d8f23bb51150f"
+  integrity sha512-lwt+ThlV5QIFg7WCIKn7IvCnGpEsGw8BkASPd5yyNZ7hU8gxubE7jOChVte8Lf+yMQmZsju55bCsk813+u4GxQ==
   dependencies:
     d3-require "^1.2.0"
     esm "^3.0.84"
