@@ -140,7 +140,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   test.deepEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
   test.deepEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
   test.deepEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: circular definition"}); // Variables that depend on cycles are themselves circular.
+  test.deepEqual(await valueof(foo), {error: "RuntimeError: bar could not be resolved"});
   foo.define("foo", [], () => "foo");
   await runtime._computing;
   test.equal(foo._reachable, true);
