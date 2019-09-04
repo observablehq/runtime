@@ -126,8 +126,7 @@ function runtime_computeNow() {
     variable._outputs.forEach(variable_increment);
   });
 
-  while (variables.size) {
-
+  do {
     // Identify the root variables (those with no updating inputs).
     variables.forEach(function(variable) {
       if (variable._indegree === 0) {
@@ -142,7 +141,7 @@ function runtime_computeNow() {
       variables.delete(variable);
     }
 
-    // Any remaining variables have circular definitions.
+    // Any remaining variables are circular, or depend on them.
     variables.forEach(function(variable) {
       if (variable_circular(variable)) {
         variable_error(variable, new RuntimeError("circular definition"));
@@ -150,7 +149,7 @@ function runtime_computeNow() {
         variables.delete(variable);
       }
     });
-  }
+  } while (variables.size);
 
   function postqueue(variable) {
     if (--variable._indegree === 0) {
