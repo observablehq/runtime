@@ -159,12 +159,10 @@ function runtime_computeNow() {
 }
 
 function variable_circular(variable) {
-  const seen = new Set().add(variable);
-  for (const v of seen) {
-    for (const o of v._inputs) {
-      if (o === variable) return true;
-      seen.add(o);
-    }
+  const inputs = new Set(variable._inputs);
+  for (const i of inputs) {
+    if (i === variable) return true;
+    i._inputs.forEach(inputs.add, inputs);
   }
   return false;
 }
