@@ -126,27 +126,31 @@ function runtime_computeNow() {
     variable._outputs.forEach(variable_increment);
   });
 
-  // Identify the root variables (those with no updating inputs).
-  variables.forEach(function(variable) {
-    if (variable._indegree === 0) {
-      queue.push(variable);
+  while (variables.size) {
+
+    // Identify the root variables (those with no updating inputs).
+    variables.forEach(function(variable) {
+      if (variable._indegree === 0) {
+        queue.push(variable);
+      }
+    });
+
+    // Compute the variables in topological order.
+    while (variable = queue.pop()) {
+      variable_compute(variable);
+      variable._outputs.forEach(postqueue);
+      variables.delete(variable);
     }
-  });
 
-  // Compute the variables in topological order.
-  while (variable = queue.pop()) {
-    variable_compute(variable);
-    variable._outputs.forEach(postqueue);
-    variables.delete(variable);
+    // Any remaining variables have circular definitions.
+    variables.forEach(function(variable) {
+      if (variable_circular(variable)) {
+        variable_error(variable, new RuntimeError("circular definition"));
+        variable._outputs.forEach(variable_decrement);
+        variables.delete(variable);
+      }
+    });
   }
-
-  // Any remaining variables have circular definitions.
-  variables.forEach(function(variable) {
-    var error = new RuntimeError("circular definition");
-    variable._value = undefined;
-    (variable._promise = Promise.reject(error)).catch(noop);
-    variable._rejected(error);
-  });
 
   function postqueue(variable) {
     if (--variable._indegree === 0) {
@@ -155,8 +159,23 @@ function runtime_computeNow() {
   }
 }
 
+function variable_circular(variable) {
+  const seen = new Set().add(variable);
+  for (const v of seen) {
+    for (const o of v._inputs) {
+      if (o === variable) return true;
+      seen.add(o);
+    }
+  }
+  return false;
+}
+
 function variable_increment(variable) {
   ++variable._indegree;
+}
+
+function variable_decrement(variable) {
+  --variable._indegree;
 }
 
 function variable_value(variable) {
@@ -265,6 +284,17 @@ function variable_postrecompute(variable, value, promise) {
   variable._promise = promise;
   variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
   return runtime._compute();
+}
+
+function variable_error(variable, error) {
+  variable._invalidate();
+  variable._invalidate = noop;
+  variable._pending();
+  ++variable._version;
+  variable._indegree = NaN;
+  (variable._promise = Promise.reject(error)).catch(noop);
+  variable._value = undefined;
+  variable._rejected(error);
 }
 
 function variable_return(generator) {
