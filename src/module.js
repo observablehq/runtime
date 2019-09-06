@@ -73,7 +73,7 @@ function module_derive(injects, injectModule) {
           const module = variable._inputs[0]._module;
           const source = module._source || module;
           if (source === this) { // circular import-with!
-            console.warn("circular module definition; ignoring");
+            console.warn("circular module definition; ignoring"); // eslint-disable-line no-console
             return;
           }
           modules.add(source);
