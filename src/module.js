@@ -1,3 +1,4 @@
+import {forEach} from "./array";
 import constant from "./constant";
 import {RuntimeError} from "./errors";
 import identity from "./identity";
@@ -59,11 +60,11 @@ async function module_value(name) {
 function module_derive(injects, injectModule) {
   var copy = new Module(this._runtime);
   copy._source = this;
-  for (let inject of injects) {
+  forEach.call(injects, function(inject) {
     if (typeof inject !== "object") inject = {name: inject + ""};
     if (inject.alias == null) inject.alias = inject.name;
     copy.import(inject.name, inject.alias, injectModule);
-  }
+  });
   Promise.resolve().then(() => {
     const modules = new Set([this]);
     for (const module of modules) {
