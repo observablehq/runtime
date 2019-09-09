@@ -93,10 +93,9 @@ function module_copy(copy, map) {
     if (source._definition === identity) { // import
       var sourceInput = source._inputs[0],
           sourceModule = sourceInput._module;
-      if (sourceModule._source) { // import-with
-        sourceModule = map.get(sourceModule) || sourceModule._copy(new Module(copy._runtime), map);
-      }
-      copy.import(sourceInput._name, name, sourceModule);
+      copy.import(sourceInput._name, name, sourceModule._source // import-with
+        ? map.get(sourceModule) || sourceModule._copy(new Module(copy._runtime), map)
+        : sourceModule);
     } else {
       copy.define(name, source._inputs.map(variable_name), source._definition);
     }
