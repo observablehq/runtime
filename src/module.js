@@ -86,6 +86,7 @@ function module_derive(injects, injectModule) {
 }
 
 function module_copy(copy, map) {
+  copy._source = this;
   map.set(this, copy);
   for (const [name, source] of this._scope) {
     var target = copy._scope.get(name);
@@ -93,9 +94,9 @@ function module_copy(copy, map) {
     if (source._definition === identity) { // import
       var sourceInput = source._inputs[0],
           sourceModule = sourceInput._module;
-      copy.import(sourceInput._name, name, sourceModule._source // import-with
-        ? map.get(sourceModule) || sourceModule._copy(new Module(copy._runtime), map)
-        : sourceModule);
+      copy.import(sourceInput._name, name, map.get(sourceModule)
+        || (sourceModule._source ? sourceModule._copy(new Module(copy._runtime), map) // import-with
+        : sourceModule));
     } else {
       copy.define(name, source._inputs.map(variable_name), source._definition);
     }

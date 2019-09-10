@@ -13,7 +13,7 @@
     "url": "https://github.com/observablehq/runtime.git"
   },
   "scripts": {
-    "test": "tape -r esm 'test/**/*-test.js'",
+    "test": "rollup -c && tape -r esm 'test/**/*-test.js'",
     "prepublishOnly": "rollup -c",
     "postpublish": "git push && git push --tags"
   },
