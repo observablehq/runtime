@@ -59,3 +59,19 @@ tape("module.derive(…) does not copy non-injected modules", async test => {
   test.strictEqual(g._inputs[0]._module, CB);
   test.strictEqual(g._inputs[0]._inputs[0]._module, A);
 });
+
+tape("module.derive(…) does not copy non-injected modules, again", async test => {
+  const runtime = new Runtime();
+  const A = runtime.module();
+  A.define("a", () => ({}));
+  const B = runtime.module();
+  B.import("a", A);
+  const C = runtime.module();
+  const CB = B.derive([], C);
+  const a1 = C.variable(true).import("a", "a1", CB);
+  const a2 = C.variable(true).import("a", "a2", A);
+  const {value: v1} = await valueof(a1);
+  const {value: v2} = await valueof(a2);
+  test.deepEqual(v1, {});
+  test.strictEqual(v1, v2);
+});
