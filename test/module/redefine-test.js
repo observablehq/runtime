@@ -6,7 +6,7 @@ tape("module.redefine(name, inputs, definition) can redefine a normal variable",
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define("foo", [], () => 42);
-  test.equal(module.redefine("foo", [], () => 43, foo), foo);
+  test.equal(module.redefine("foo", [], () => 43), foo);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(foo), {value: 43});
 });

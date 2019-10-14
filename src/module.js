@@ -10,6 +10,10 @@ export default function Module(runtime) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
+    _special: {value: new Map([
+      ["invalidation", variable_invalidation],
+      ["visibility", variable_visibility]
+    ])},
     _source: {value: null, writable: true}
   });
 }
@@ -106,14 +110,12 @@ function module_copy(copy, map) {
 
 function module_resolve(name) {
   var variable = this._scope.get(name), value;
-  if (!variable)  {
+  if (!variable) {
     variable = new Variable(TYPE_IMPLICIT, this);
-    if (this._runtime._builtin._scope.has(name)) {
+    if (this._special.has(name)) {
+      variable.define(name, this._special.get(name));
+    } else if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
-    } else if (name === "invalidation") {
-      variable.define(name, variable_invalidation);
-    } else if (name === "visibility") {
-      variable.define(name, variable_visibility);
     } else {
       try {
         value = this._runtime._global(name);
