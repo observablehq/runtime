@@ -57,11 +57,11 @@ function runtime_module(define, observer = noop, special = {}) {
       this._init = null;
       return module;
     }
-    return new Module(this, special);
+    return new Module(this, Object.entries(special));
   }
   module = this._modules.get(define);
   if (module) return module;
-  this._init = module = new Module(this, special);
+  this._init = module = new Module(this, Object.entries(special));
   this._modules.set(define, module);
   try {
     define(this, observer);
