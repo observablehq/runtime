@@ -57,7 +57,7 @@ function runtime_module(define, observer = noop, special = {}) {
       this._init = null;
       return module;
     }
-    return new Module(this);
+    return new Module(this, special);
   }
   module = this._modules.get(define);
   if (module) return module;
