@@ -6,13 +6,14 @@ import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer} from "./variable";
 
-export default function Module(runtime) {
+export default function Module(runtime, special = {}) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
     _special: {value: new Map([
       ["invalidation", variable_invalidation],
-      ["visibility", variable_visibility]
+      ["visibility", variable_visibility],
+      ...Object.entries(special)
     ])},
     _source: {value: null, writable: true}
   });

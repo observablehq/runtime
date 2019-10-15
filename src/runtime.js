@@ -50,7 +50,7 @@ function runtime_dispose() {
   });
 }
 
-function runtime_module(define, observer = noop) {
+function runtime_module(define, observer = noop, special = {}) {
   let module;
   if (define === undefined) {
     if (module = this._init) {
@@ -61,7 +61,7 @@ function runtime_module(define, observer = noop) {
   }
   module = this._modules.get(define);
   if (module) return module;
-  this._init = module = new Module(this);
+  this._init = module = new Module(this, special);
   this._modules.set(define, module);
   try {
     define(this, observer);

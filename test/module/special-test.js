@@ -1,11 +1,11 @@
 import { Runtime } from "../../src";
 import tape from "../tape";
 import valueof from "../variable/valueof";
+import noop from "../../src/noop";
 
-tape("module._special is defines an module local variable", async test => {
+tape("module._special defines a module local variable", async test => {
   const runtime = new Runtime();
-  const module = runtime.module();
-  module._special.set("foo", () => 42);
+  const module = runtime.module(noop, undefined, {foo: () => 42});
   const bar = module.variable(true).define("bar", ["foo"], foo => foo + 1);
   await new Promise(setImmediate);
   test.deepEqual(await valueof(bar), {value: 43});
