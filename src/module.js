@@ -6,14 +6,14 @@ import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer} from "./variable";
 
-export default function Module(runtime, special = {}) {
+export default function Module(runtime, special) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
     _special: {value: new Map([
       ["invalidation", variable_invalidation],
       ["visibility", variable_visibility],
-      ...Object.entries(special)
+      ...(Symbol.iterator in special ? special : Object.entries(special))
     ])},
     _source: {value: null, writable: true}
   });
@@ -63,7 +63,7 @@ async function module_value(name) {
 }
 
 function module_derive(injects, injectModule) {
-  var copy = new Module(this._runtime);
+  var copy = new Module(this._runtime, this._special);
   copy._source = this;
   forEach.call(injects, function(inject) {
     if (typeof inject !== "object") inject = {name: inject + ""};
@@ -100,8 +100,9 @@ function module_copy(copy, map) {
       var sourceInput = source._inputs[0],
           sourceModule = sourceInput._module;
       copy.import(sourceInput._name, name, map.get(sourceModule)
-        || (sourceModule._source ? sourceModule._copy(new Module(copy._runtime), map) // import-with
-        : sourceModule));
+        || (sourceModule._source
+           ? sourceModule._copy(new Module(copy._runtime, copy._special), map) // import-with
+           : sourceModule));
     } else {
       copy.define(name, source._inputs.map(variable_name), source._definition);
     }
