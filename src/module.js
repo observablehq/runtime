@@ -13,7 +13,7 @@ export default function Module(runtime, special) {
     _special: {value: new Map([
       ["invalidation", variable_invalidation],
       ["visibility", variable_visibility],
-      ...(Symbol.iterator in special ? special : Object.entries(special))
+      ...special
     ])},
     _source: {value: null, writable: true}
   });
