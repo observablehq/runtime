@@ -284,7 +284,7 @@ tape("variable.define ignores an asynchronous result from a redefined variable",
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
-  await new Promise(resolve => setImmediate(resolve));
+  await new Promise(setImmediate);
   foo.define("foo", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
@@ -296,7 +296,7 @@ tape("variable.define ignores an asynchronous result from a redefined input", as
   const main = runtime.module();
   const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
-  await new Promise(resolve => setImmediate(resolve));
+  await new Promise(setImmediate);
   bar.define("bar", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
