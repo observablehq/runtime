@@ -95,14 +95,14 @@ tape("variable.define recomputes reachability as expected", async test => {
   main.variable().import("bar", module);
   main.variable().import("baz", module);
   main.variable().import("quux", module);
-  await runtime._computing;
+  await runtime._compute();
   test.equal(quux._reachable, true);
   test.equal(baz._reachable, true);
   test.equal(bar._reachable, true);
   test.equal(foo._reachable, true);
   test.deepEqual(await valueof(foo), {value: ["bar-42", "baz-42", 42]});
   foo.define("foo", [], () => "foo");
-  await runtime._computing;
+  await runtime._compute();
   test.equal(quux._reachable, false);
   test.equal(baz._reachable, false);
   test.equal(bar._reachable, false);
@@ -119,7 +119,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   const baz = module.define("baz", ["quux"], quux => `baz-${quux}`);
   const quux = module.define("quux", ["zapp"], function*(zapp) { try { while (true) yield `quux-${zapp}`; } finally { returned = true; }});
   const zapp = module.define("zapp", ["bar"], bar => `zaap-${bar}`);
-  await runtime._computing;
+  await runtime._compute();
   test.equal(bar._reachable, false);
   test.equal(baz._reachable, false);
   test.equal(quux._reachable, false);
@@ -130,7 +130,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   test.deepEqual(await valueof(zapp), {value: undefined});
   main.variable().import("bar", module);
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
-  await runtime._computing;
+  await runtime._compute();
   test.equal(foo._reachable, true);
   test.equal(bar._reachable, true);
   test.equal(baz._reachable, true);
@@ -142,7 +142,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   test.deepEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
   test.deepEqual(await valueof(foo), {error: "RuntimeError: bar could not be resolved"});
   foo.define("foo", [], () => "foo");
-  await runtime._computing;
+  await runtime._compute();
   test.equal(foo._reachable, true);
   test.equal(bar._reachable, false);
   test.equal(baz._reachable, false);
@@ -187,7 +187,7 @@ tape("variable.define does not terminate reachable generators", async test => {
   test.deepEqual(await valueof(baz), {value: 1});
   test.equal(returned, false);
   bar._invalidate();
-  await runtime._computing;
+  await runtime._compute();
   test.equal(returned, true);
 });
 
@@ -233,7 +233,6 @@ tape("variable.define supports generator cells", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield ++i; });
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(foo), {value: 2});
   test.deepEqual(await valueof(foo), {value: 3});
@@ -244,7 +243,6 @@ tape("variable.define supports generator objects", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => range(3));
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 0});
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(foo), {value: 2});
@@ -255,7 +253,6 @@ tape("variable.define supports a promise that resolves to a generator object", a
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], async () => range(3));
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 0});
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(foo), {value: 2});
@@ -266,7 +263,6 @@ tape("variable.define supports generators that yield promises", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(foo), {value: 2});
   test.deepEqual(await valueof(foo), {value: 3});
@@ -277,11 +273,9 @@ tape("variable.define allows a variable to be redefined", async test => {
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable(true).define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(bar), {value: 1});
   foo.define("foo", [], () => 2);
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 2});
   test.deepEqual(await valueof(bar), {value: 2});
 });
@@ -290,7 +284,7 @@ tape("variable.define ignores an asynchronous result from a redefined variable",
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
-  await runtime._computing;
+  await new Promise(resolve => setImmediate(resolve));
   foo.define("foo", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
@@ -302,7 +296,7 @@ tape("variable.define ignores an asynchronous result from a redefined input", as
   const main = runtime.module();
   const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
-  await runtime._computing;
+  await new Promise(resolve => setImmediate(resolve));
   bar.define("bar", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
   test.deepEqual(await valueof(foo), {value: "success"});
@@ -327,7 +321,6 @@ tape("variable.define does not try to compute unreachable variables that are out
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable(true).define("bar", [], () => 2);
   const baz = main.variable().define("baz", ["foo", "bar"], (foo, bar) => evaluated = foo + bar);
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 1});
   test.deepEqual(await valueof(bar), {value: 2});
   test.deepEqual(await valueof(baz), {value: undefined});
@@ -347,7 +340,6 @@ tape("variable.define captures the value of whitelisted globals", async test => 
   const module = runtime.module();
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
   test.deepEqual(await valueof(foo), {value: 2});
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 2});
 });
 
