@@ -7,7 +7,6 @@ tape("module.redefine(name, inputs, definition) can redefine a normal variable",
   const module = runtime.module();
   const foo = module.variable(true).define("foo", [], () => 42);
   test.equal(module.redefine("foo", [], () => 43), foo);
-  await runtime._computing;
   test.deepEqual(await valueof(foo), {value: 43});
 });
 
@@ -16,7 +15,6 @@ tape("module.redefine(name, inputs, definition) can redefine an implicit variabl
   const module = runtime.module();
   const bar = module.variable(true).define("bar", ["foo"], foo => foo + 1);
   module.redefine("foo", [], () => 43);
-  await runtime._computing;
   test.deepEqual(await valueof(bar), {value: 44});
 });
 
@@ -31,7 +29,6 @@ tape("module.redefine(name, inputs, definition) can’t redefine a duplicate def
   } catch (error) {
     test.deepEqual(error, {message: "foo is defined more than once", input: undefined});
   }
-  await runtime._computing;
   test.deepEqual(await valueof(foo1), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(foo2), {error: "RuntimeError: foo is defined more than once"});
 });
