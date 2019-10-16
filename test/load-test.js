@@ -2,7 +2,7 @@ import load from "../src/load";
 import tape from "./tape";
 
 tape("basic notebook as module loading", async test => {
-  let result = null;
+  let fulfilled, value = new Promise(resolve => fulfilled = resolve);
   load({
     id: "notebook@1",
     modules: [
@@ -17,14 +17,13 @@ tape("basic notebook as module loading", async test => {
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name === "foo") return {fulfilled};
   });
-  await sleep(10);
-  test.equals(result, 101);
+  test.equals(await value, 101);
 });
 
 tape("notebooks as modules with variables depending on other variables", async test => {
-  let result = null;
+  let fulfilled, value = new Promise(resolve => fulfilled = resolve);
   load({
     id: "notebook@1",
     modules: [
@@ -44,14 +43,13 @@ tape("notebooks as modules with variables depending on other variables", async t
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name === "foo") return {fulfilled};
   });
-  await sleep(10);
-  test.equals(result, 202);
+  test.equals(await value, 202);
 });
 
 tape("notebooks as modules with imports", async test => {
-  let result = null;
+  let fulfilled, value = new Promise(resolve => fulfilled = resolve);
   load({
     id: "notebook@1",
     modules: [
@@ -81,14 +79,13 @@ tape("notebooks as modules with imports", async test => {
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name === "foo") return {fulfilled};
   });
-  await sleep(10);
-  test.equals(result, 202);
+  test.equals(await value, 202);
 });
 
 tape("Rejects with an error when trying to import from a nonexistent module", async test => {
-  const failures = [];
+  let rejected, value = new Promise((resolve, reject) => rejected = reject);
   load({
     id: "notebook@1",
     modules: [
@@ -109,18 +106,18 @@ tape("Rejects with an error when trying to import from a nonexistent module", as
       }
     ]
   }, null, ({name}) => {
-    return {
-      rejected: (error) => failures.push({name, type: error.constructor.name, message: error.message})
-    };
+    if (name === "foo") return {rejected};
   });
-  await sleep(10);
-  test.deepEquals(failures, [
-    {name: "foo", type: "RuntimeError", message: "nonexistent could not be resolved"}
-  ]);
+  try {
+    await value;
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error, {message: "nonexistent could not be resolved", input: "nonexistent"});
+  }
 });
 
 tape("notebook as modules with builtins", async test => {
-  let result = null;
+  let fulfilled, value = new Promise(resolve => fulfilled = resolve);
   load({
     id: "notebook@1",
     modules: [
@@ -138,14 +135,13 @@ tape("notebook as modules with builtins", async test => {
   }, {
     bar: 42
   }, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name === "foo") return {fulfilled};
   });
-  await sleep(10);
-  test.equals(result, 84);
+  test.equals(await value, 84);
 });
 
 tape("notebook with the default standard library", async test => {
-  let result = null;
+  let fulfilled, value = new Promise(resolve => fulfilled = resolve);
   load({
     id: "notebook@1",
     modules: [
@@ -161,12 +157,7 @@ tape("notebook with the default standard library", async test => {
       }
     ]
   }, null, ({name}) => {
-    if (name == "foo") return {fulfilled: (value) => result = value};
+    if (name === "foo") return {fulfilled};
   });
-  await sleep(10);
-  test.equals(result.outerHTML, '<div></div>');
+  test.equals((await value).outerHTML, '<div></div>');
 });
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
