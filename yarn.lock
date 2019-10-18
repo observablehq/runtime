@@ -25,13 +25,11 @@
   dependencies:
     esm "^3.0.84"
 
-"@observablehq/stdlib@^3.0.0":
+"@observablehq/stdlib@https://github.com/observablehq/stdlib#bfdb699694ed08baafa15410731cc25f7bac66d5":
   version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.1.1.tgz#65e4368cba5920aa649c8c2a0c9d8f23bb51150f"
-  integrity sha512-lwt+ThlV5QIFg7WCIKn7IvCnGpEsGw8BkASPd5yyNZ7hU8gxubE7jOChVte8Lf+yMQmZsju55bCsk813+u4GxQ==
+  resolved "https://github.com/observablehq/stdlib#bfdb699694ed08baafa15410731cc25f7bac66d5"
   dependencies:
     d3-require "^1.2.0"
-    esm "^3.0.84"
     marked "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 "@types/estree@*":
