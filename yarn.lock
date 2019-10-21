@@ -25,11 +25,11 @@
   dependencies:
     esm "^3.0.84"
 
-"@observablehq/stdlib@https://github.com/observablehq/stdlib#d0c10dc4c987cedddfa5eea31d7df7367ad4aa00":
+"@observablehq/stdlib@https://github.com/observablehq/stdlib#811d89ba1722bfb5c02cfb1fcfd5d2b8c683b55d":
   version "3.1.1"
-  resolved "https://github.com/observablehq/stdlib#d0c10dc4c987cedddfa5eea31d7df7367ad4aa00"
+  resolved "https://github.com/observablehq/stdlib#811d89ba1722bfb5c02cfb1fcfd5d2b8c683b55d"
   dependencies:
-    d3-require "^1.2.0"
+    d3-require "^1.2.4"
     marked "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 "@types/estree@*":
@@ -327,10 +327,10 @@ cssstyle@^1.2.2:
   dependencies:
     cssom "0.3.x"
 
-d3-require@^1.2.0:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.2.3.tgz#65a1c2137e69c5c442f1ca2a04f72a3965124c16"
-  integrity sha512-zfat3WTZRZmh7jCrTIhg4zZvivA0DZvez8lZq0JwYG9aW8LcSUFO4eiPnL5F2MolHcLE8CLfEt06sPP8N7y3AQ==
+d3-require@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/d3-require/-/d3-require-1.2.4.tgz#59afc591d5089f99fecd8c45ef7539e1fee112b3"
+  integrity sha512-8UseEGCkBkBxIMouLMPONUBmU8DUPC1q12LARV1Lk/2Jwa32SVgmRfX8GdIeR06ZP+CG85YD3N13K2s14qCNyA==
 
 dashdash@^1.12.0:
   version "1.14.1"
