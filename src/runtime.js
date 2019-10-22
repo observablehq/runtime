@@ -52,16 +52,22 @@ function runtime_dispose() {
 
 function runtime_module(define, observer = noop, special = {}) {
   let module;
+  const specialEntries = Object.entries(special);
   if (define === undefined) {
     if (module = this._init) {
       this._init = null;
+      if (specialEntries.length) {
+        for (let [name, value] of specialEntries) {
+          module._setSpecial(name, value);
+        }
+      }
       return module;
     }
-    return new Module(this, Object.entries(special));
+    return new Module(this, specialEntries);
   }
   module = this._modules.get(define);
   if (module) return module;
-  this._init = module = new Module(this, Object.entries(special));
+  this._init = module = new Module(this, specialEntries);
   this._modules.set(define, module);
   try {
     define(this, observer);

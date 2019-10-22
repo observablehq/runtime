@@ -22,6 +22,7 @@ export default function Module(runtime, special) {
 Object.defineProperties(Module.prototype, {
   _copy: {value: module_copy, writable: true, configurable: true},
   _resolve: {value: module_resolve, writable: true, configurable: true},
+  _setSpecial: {value: module_set_special, writable: true, configurable: true},
   redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
@@ -132,6 +133,10 @@ function module_resolve(name) {
     }
   }
   return variable;
+}
+
+function module_set_special(name, value) {
+  this._special.set(name, value);
 }
 
 function variable_name(variable) {
