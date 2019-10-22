@@ -25,9 +25,9 @@
   dependencies:
     esm "^3.0.84"
 
-"@observablehq/stdlib@https://github.com/observablehq/stdlib#811d89ba1722bfb5c02cfb1fcfd5d2b8c683b55d":
+"@observablehq/stdlib@https://github.com/observablehq/stdlib#590fffdb0f6f480360005d1d01d59eb41fd2d32a":
   version "3.1.1"
-  resolved "https://github.com/observablehq/stdlib#811d89ba1722bfb5c02cfb1fcfd5d2b8c683b55d"
+  resolved "https://github.com/observablehq/stdlib#590fffdb0f6f480360005d1d01d59eb41fd2d32a"
   dependencies:
     d3-require "^1.2.4"
     marked "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
