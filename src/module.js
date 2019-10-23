@@ -6,14 +6,14 @@ import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer} from "./variable";
 
-export default function Module(runtime, special) {
+export default function Module(runtime, builtins = []) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
-    _special: {value: new Map([
+    _builtins: {value: new Map([
       ["invalidation", variable_invalidation],
       ["visibility", variable_visibility],
-      ...special
+      ...builtins
     ])},
     _source: {value: null, writable: true}
   });
@@ -22,13 +22,13 @@ export default function Module(runtime, special) {
 Object.defineProperties(Module.prototype, {
   _copy: {value: module_copy, writable: true, configurable: true},
   _resolve: {value: module_resolve, writable: true, configurable: true},
-  _setSpecial: {value: module_set_special, writable: true, configurable: true},
   redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
   derive: {value: module_derive, writable: true, configurable: true},
   import: {value: module_import, writable: true, configurable: true},
   value: {value: module_value, writable: true, configurable: true},
-  variable: {value: module_variable, writable: true, configurable: true}
+  variable: {value: module_variable, writable: true, configurable: true},
+  builtin: {value: module_builtin, writable: true, configurable: true}
 });
 
 function module_redefine(name) {
@@ -64,7 +64,7 @@ async function module_value(name) {
 }
 
 function module_derive(injects, injectModule) {
-  var copy = new Module(this._runtime, this._special);
+  var copy = new Module(this._runtime, this._builtins);
   copy._source = this;
   forEach.call(injects, function(inject) {
     if (typeof inject !== "object") inject = {name: inject + ""};
@@ -102,7 +102,7 @@ function module_copy(copy, map) {
           sourceModule = sourceInput._module;
       copy.import(sourceInput._name, name, map.get(sourceModule)
         || (sourceModule._source
-           ? sourceModule._copy(new Module(copy._runtime, copy._special), map) // import-with
+           ? sourceModule._copy(new Module(copy._runtime, copy._builtins), map) // import-with
            : sourceModule));
     } else {
       copy.define(name, source._inputs.map(variable_name), source._definition);
@@ -115,8 +115,8 @@ function module_resolve(name) {
   var variable = this._scope.get(name), value;
   if (!variable) {
     variable = new Variable(TYPE_IMPLICIT, this);
-    if (this._special.has(name)) {
-      variable.define(name, this._special.get(name));
+    if (this._builtins.has(name)) {
+      variable.define(name, constant(this._builtins.get(name)));
     } else if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
     } else {
@@ -135,8 +135,8 @@ function module_resolve(name) {
   return variable;
 }
 
-function module_set_special(name, value) {
-  this._special.set(name, value);
+function module_builtin(name, value) {
+  this._builtins.set(name, value);
 }
 
 function variable_name(variable) {

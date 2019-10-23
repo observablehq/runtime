@@ -1,7 +1,6 @@
 import {Runtime} from "../../src/";
 import tape from "../tape";
 import valueof from "./valueof";
-import noop from "../../src/noop";
 
 tape("module.derive(overrides, module) injects variables into a copied module", async test => {
   const runtime = new Runtime();
@@ -20,9 +19,10 @@ tape("module.derive(overrides, module) injects variables into a copied module", 
   test.deepEqual(await valueof(d1), {value: 42});
 });
 
-tape("module.derive(…) copies special variables", async test => {
+tape("module.derive(…) copies module-specific builtins", async test => {
   const runtime = new Runtime();
-  const module0 = runtime.module(noop, undefined, {a: 1});
+  const module0 = runtime.module();
+  module0.builtin("a", 1);
   const b0 = module0.variable(true).define("b", ["a"], a => a + 1);
   const module1_0 = module0.derive([], module0);
   const c1 = module1_0.variable(true).define("c", ["a"], a => a + 2);
