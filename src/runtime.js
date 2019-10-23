@@ -1,4 +1,4 @@
-import {Library, ResolveFileAttachment} from "@observablehq/stdlib";
+import {Library, FileAttachments} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors";
 import generatorish from "./generatorish";
 import load from "./load";
@@ -39,7 +39,7 @@ Object.defineProperties(Runtime.prototype, {
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   dispose: {value: runtime_dispose, writable: true, configurable: true},
   module: {value: runtime_module, writable: true, configurable: true},
-  ResolveFileAttachment: {value: ResolveFileAttachment, writable: true, configurable: true}
+  fileAttachments: {value: FileAttachments, writable: true, configurable: true}
 });
 
 function runtime_dispose() {
