@@ -1,6 +1,9 @@
 {
   "name": "@observablehq/runtime",
-  "version": "4.4.7",
+  "version": "4.5.0-rc.1",
+  "publishConfig": {
+    "tag": "next"
+  },
   "license": "ISC",
   "main": "dist/runtime.umd.js",
   "module": "src/index.js",
@@ -35,7 +38,7 @@
   ],
   "dependencies": {
     "@observablehq/inspector": "^3.1.0",
-    "@observablehq/stdlib": "https://github.com/observablehq/stdlib#e06f7882546784fed0019cba5d85e23917c3baa7",
+    "@observablehq/stdlib": "3.2.0-rc.1",
     "esm": "^3.0.84"
   },
   "devDependencies": {
