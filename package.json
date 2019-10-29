@@ -1,9 +1,6 @@
 {
   "name": "@observablehq/runtime",
   "version": "4.4.4",
-  "publishConfig": {
-    "tag": "next"
-  },
   "license": "ISC",
   "main": "dist/runtime.umd.js",
   "module": "src/index.js",
