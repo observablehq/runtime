@@ -18,12 +18,12 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@observablehq/inspector@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.1.0.tgz#4726f9aabc58aa410a4ba27adf89b180fa9a302b"
-  integrity sha512-DOx40q05QZdQnYpUsKch+8raWGmKSBh5DIAinQRoK+ij7Eq/PKpHJvNrrhThF4+2b/qViUhZGOwMLPhlC2qMzg==
+"@observablehq/inspector@^3.2.0-rc.1":
+  version "3.2.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.0-rc.1.tgz#574fc11e4c2b6cdc068047444fabe685625b4ceb"
+  integrity sha512-d2H0s5hjTL9m5qsZtYzYSEvSGxpCMOGgHG4ZxDKSJfGPIOzJ0SpIYjersx7MDZcttk+uWCfvhDHY0FsdfN8nlQ==
   dependencies:
-    esm "^3.0.84"
+    esm "^3.2.25"
 
 "@observablehq/stdlib@^3.2.0":
   version "3.2.0"
@@ -530,7 +530,7 @@ eslint@^6.5.1:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-esm@^3.0.84:
+esm@^3.0.84, esm@^3.2.25:
   version "3.2.25"
   resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
   integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
