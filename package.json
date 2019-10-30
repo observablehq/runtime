@@ -1,6 +1,6 @@
 {
   "name": "@observablehq/runtime",
-  "version": "4.6.0-rc.2",
+  "version": "4.6.0",
   "license": "ISC",
   "main": "dist/runtime.umd.js",
   "module": "src/index.js",
@@ -34,7 +34,7 @@
     "dist/**/*.js"
   ],
   "dependencies": {
-    "@observablehq/inspector": "^3.2.0-rc.2",
+    "@observablehq/inspector": "^3.2.0",
     "@observablehq/stdlib": "^3.2.0",
     "esm": "^3.0.84"
   },
