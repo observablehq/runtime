@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@observablehq/inspector@^3.2.0-rc.1":
-  version "3.2.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.0-rc.1.tgz#574fc11e4c2b6cdc068047444fabe685625b4ceb"
-  integrity sha512-d2H0s5hjTL9m5qsZtYzYSEvSGxpCMOGgHG4ZxDKSJfGPIOzJ0SpIYjersx7MDZcttk+uWCfvhDHY0FsdfN8nlQ==
+"@observablehq/inspector@^3.2.0-rc.2":
+  version "3.2.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.0-rc.2.tgz#3d2596b9471ff2b153d29501b8076235729ec36e"
+  integrity sha512-SRNDe2xdn7kJ8hWSAF99FyNnP/O1Q8PUujFhbnu6KHQfV71EolkRtVkdhv1qunqAVMNJrRZcYr2UiRsWU0b3Ig==
   dependencies:
     esm "^3.2.25"
 
