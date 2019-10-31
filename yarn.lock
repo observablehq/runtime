@@ -19,9 +19,9 @@
     js-tokens "^4.0.0"
 
 "@observablehq/inspector@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.0.tgz#e80ef1c23ebd6e35ed97eef6a863da3ee22db6a1"
-  integrity sha512-oZcMpj1teGHjwnSxnaZo5bQ/OxvpzgKyiR3mehCeqUl1bkWCbD5LTWQSIADf9IUrG7oFllXisIXLwc0f6L3EVQ==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.1.tgz#c953fd95f1b90fac6f39e41965a72cc079d3e465"
+  integrity sha512-U8EASUAUYCQmCprOF9HafRMnU4yyD0IXjRuDwAjBMjVpm36KXPzXWxHcdzlt/3CbIEu8GOhKQqHBAX9pv6OyUQ==
   dependencies:
     esm "^3.2.25"
 
