@@ -42,7 +42,7 @@
     "eslint": "^6.6.0",
     "husky": "^3.0.9",
     "jsdom": "^15.2.0",
-    "rollup": "^1.22.0",
+    "rollup": "^1.26.2",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-terser": "^5.1.2",
     "tape": "^4.9.1",
