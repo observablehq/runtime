@@ -232,8 +232,10 @@ function variable_compute(variable) {
   }).then(function(value) {
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
+    // Note that the cell may already have been invalidated here,
+    // in which case we need to terminate the generator immediately!
     if (generatorish(value)) {
-      if (variable._version !== version) return;
+      if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
