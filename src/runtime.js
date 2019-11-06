@@ -233,6 +233,7 @@ function variable_compute(variable) {
     // If the value is a generator, then retrieve its first value,
     // and dispose of the generator if the variable is invalidated.
     if (generatorish(value)) {
+      if (variable._version !== version) return;
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
       return variable_precompute(variable, version, promise, value);
     }
