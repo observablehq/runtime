@@ -241,7 +241,7 @@ function variable_compute(variable, postcompute) {
     if (generatorish(value)) {
       if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
-      return variable_precompute(variable, version, promise, value, postcompute);
+      return variable_precompute(variable, version, value, postcompute);
     }
     return value;
   });
@@ -256,7 +256,7 @@ function variable_compute(variable, postcompute) {
   });
 }
 
-function variable_precompute(variable, version, promise, generator, postcompute) {
+function variable_precompute(variable, version, generator, postcompute) {
   function recompute() {
     var promise = new Promise(function(resolve) {
       resolve(generator.next());
