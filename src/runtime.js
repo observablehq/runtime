@@ -89,7 +89,9 @@ function runtime_computeSoon() {
 function runtime_computeNow() {
   var queue = [],
       variables,
-      variable;
+      variable,
+      postcomputed,
+      postcompute = new Promise(_ => postcomputed = _);
 
   // Compute the reachability of the transitive closure of dirty variables.
   // Any newly-reachable variable must also be recomputed.
@@ -137,7 +139,7 @@ function runtime_computeNow() {
 
     // Compute the variables in topological order.
     while (variable = queue.pop()) {
-      variable_compute(variable);
+      variable_compute(variable, postcompute);
       variable._outputs.forEach(postqueue);
       variables.delete(variable);
     }
@@ -151,6 +153,8 @@ function runtime_computeNow() {
       }
     });
   } while (variables.size);
+
+  postcomputed();
 
   function postqueue(variable) {
     if (--variable._indegree === 0) {
@@ -202,7 +206,7 @@ function variable_intersector(invalidation, variable) {
   };
 }
 
-function variable_compute(variable) {
+function variable_compute(variable, postcompute) {
   variable._invalidate();
   variable._invalidate = noop;
   variable._pending();
@@ -237,7 +241,7 @@ function variable_compute(variable) {
     if (generatorish(value)) {
       if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
-      return variable_precompute(variable, version, promise, value);
+      return variable_precompute(variable, version, promise, value, postcompute);
     }
     return value;
   });
@@ -252,7 +256,7 @@ function variable_compute(variable) {
   });
 }
 
-function variable_precompute(variable, version, promise, generator) {
+function variable_precompute(variable, version, promise, generator, postcompute) {
   function recompute() {
     var promise = new Promise(function(resolve) {
       resolve(generator.next());
@@ -274,7 +278,7 @@ function variable_precompute(variable, version, promise, generator) {
     resolve(generator.next());
   }).then(function(next) {
     if (next.done) return;
-    promise.then(recompute);
+    postcompute.then(recompute);
     return next.value;
   });
 }
