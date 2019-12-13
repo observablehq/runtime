@@ -374,30 +374,54 @@ tape("variable.define correctly handles globals that throw", async test => {
   test.deepEqual(await valueof(foo), {error: "RuntimeError: oops could not be resolved"});
 });
 
-tape("variable.define allows other variables to begin computation before a generator may resume", async test => {
+tape.only("variable.define allows other variables to begin computation before a generator may resume", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
   const main = runtime.module();
   let i = 0;
-  let iteration = 0;
-  const onFulfilled = value => {
-    if (iteration === 0) {
+  let genIteration = 0;
+  let valIteration = 0;
+  const onGenFulfilled = value => {
+    if (genIteration === 0) {
+      test.equals(valIteration, 0);
       test.equals(value, 1);
-      test.equals(i, 2); // Generator has resumed before first fulfillment.
+      test.equals(i, 2); // Generator has resumed before first fulfillment runs.
     }
-    else if (iteration === 1) {
+    else if (genIteration === 1) {
+      test.equals(valIteration, 0);
       test.equals(value, 2);
       test.equals(i, 2);
     }
-    else if (iteration === 2) {
+    else if (genIteration === 2) {
+      test.equals(valIteration, 1);
       test.equals(value, 3);
       test.equals(i, 3);
     } else {
       test.fail();
     }
-    iteration++;
+    genIteration++;
   };
-  const gen = module.variable({fulfilled: onFulfilled}).define("gen", [], function*() {
+  const onValFulfilled = value => {
+    if (valIteration === 0) {
+      test.equals(genIteration, 2);
+      test.equals(value, 1);
+      test.equals(i, 2);
+    }
+    else if (valIteration === 1) {
+      test.equals(genIteration, 3);
+      test.equals(value, 2);
+      test.equals(i, 3);
+    }
+    else if (valIteration === 2) {
+      test.equals(genIteration, 3);
+      test.equals(value, 3);
+      test.equals(i, 3);
+    } else {
+      test.fail();
+    }
+    valIteration++;
+  };
+  const gen = module.variable({fulfilled: onGenFulfilled}).define("gen", [], function*() {
     i++;
     yield i;
     i++;
@@ -406,16 +430,16 @@ tape("variable.define allows other variables to begin computation before a gener
     yield i;
   });
   main.variable().import("gen", module);
-  const simple = main.variable(true).define("simple", ["gen"], i => i);
+  const val = main.variable({fulfilled: onValFulfilled}).define("val", ["gen"], i => i);
   test.equals(await gen._promise, undefined, "gen cell undefined");
-  test.equals(await simple._promise, undefined, "simple cell undefined");
+  test.equals(await val._promise, undefined, "val cell undefined");
   await runtime._compute();
   test.equals(await gen._promise, 1, "gen cell 1");
-  test.equals(await simple._promise, 1, "simple cell 1");
+  test.equals(await val._promise, 1, "val cell 1");
   await runtime._compute();
   test.equals(await gen._promise, 2, "gen cell 2");
-  test.equals(await simple._promise, 2, "simple cell 2");
+  test.equals(await val._promise, 2, "val cell 2");
   await runtime._compute();
   test.equals(await gen._promise, 3, "gen cell 3");
-  test.equals(await simple._promise, 3, "simple cell 3");
+  test.equals(await val._promise, 3, "val cell 3");
 });
