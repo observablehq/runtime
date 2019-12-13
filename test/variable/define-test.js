@@ -373,3 +373,49 @@ tape("variable.define correctly handles globals that throw", async test => {
   const foo = module.variable(true).define(["oops"], oops => oops);
   test.deepEqual(await valueof(foo), {error: "RuntimeError: oops could not be resolved"});
 });
+
+tape("variable.define allows other variables to begin computation before a generator may resume", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const main = runtime.module();
+  let i = 0;
+  let iteration = 0;
+  const onFulfilled = value => {
+    if (iteration === 0) {
+      test.equals(value, 1);
+      test.equals(i, 2); // Generator has resumed before first fulfillment.
+    }
+    else if (iteration === 1) {
+      test.equals(value, 2);
+      test.equals(i, 2);
+    }
+    else if (iteration === 2) {
+      test.equals(value, 3);
+      test.equals(i, 3);
+    } else {
+      test.fail();
+    }
+    iteration++;
+  };
+  const gen = module.variable({fulfilled: onFulfilled}).define("gen", [], function*() {
+    i++;
+    yield i;
+    i++;
+    yield i;
+    i++;
+    yield i;
+  });
+  main.variable().import("gen", module);
+  const simple = main.variable(true).define("simple", ["gen"], i => i);
+  test.equals(await gen._promise, undefined, "gen cell undefined");
+  test.equals(await simple._promise, undefined, "simple cell undefined");
+  await runtime._compute();
+  test.equals(await gen._promise, 1, "gen cell 1");
+  test.equals(await simple._promise, 1, "simple cell 1");
+  await runtime._compute();
+  test.equals(await gen._promise, 2, "gen cell 2");
+  test.equals(await simple._promise, 2, "simple cell 2");
+  await runtime._compute();
+  test.equals(await gen._promise, 3, "gen cell 3");
+  test.equals(await simple._promise, 3, "simple cell 3");
+});
