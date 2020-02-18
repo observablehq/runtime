@@ -443,3 +443,40 @@ tape("variable.define allows other variables to begin computation before a gener
   test.equals(await gen._promise, 3, "gen cell 3");
   test.equals(await val._promise, 3, "val cell 3");
 });
+
+tape.only("variable.define allows other variables to begin computation before a generator may resume", async test => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  let i = 0;
+  let valIteration = 0;
+  const gen = main.variable().define("gen", [], function*() {
+    console.log("computing gen (1)", {i});
+    i++;
+    yield i;
+    console.log("computing gen (2)", {i});
+    i++;
+    yield i;
+    console.log("computing gen (3)", {i});
+    i++;
+    yield i;
+    console.log("computing gen (4)", {i});
+  });
+  const val = main.variable(true).define("val", ["gen"], gen => {
+    console.log("computing val", {gen});
+    valIteration++;
+    test.equals(gen, valIteration);
+    test.equals(gen, i);
+    return gen;
+  });
+  test.equals(await gen._promise, undefined, "gen cell undefined");
+  test.equals(await val._promise, undefined, "val cell undefined");
+  await runtime._compute();
+  test.equals(await gen._promise, 1, "gen cell 1");
+  test.equals(await val._promise, 1, "val cell 1");
+  await runtime._compute();
+  test.equals(await gen._promise, 2, "gen cell 2");
+  test.equals(await val._promise, 2, "val cell 2");
+  await runtime._compute();
+  test.equals(await gen._promise, 3, "gen cell 3");
+  test.equals(await val._promise, 3, "val cell 3");
+});
