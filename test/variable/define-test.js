@@ -374,7 +374,7 @@ tape("variable.define correctly handles globals that throw", async test => {
   test.deepEqual(await valueof(foo), {error: "RuntimeError: oops could not be resolved"});
 });
 
-tape.only("variable.define allows other variables to begin computation before a generator may resume", async test => {
+tape("variable.define allows other variables to begin computation before a generator may resume", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
   const main = runtime.module();
