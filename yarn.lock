@@ -26,12 +26,11 @@
     esm "^3.2.25"
 
 "@observablehq/stdlib@^3.2.0":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.2.1.tgz#770a5c2a85d4cb281267a07c6a1e8732ec71b374"
-  integrity sha512-Zsk6C2zccu+71alrv1hyrEfeSaesQ+27KHoDvuuPEdNH9XVC17sHo4HVsBZAroIMBsBjiuFUzuSuiqvD72WX1A==
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.3.0.tgz#e500b3485d29f31b567d28d734d5c7b0a128cbe2"
+  integrity sha512-FFqmB3KgFHKEVxn7ZFloxg1rL+mKayV46Tw8IhEbjEce8OhkhbhzfhuEBTmq+aD9XciZOwWLBdd5dJYxreXUNg==
   dependencies:
     d3-require "^1.2.4"
-    marked "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 "@types/estree@*":
   version "0.0.39"
@@ -335,7 +334,7 @@ cssstyle@^2.0.0:
 
 d3-require@^1.2.4:
   version "1.2.4"
-  resolved "https://registry.npmjs.org/d3-require/-/d3-require-1.2.4.tgz#59afc591d5089f99fecd8c45ef7539e1fee112b3"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.2.4.tgz#59afc591d5089f99fecd8c45ef7539e1fee112b3"
   integrity sha512-8UseEGCkBkBxIMouLMPONUBmU8DUPC1q12LARV1Lk/2Jwa32SVgmRfX8GdIeR06ZP+CG85YD3N13K2s14qCNyA==
 
 dashdash@^1.12.0:
@@ -1103,10 +1102,6 @@ lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
-
-"marked@https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f":
-  version "0.3.12"
-  resolved "https://github.com/observablehq/marked.git#94c6b946f462fd25db4465d71a6859183f86c57f"
 
 merge-stream@^2.0.0:
   version "2.0.0"
