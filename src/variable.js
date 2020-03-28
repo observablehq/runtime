@@ -103,9 +103,7 @@ function variable_defineImpl(name, inputs, definition) {
   else runtime._variables.add(this);
 
   // Did the variable’s name change? Time to patch references!
-  if (name == this._name && scope.get(name) === this) {
-    this._outputs.forEach(runtime._updates.add, runtime._updates);
-  } else {
+  if (name !== this._name || scope.get(name) !== this) {
     var error, found;
 
     if (this._name) { // Did this variable previously have a name?
