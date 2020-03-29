@@ -280,6 +280,21 @@ tape("variable.define allows a variable to be redefined", async test => {
   test.deepEqual(await valueof(bar), {value: 2});
 });
 
+tape("variable.define recomputes downstream values when a variable is renamed", async test => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const foo = main.variable(true).define("foo", [], () => 1);
+  const bar = main.variable(true).define("bar", [], () => 2);
+  const baz = main.variable(true).define("baz", ["foo", "bar"], (foo, bar) => foo + bar);
+  test.deepEqual(await valueof(foo), {value: 1});
+  test.deepEqual(await valueof(bar), {value: 2});
+  test.deepEqual(await valueof(baz), {value: 3});
+  foo.define("quux", [], () => 10);
+  test.deepEqual(await valueof(foo), {value: 10});
+  test.deepEqual(await valueof(bar), {value: 2});
+  test.deepEqual(await valueof(baz), {error: "RuntimeError: foo is not defined"});
+});
+
 tape("variable.define ignores an asynchronous result from a redefined variable", async test => {
   const runtime = new Runtime();
   const main = runtime.module();
