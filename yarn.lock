@@ -25,10 +25,10 @@
   dependencies:
     esm "^3.2.25"
 
-"@observablehq/stdlib@^3.2.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.3.0.tgz#e500b3485d29f31b567d28d734d5c7b0a128cbe2"
-  integrity sha512-FFqmB3KgFHKEVxn7ZFloxg1rL+mKayV46Tw8IhEbjEce8OhkhbhzfhuEBTmq+aD9XciZOwWLBdd5dJYxreXUNg==
+"@observablehq/stdlib@^3.2.2":
+  version "3.3.2"
+  resolved "https://registry.npmjs.org/@observablehq/stdlib/-/stdlib-3.3.2.tgz#4d758e9993b685c11433ef4b75c5c2079d1996dc"
+  integrity sha512-botHJWdpPPcDexyskFeoXsyrXJIcrlsjd9xccMEx5Xj8aDOXK9qzEgVQE1gsCx/kxdHHyMg4ubOZD6AYHAd8PQ==
   dependencies:
     d3-require "^1.2.4"
 
