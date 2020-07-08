@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "tape -r esm 'test/**/*-test.js'",
-    "prepublishOnly": "rollup -c",
+    "prepublishOnly": "rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags"
   },
   "husky": {
