@@ -67,8 +67,8 @@ tape("variable.import() fails when importing creates a circular reference", asyn
   b.define("bar", ["foo"], (foo) => `${foo}bar`);
   const afoobar = a.variable(true).define("foobar", ["foo", "bar"], (foo, bar) => 'a' + foo + bar);
   const bbarfoo = b.variable(true).define("barfoo", ["bar", "foo"], (bar, foo) => 'b' + bar + foo);
-  test.deepEqual(await valueof(afoobar), {error: "RuntimeError: foo could not be resolved"});
-  test.deepEqual(await valueof(bbarfoo), {error: "RuntimeError: bar could not be resolved"});
+  test.deepEqual(await valueof(afoobar), {error: "RuntimeError: circular definition"});
+  test.deepEqual(await valueof(bbarfoo), {error: "RuntimeError: circular definition"});
 });
 
 tape(
@@ -105,8 +105,8 @@ tape(
     define1();
 
     test.deepEqual(await valueof(a1), {value: 1});
-    test.deepEqual(await valueof(b1), {error: 'RuntimeError: b could not be resolved'});
-    test.deepEqual(await valueof(a2), {error: 'RuntimeError: a could not be resolved'});
+    test.deepEqual(await valueof(b1), {error: 'RuntimeError: b is not defined'});
+    test.deepEqual(await valueof(a2), {error: 'RuntimeError: a is not defined'});
     test.deepEqual(await valueof(b2), {value: 2});
   }
 );
@@ -161,8 +161,8 @@ tape(
     test.deepEqual(await valueof(a), {value: 1});
     test.deepEqual(await valueof(b), {value: 2});
     test.deepEqual(await valueof(c), {value: 3});
-    test.deepEqual(await valueof(importA), {error: 'RuntimeError: a could not be resolved'});
-    test.deepEqual(await valueof(importB), {error: 'RuntimeError: b could not be resolved'});
-    test.deepEqual(await valueof(importC), {error: 'RuntimeError: c could not be resolved'});
+    test.deepEqual(await valueof(importA), {error: 'RuntimeError: a is not defined'});
+    test.deepEqual(await valueof(importB), {error: 'RuntimeError: b is not defined'});
+    test.deepEqual(await valueof(importC), {error: 'RuntimeError: c is not defined'});
   }
 );

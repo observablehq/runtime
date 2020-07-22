@@ -112,7 +112,7 @@ tape("Rejects with an error when trying to import from a nonexistent module", as
     await value;
     test.fail();
   } catch (error) {
-    test.deepEqual(error, {message: "nonexistent could not be resolved", input: "nonexistent"});
+    test.deepEqual(error, {message: "nonexistent is not defined", input: "nonexistent"});
   }
 });
 
