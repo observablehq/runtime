@@ -140,7 +140,7 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   test.deepEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
   test.deepEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
   test.deepEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: bar could not be resolved"});
+  test.deepEqual(await valueof(foo), {error: "RuntimeError: circular definition"});
   foo.define("foo", [], () => "foo");
   await runtime._compute();
   test.equal(foo._reachable, true);
@@ -199,7 +199,7 @@ tape("variable.define detects duplicate declarations", async test => {
   const v3 = main.variable(true).define(null, ["foo"], foo => foo);
   test.deepEqual(await valueof(v1), {error: "RuntimeError: foo is defined more than once"});
   test.deepEqual(await valueof(v2), {error: "RuntimeError: foo is defined more than once"});
-  test.deepEqual(await valueof(v3), {error: "RuntimeError: foo could not be resolved"});
+  test.deepEqual(await valueof(v3), {error: "RuntimeError: foo is defined more than once"});
 });
 
 tape("variable.define detects missing inputs and erroneous inputs", async test => {
@@ -208,7 +208,7 @@ tape("variable.define detects missing inputs and erroneous inputs", async test =
   const v1 = main.variable(true).define("foo", ["baz"], () => 1);
   const v2 = main.variable(true).define("bar", ["foo"], () => 2);
   test.deepEqual(await valueof(v1), {error: "RuntimeError: baz is not defined"});
-  test.deepEqual(await valueof(v2), {error: "RuntimeError: foo could not be resolved"});
+  test.deepEqual(await valueof(v2), {error: "RuntimeError: baz is not defined"});
 });
 
 tape("variable.define allows masking of builtins", async test => {
@@ -371,5 +371,5 @@ tape("variable.define correctly handles globals that throw", async test => {
   const runtime = new Runtime(null, name => { if (name === "oops") throw new Error("oops"); });
   const module = runtime.module();
   const foo = module.variable(true).define(["oops"], oops => oops);
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: oops could not be resolved"});
+  test.deepEqual(await valueof(foo), {error: "RuntimeError: oops"});
 });
