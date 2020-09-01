@@ -39,7 +39,7 @@
     "esm": "^3.0.84"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
+    "eslint": "^7.8.0",
     "husky": "^3.1.0",
     "jsdom": "^15.2.0",
     "rollup": "^1.26.2",
