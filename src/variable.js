@@ -11,7 +11,7 @@ export var TYPE_DUPLICATE = 3; // created on duplicate definition
 export var no_observer = {};
 
 export default function Variable(type, module, observer) {
-  if (observer == null) observer = no_observer;
+  if (!observer) observer = no_observer;
   Object.defineProperties(this, {
     _observer: {value: observer, writable: true},
     _definition: {value: variable_undefined, writable: true},
