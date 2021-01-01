@@ -38,7 +38,7 @@
     "@observablehq/stdlib": "^3.4.0"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
+    "eslint": "^7.16.0",
     "esm": "^3.0.84",
     "husky": "^3.1.0",
     "jsdom": "^16.4.0",
