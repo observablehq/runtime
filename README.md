@@ -90,7 +90,7 @@ This would produce the following output:
 
 > Hello, red.
 
-Builtins must have constant values; unlike [variables](#variables), they cannot be defined as functions. However, a builtin *may* be defined as a promise, in which case any referencing variables will be evaluated only after the promise is resolved.
+Unlike [variables](#variables), builtins cannot depend on the value of other variables or builtins; they are defined with no inputs. If a builtin is defined as a function, it will be invoked lazily to determine the value of the builtin. If you wish for the value of a builtin to be a function, the builtin must be defined either as a promise that resolves to a function or as a function that returns a function. Builtins may also be defined as generators for dynamic values; see [now](https://github.com/observablehq/stdlib/blob/master/README.md#now) for example.
 
 <a href="#runtime_module" name="runtime_module">#</a> <i>runtime</i>.<b>module</b>([<i>define</i>][, <i>observer</i>]) [<>](https://github.com/observablehq/runtime/blob/master/src/runtime.js "Source")
 
