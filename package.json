@@ -34,18 +34,18 @@
     "dist/**/*.js"
   ],
   "dependencies": {
-    "@observablehq/inspector": "^3.2.0",
+    "@observablehq/inspector": "^3.2.1",
     "@observablehq/stdlib": "^3.4.0"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
-    "esm": "^3.0.84",
-    "husky": "^4.3.6",
+    "eslint": "^7.18.0",
+    "esm": "^3.2.25",
+    "husky": "^4.3.8",
     "jsdom": "^16.4.0",
-    "rollup": "^2.35.1",
-    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup": "^2.36.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "tape": "^4.13.3",
-    "tape-await": "0.1.2"
+    "tape-await": "^0.1.2"
   }
 }
