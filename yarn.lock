@@ -45,9 +45,9 @@
   integrity sha512-HBHtruB7hcNqyapyNF77fPVpiCyqEZsmLD6rhCy7nHPaciAEPML4NtQG2QBuTkYlEu64Zulky6g3ABrD0PhX2Q==
 
 "@observablehq/stdlib@^3.4.1":
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.4.1.tgz#39d88fb9d3b79f3c987e9a0099ac4b6ff9ea8c5d"
-  integrity sha512-v0aoQV3e2NphWvkJC/jDI60bV4Nvwy8XD7PFZdzBZYmcQt/cO1ly7TVRZTHGljXdK5e7W6blFY6lNgevUwfrNw==
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.5.0.tgz#2223424937576fd7d51aba4014205bc0ab122001"
+  integrity sha512-sYM4u5U34lZua1xj/nlrik8WgdA443Tw1pyn7f+mYASi5D+jUGOiHuTZYCSmGRXGKCADK+gVL+ksXiShihvWVw==
   dependencies:
     d3-require "^1.2.4"
 
