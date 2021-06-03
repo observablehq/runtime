@@ -12,7 +12,15 @@ function config(output) {
       terser({
         toplevel: output.format === "es",
         output: {preamble: copyright},
-        mangle: {reserved: ["FileAttachment", "RequireError", "SQLiteDatabaseClient"]}
+        mangle: {
+          reserved: [
+            "FileAttachment",
+            "RequireError",
+            "SQLiteDatabaseClient",
+            "ZipArchive",
+            "ZipArchiveEntry"
+          ]
+        }
       })
     ],
     output
