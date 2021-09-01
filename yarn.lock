@@ -40,9 +40,9 @@
     strip-json-comments "^3.1.1"
 
 "@observablehq/inspector@^3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.2.tgz#df4e9774e2461836a6e09ff22d79a18a9e77ee11"
-  integrity sha512-HBHtruB7hcNqyapyNF77fPVpiCyqEZsmLD6rhCy7nHPaciAEPML4NtQG2QBuTkYlEu64Zulky6g3ABrD0PhX2Q==
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-3.2.3.tgz#3733136f66e8fd144ed4270a6701a9e8282dfff8"
+  integrity sha512-VXUwnkez9Mi2S9JhY+qH0SJoZrmMCj7kZ2eLVGaNa15BBlLiLHgMbwp7yZqsngTovPF6nLscQ2WXOIBOL94r/Q==
 
 "@observablehq/stdlib@^3.4.1":
   version "3.12.0"
