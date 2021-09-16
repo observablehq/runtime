@@ -1,6 +1,6 @@
 {
   "name": "@observablehq/runtime",
-  "version": "4.16.1",
+  "version": "4.17.0",
   "license": "ISC",
   "main": "dist/runtime.umd.js",
   "module": "src/index.js",
