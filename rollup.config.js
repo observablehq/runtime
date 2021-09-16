@@ -17,6 +17,7 @@ function config(output) {
             "FileAttachment",
             "RequireError",
             "SQLiteDatabaseClient",
+            "Workbook",
             "ZipArchive",
             "ZipArchiveEntry"
           ]
