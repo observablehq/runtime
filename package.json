@@ -17,11 +17,6 @@
     "prepublishOnly": "rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "eslint . && yarn test"
-    }
-  },
   "esm": {
     "mode": "all",
     "mainFields": [
@@ -40,7 +35,6 @@
   "devDependencies": {
     "eslint": "^7.18.0",
     "esm": "^3.2.25",
-    "husky": "^4.3.8",
     "jsdom": "^16.4.0",
     "rollup": "^2.37.1",
     "rollup-plugin-node-resolve": "^5.2.0",
