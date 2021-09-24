@@ -17,13 +17,6 @@
     "prepublishOnly": "rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags"
   },
-  "esm": {
-    "mode": "all",
-    "mainFields": [
-      "module"
-    ],
-    "cjs": true
-  },
   "files": [
     "src/**/*.js",
     "dist/**/*.js"
@@ -35,7 +28,7 @@
   "devDependencies": {
     "eslint": "^7.18.0",
     "esm": "^3.2.25",
-    "jsdom": "^16.4.0",
+    "jsdom": "^17.0.0",
     "rollup": "^2.37.1",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
