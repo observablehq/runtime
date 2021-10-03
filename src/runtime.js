@@ -266,6 +266,7 @@ function variable_generate(variable, version, generator) {
           runtime_defer(recompute);
         });
       } else {
+        variable._pending();
         variable._promise = promise;
         variable._outputs.forEach(runtime._updates.add, runtime._updates);
         const compute = runtime._compute();
