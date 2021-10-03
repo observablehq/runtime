@@ -293,7 +293,7 @@ function variable_generate(variable, version, generator) {
 // relative depth of any downstream variable of the current generator. For now
 // we approximate by hard-coding a relatively shallow depth, which should at
 // least cover the common cases.
-function runtime_defer(task, depth = 6) {
+function runtime_defer(task, depth = 12) {
   queueMicrotask(depth > 1 ? () => runtime_defer(task, depth - 1) : task);
 }
 
