@@ -16,6 +16,7 @@ export default function Runtime(builtins = new Library, global = window_global) 
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
+    _precomputes: {value: [], writable: true},
     _computing: {value: null, writable: true},
     _init: {value: null, writable: true},
     _modules: {value: new Map},
@@ -34,6 +35,7 @@ Object.defineProperties(Runtime, {
 });
 
 Object.defineProperties(Runtime.prototype, {
+  _precompute: {value: runtime_precompute, writable: true, configurable: true},
   _compute: {value: runtime_compute, writable: true, configurable: true},
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
@@ -72,24 +74,32 @@ function runtime_module(define, observer = noop) {
   return module;
 }
 
+function runtime_precompute(callback) {
+  this._precomputes.push(callback);
+  this._compute();
+}
+
 function runtime_compute() {
   return this._computing || (this._computing = this._computeSoon());
 }
 
 function runtime_computeSoon() {
-  var runtime = this;
-  return new Promise(function(resolve) {
-    frame(function() {
-      resolve();
-      runtime._disposed || runtime._computeNow();
-    });
-  });
+  return new Promise(frame).then(() => this._disposed ? undefined : this._computeNow());
 }
 
-function runtime_computeNow() {
+async function runtime_computeNow() {
   var queue = [],
       variables,
-      variable;
+      variable,
+      precomputes = this._precomputes;
+
+  // If there are any paused generators, resume them before computing so they
+  // can update (if synchronous) before computing downstream variables.
+  if (precomputes.length) {
+    this._precomputes = [];
+    for (const callback of precomputes) callback();
+    await runtime_defer(2);
+  }
 
   // Compute the reachability of the transitive closure of dirty variables.
   // Any newly-reachable variable must also be recomputed.
@@ -159,6 +169,16 @@ function runtime_computeNow() {
   }
 }
 
+// We want to give generators, if they’re defined synchronously, a chance to
+// update before computing downstream variables. This creates a synchronous
+// promise chain of the given depth that we’ll await before recomputing
+// downstream variables.
+function runtime_defer(depth = 0) {
+  let p = Promise.resolve();
+  for (let i = 0; i < depth; ++i) p = p.then(() => {});
+  return p;
+}
+
 function variable_circular(variable) {
   const inputs = new Set(variable._inputs);
   for (const i of inputs) {
@@ -206,10 +226,21 @@ function variable_compute(variable) {
   variable._invalidate();
   variable._invalidate = noop;
   variable._pending();
-  var value0 = variable._value,
-      version = ++variable._version,
-      invalidation = null,
-      promise = variable._promise = Promise.all(variable._inputs.map(variable_value)).then(function(inputs) {
+
+  const value0 = variable._value;
+  const version = ++variable._version;
+
+  // Lazily-constructed invalidation variable; only constructed if referenced as an input.
+  let invalidation = null;
+
+  // If the variable doesn’t have any inputs, we can optimize slightly.
+  const promise = variable._promise = (variable._inputs.length
+      ? Promise.all(variable._inputs.map(variable_value)).then(define)
+      : new Promise(resolve => resolve(variable._definition.call(value0))))
+    .then(generate);
+
+  // Compute the initial value of the variable.
+  function define(inputs) {
     if (variable._version !== version) return;
 
     // Replace any reference to invalidation with the promise, lazily.
@@ -227,20 +258,22 @@ function variable_compute(variable) {
       }
     }
 
-    // Compute the initial value of the variable.
     return variable._definition.apply(value0, inputs);
-  }).then(function(value) {
-    // If the value is a generator, then retrieve its first value,
-    // and dispose of the generator if the variable is invalidated.
-    // Note that the cell may already have been invalidated here,
-    // in which case we need to terminate the generator immediately!
+  }
+
+  // If the value is a generator, then retrieve its first value, and dispose of
+  // the generator if the variable is invalidated. Note that the cell may
+  // already have been invalidated here, in which case we need to terminate the
+  // generator immediately!
+  function generate(value) {
     if (generatorish(value)) {
       if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
-      return variable_precompute(variable, version, promise, value);
+      return variable_generate(variable, version, value);
     }
     return value;
-  });
+  }
+
   promise.then(function(value) {
     if (variable._version !== version) return;
     variable._value = value;
@@ -252,39 +285,36 @@ function variable_compute(variable) {
   });
 }
 
-function variable_precompute(variable, version, promise, generator) {
-  function recompute() {
-    var promise = new Promise(function(resolve) {
-      resolve(generator.next());
-    }).then(function(next) {
-      return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        if (variable._version !== version) return;
-        variable_postrecompute(variable, value, promise).then(recompute);
-        variable._fulfilled(value);
-        return value;
-      });
-    });
-    promise.catch(function(error) {
-      if (variable._version !== version) return;
-      variable_postrecompute(variable, undefined, promise);
-      variable._rejected(error);
-    });
-  }
-  return new Promise(function(resolve) {
-    resolve(generator.next());
-  }).then(function(next) {
-    if (next.done) return;
-    promise.then(recompute);
-    return next.value;
-  });
-}
-
-function variable_postrecompute(variable, value, promise) {
+function variable_generate(variable, version, generator) {
   var runtime = variable._module._runtime;
-  variable._value = value;
-  variable._promise = promise;
-  variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
-  return runtime._compute();
+  return (function recompute(first) {
+    return Promise.resolve(generator.next()).then(({done, value}) => {
+      if (done) return;
+      const promise = Promise.resolve(value);
+      if (first) {
+        promise.then(() => {
+          if (variable._version !== version) return;
+          runtime._precompute(recompute);
+        });
+      } else {
+        variable._pending();
+        variable._promise = promise;
+        variable._outputs.forEach(runtime._updates.add, runtime._updates);
+        const compute = runtime._compute();
+        promise.then((value) => {
+          if (variable._version !== version) return;
+          variable._value = value;
+          variable._fulfilled(value);
+          compute.then(() => runtime._precompute(recompute));
+        }, (error) => {
+          if (variable._version !== version) return;
+          variable._value = undefined;
+          variable._rejected(error);
+        });
+      }
+      return value;
+    });
+  })(true);
 }
 
 function variable_error(variable, error) {
