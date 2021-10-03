@@ -281,7 +281,7 @@ function variable_generate(variable, version, generator) {
           variable._rejected(error);
         });
       }
-      return promise;
+      return value;
     });
   })(true);
 }
