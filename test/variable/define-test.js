@@ -402,11 +402,11 @@ tape("variable.define allows other variables to begin computation before a gener
       test.equals(value, 1);
       test.equals(i, 1);
     } else if (genIteration === 1) {
-      test.equals(valIteration, 0);
+      test.equals(valIteration, 1);
       test.equals(value, 2);
       test.equals(i, 2);
     } else if (genIteration === 2) {
-      test.equals(valIteration, 1);
+      test.equals(valIteration, 2);
       test.equals(value, 3);
       test.equals(i, 3);
     } else {
@@ -416,16 +416,14 @@ tape("variable.define allows other variables to begin computation before a gener
   };
   const onValFulfilled = value => {
     if (valIteration === 0) {
-      test.equals(genIteration, 2);
+      test.equals(genIteration, 1);
       test.equals(value, 1);
-      test.equals(i, 2);
-    }
-    else if (valIteration === 1) {
-      test.equals(genIteration, 3);
+      test.equals(i, 1);
+    } else if (valIteration === 1) {
+      test.equals(genIteration, 2);
       test.equals(value, 2);
-      test.equals(i, 3);
-    }
-    else if (valIteration === 2) {
+      test.equals(i, 2);
+    } else if (valIteration === 2) {
       test.equals(genIteration, 3);
       test.equals(value, 3);
       test.equals(i, 3);
