@@ -255,9 +255,7 @@ function variable_compute(variable) {
 function variable_generate(variable, version, generator) {
   var runtime = variable._module._runtime;
   return (function recompute(first) {
-    return new Promise((resolve) => {
-      resolve(generator.next());
-    }).then(({done, value}) => {
+    return Promise.resolve(generator.next()).then(({done, value}) => {
       if (done) return;
       const promise = Promise.resolve(value);
       if (first) {
