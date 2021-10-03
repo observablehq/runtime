@@ -237,7 +237,7 @@ function variable_compute(variable) {
     if (generatorish(value)) {
       if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
-      return variable_precompute(variable, version, promise, value);
+      return variable_generate(variable, version, value);
     }
     return value;
   });
@@ -252,39 +252,49 @@ function variable_compute(variable) {
   });
 }
 
-function variable_precompute(variable, version, promise, generator) {
-  function recompute() {
-    var promise = new Promise(function(resolve) {
+function variable_generate(variable, version, generator) {
+  var runtime = variable._module._runtime;
+  return (function recompute(first) {
+    return new Promise((resolve) => {
       resolve(generator.next());
-    }).then(function(next) {
-      return next.done ? undefined : Promise.resolve(next.value).then(function(value) {
-        if (variable._version !== version) return;
-        variable_postrecompute(variable, value, promise).then(recompute);
-        variable._fulfilled(value);
-        return value;
-      });
+    }).then(({done, value}) => {
+      if (done) return;
+      const promise = Promise.resolve(value);
+      if (first) {
+        promise.then(() => {
+          if (variable._version !== version) return;
+          runtime_defer(recompute);
+        });
+      } else {
+        variable._promise = promise;
+        variable._outputs.forEach(runtime._updates.add, runtime._updates);
+        const compute = runtime._compute();
+        promise.then((value) => {
+          if (variable._version !== version) return;
+          variable._value = value;
+          variable._fulfilled(value);
+          compute.then(() => runtime_defer(recompute));
+        }, (error) => {
+          if (variable._version !== version) return;
+          variable._value = undefined;
+          variable._rejected(error);
+        });
+      }
+      return promise;
     });
-    promise.catch(function(error) {
-      if (variable._version !== version) return;
-      variable_postrecompute(variable, undefined, promise);
-      variable._rejected(error);
-    });
-  }
-  return new Promise(function(resolve) {
-    resolve(generator.next());
-  }).then(function(next) {
-    if (next.done) return;
-    promise.then(recompute);
-    return next.value;
-  });
+  })(true);
 }
 
-function variable_postrecompute(variable, value, promise) {
-  var runtime = variable._module._runtime;
-  variable._value = value;
-  variable._promise = promise;
-  variable._outputs.forEach(runtime._updates.add, runtime._updates); // TODO Cleaner?
-  return runtime._compute();
+// We want to give variables downstream of a generator, if they’re defined
+// synchronously, a chance to run before resuming the generator; we also want to
+// resume the generator within the current event loop, rather than deferring it
+// to a subsequent animation frame. For strict correctness, we’d need to know
+// the topological structure of the dataflow graph—specifically the worst-case
+// relative depth of any downstream variable of the current generator. For now
+// we approximate by hard-coding a relatively shallow depth, which should at
+// least cover the common cases.
+function runtime_defer(task, depth = 6) {
+  queueMicrotask(depth > 1 ? () => runtime_defer(task, depth - 1) : task);
 }
 
 function variable_error(variable, error) {
