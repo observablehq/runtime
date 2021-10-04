@@ -97,7 +97,7 @@ async function runtime_computeNow() {
   // can update (if synchronous) before computing downstream variables.
   if (precomputes.length) {
     this._precomputes = [];
-    for (const callback of precomputes) callback();
+    for (const callback of precomputes) try { callback(); } catch {}
     await runtime_defer(2);
   }
 
@@ -288,7 +288,7 @@ function variable_compute(variable) {
 function variable_generate(variable, version, generator) {
   var runtime = variable._module._runtime;
   return (function recompute(first) {
-    return Promise.resolve(generator.next()).then(({done, value}) => {
+    const promise = new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
       if (done) return;
       const promise = Promise.resolve(value);
       if (first) {
@@ -306,14 +306,18 @@ function variable_generate(variable, version, generator) {
           variable._value = value;
           variable._fulfilled(value);
           compute.then(() => runtime._precompute(recompute));
-        }, (error) => {
-          if (variable._version !== version) return;
-          variable._value = undefined;
-          variable._rejected(error);
         });
       }
       return value;
     });
+    if (!first) {
+      promise.catch((error) => {
+        if (variable._version !== version) return;
+        variable._value = undefined;
+        variable._rejected(error);
+      });
+    }
+    return promise;
   })(true);
 }
 
