@@ -98,7 +98,7 @@ async function runtime_computeNow() {
   if (precomputes.length) {
     this._precomputes = [];
     for (const callback of precomputes) try { callback(); } catch {}
-    await runtime_defer(2);
+    await runtime_defer(3);
   }
 
   // Compute the reachability of the transitive closure of dirty variables.
@@ -274,11 +274,11 @@ function variable_compute(variable) {
     return value;
   }
 
-  promise.then(function(value) {
+  promise.then((value) => {
     if (variable._version !== version) return;
     variable._value = value;
     variable._fulfilled(value);
-  }, function(error) {
+  }, (error) => {
     if (variable._version !== version) return;
     variable._value = undefined;
     variable._rejected(error);
@@ -286,29 +286,22 @@ function variable_compute(variable) {
 }
 
 function variable_generate(variable, version, generator) {
-  var runtime = variable._module._runtime;
+  const runtime = variable._module._runtime;
   return (function recompute(first) {
     const promise = new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
-      if (done) return;
-      const promise = Promise.resolve(value);
-      if (first) {
-        promise.then(() => {
-          if (variable._version !== version) return;
+      return done ? undefined : Promise.resolve(value).then((value) => {
+        if (variable._version !== version) return;
+        if (first) {
           runtime._precompute(recompute);
-        });
-      } else {
-        variable._pending();
-        variable._promise = promise;
-        variable._outputs.forEach(runtime._updates.add, runtime._updates);
-        const compute = runtime._compute();
-        promise.then((value) => {
-          if (variable._version !== version) return;
+        } else {
           variable._value = value;
+          variable._promise = promise;
+          variable._outputs.forEach(runtime._updates.add, runtime._updates);
           variable._fulfilled(value);
-          compute.then(() => runtime._precompute(recompute));
-        });
-      }
-      return value;
+          runtime._compute().then(() => runtime._precompute(recompute));
+        }
+        return value;
+      });
     }, first ? undefined : (error) => {
       // The variable’s promise isn’t normally set until the generator yields a
       // value; here generator.next threw an error before yielding.
