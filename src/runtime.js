@@ -97,7 +97,7 @@ async function runtime_computeNow() {
   // can update (if synchronous) before computing downstream variables.
   if (precomputes.length) {
     this._precomputes = [];
-    for (const callback of precomputes) try { callback(); } catch {}
+    for (const callback of precomputes) callback();
     await runtime_defer(3);
   }
 
