@@ -293,7 +293,7 @@ function variable_generate(variable, version, generator) {
   // to undefined if the generator is done.
   function compute(onfulfilled) {
     return new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
-      return done ? undefined : (Promise.resolve(value).then(onfulfilled), value);
+      return done ? undefined : (value = Promise.resolve(value), value.then(onfulfilled), value);
     });
   }
 
