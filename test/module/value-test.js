@@ -41,9 +41,18 @@ tape("module.value(name) supports generators that throw", async test => {
   const runtime = new Runtime();
   const module = runtime.module();
   module.define("foo", [], function*() { yield 1; throw new Error("fooed"); });
-  test.deepEqual(await module.value("foo"), 1);
+  module.define("bar", ["foo"], foo => foo);
+  const [foo1, bar1] = await Promise.all([module.value("foo"), module.value("bar")]);
+  test.deepEqual(foo1, 1);
+  test.deepEqual(bar1, 1);
   try {
     await module.value("foo");
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error.message, "fooed");
+  }
+  try {
+    await module.value("bar");
     test.fail();
   } catch (error) {
     test.deepEqual(error.message, "fooed");
