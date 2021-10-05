@@ -294,11 +294,8 @@ function variable_generate(variable, version, generator) {
         if (first) {
           runtime._precompute(recompute);
         } else {
-          variable._value = value;
-          variable._promise = promise;
-          variable._outputs.forEach(runtime._updates.add, runtime._updates);
+          variable_postrecompute(variable, value, promise).then(() => runtime._precompute(recompute));
           variable._fulfilled(value);
-          runtime._compute().then(() => runtime._precompute(recompute));
         }
         return value;
       });
@@ -306,15 +303,20 @@ function variable_generate(variable, version, generator) {
     if (!first) {
       promise.catch((error) => {
         if (variable._version !== version) return;
-        variable._value = undefined;
-        variable._promise = promise;
-        variable._outputs.forEach(runtime._updates.add, runtime._updates);
+        variable_postrecompute(variable, undefined, promise);
         variable._rejected(error);
-        runtime._compute();
       });
     }
     return promise;
   })(true);
+}
+
+function variable_postrecompute(variable, value, promise) {
+  const runtime = variable._module._runtime;
+  variable._value = value;
+  variable._promise = promise;
+  variable._outputs.forEach(runtime._updates.add, runtime._updates);
+  return runtime._compute();
 }
 
 function variable_error(variable, error) {
