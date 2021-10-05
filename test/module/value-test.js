@@ -37,6 +37,19 @@ tape("module.value(name) supports generators", async test => {
   test.deepEqual(await module.value("foo"), 3);
 });
 
+tape("module.value(name) supports generators that throw", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  module.define("foo", [], function*() { yield 1; throw new Error("fooed"); });
+  test.deepEqual(await module.value("foo"), 1);
+  try {
+    await module.value("foo");
+    test.fail();
+  } catch (error) {
+    test.deepEqual(error.message, "fooed");
+  }
+});
+
 tape("module.value(name) supports async generators", async test => {
   const runtime = new Runtime();
   const module = runtime.module();

@@ -309,10 +309,17 @@ function variable_generate(variable, version, generator) {
         });
       }
       return value;
+    }, first ? undefined : (error) => {
+      // The variable’s promise isn’t normally set until the generator yields a
+      // value; here generator.next threw an error before yielding.
+      variable._promise = promise;
+      throw error;
     });
     if (!first) {
       promise.catch((error) => {
         if (variable._version !== version) return;
+        // If generator.next threw an error (see above), or if the resulting
+        // value was a rejected promise, we’ll end up here.
         variable._value = undefined;
         variable._rejected(error);
       });
