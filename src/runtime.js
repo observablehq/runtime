@@ -287,36 +287,48 @@ function variable_compute(variable) {
 
 function variable_generate(variable, version, generator) {
   const runtime = variable._module._runtime;
-  return (function recompute(first) {
-    const promise = new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
-      return done ? undefined : Promise.resolve(value).then((value) => {
-        if (variable._version !== version) return;
-        if (first) {
-          runtime._precompute(recompute);
-        } else {
-          variable_postrecompute(variable, value, promise).then(() => runtime._precompute(recompute));
-          variable._fulfilled(value);
-        }
-        return value;
-      });
-    });
-    if (!first) {
-      promise.catch((error) => {
-        if (variable._version !== version) return;
-        variable_postrecompute(variable, undefined, promise);
-        variable._rejected(error);
-      });
-    }
-    return promise;
-  })(true);
-}
 
-function variable_postrecompute(variable, value, promise) {
-  const runtime = variable._module._runtime;
-  variable._value = value;
-  variable._promise = promise;
-  variable._outputs.forEach(runtime._updates.add, runtime._updates);
-  return runtime._compute();
+  // Retrieve the next value from the generator; if successful, invoke the
+  // specified callback. The returned promise resolves to the yielded value, or
+  // to undefined if the generator is done.
+  function compute(onfulfilled) {
+    return new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
+      return done ? undefined : (Promise.resolve(value).then(onfulfilled), value);
+    });
+  }
+
+  // Retrieve the next value from the generator; if successful, fulfill the
+  // variable, compute downstream variables, and schedule the next value to be
+  // pulled from the generator at the start of the next animation frame. If not
+  // successful, reject the variable, compute downstream variables, and return.
+  function recompute() {
+    const promise = compute((value) => {
+      if (variable._version !== version) return;
+      postcompute(value, promise).then(() => runtime._precompute(recompute));
+      variable._fulfilled(value);
+    });
+    promise.catch((error) => {
+      if (variable._version !== version) return;
+      postcompute(undefined, promise);
+      variable._rejected(error);
+    });
+  }
+
+  // After the generator fulfills or rejects, set its current value, promise,
+  // and schedule any downstream variables for update.
+  function postcompute(value, promise) {
+    variable._value = value;
+    variable._promise = promise;
+    variable._outputs.forEach(runtime._updates.add, runtime._updates);
+    return runtime._compute();
+  }
+
+  // When retrieving the first value from the generator, the promise graph is
+  // already established, so we only need to queue the next pull.
+  return compute(() => {
+    if (variable._version !== version) return;
+    runtime._precompute(recompute);
+  });
 }
 
 function variable_error(variable, error) {
