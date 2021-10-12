@@ -293,7 +293,7 @@ function variable_generate(variable, version, generator) {
   // to undefined if the generator is done.
   function compute(onfulfilled) {
     return new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
-      return done ? undefined : (value = Promise.resolve(value), value.then(onfulfilled), value);
+      return done ? undefined : Promise.resolve(value).then(onfulfilled);
     });
   }
 
@@ -306,6 +306,7 @@ function variable_generate(variable, version, generator) {
       if (variable._version !== version) return;
       postcompute(value, promise).then(() => runtime._precompute(recompute));
       variable._fulfilled(value);
+      return value;
     });
     promise.catch((error) => {
       if (variable._version !== version) return;
@@ -325,9 +326,10 @@ function variable_generate(variable, version, generator) {
 
   // When retrieving the first value from the generator, the promise graph is
   // already established, so we only need to queue the next pull.
-  return compute(() => {
+  return compute((value) => {
     if (variable._version !== version) return;
     runtime._precompute(recompute);
+    return value;
   });
 }
 
