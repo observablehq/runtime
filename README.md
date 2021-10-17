@@ -4,7 +4,7 @@
 
 The [Observable runtime](https://observablehq.com/@observablehq/how-observable-runs) lets you run Observable notebooks as true reactive programs [in any JavaScript environment](https://observablehq.com/@observablehq/downloading-and-embedding-notebooks): on your personal website, integrated into your web application or interactive dashboard. Take your notebook to any distant shore the web platform reaches.
 
-For example, to render the “hello” cell from the [“Hello World” notebook](https://observablehq.com/@tmcw/hello-world):
+For example, to render the “hello” cell from the [“Hello World” notebook](https://observablehq.com/@observablehq/hello-world):
 
 ```html
 <!DOCTYPE html>
@@ -14,12 +14,14 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 <script type="module">
 
 import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-import define from "https://api.observablehq.com/@tmcw/hello-world.js?v=3";
+import define from "https://api.observablehq.com/@observablehq/hello-world.js?v=3";
 
 const runtime = new Runtime();
 const main = runtime.module(define, name => {
   if (name === "hello") {
-    return new Inspector(document.body);
+    const node = document.createElement("DIV");
+    document.body.appendChild(node);
+    return new Inspector(node);
   }
 });
 
@@ -38,19 +40,15 @@ For more control, implement a [custom observer](#observers) in place of the stan
 ```js
 const runtime = new Runtime();
 const main = runtime.module(define, name => {
-  const node = document.getElementById(name);
   return {
     pending() {
-      node.classList.add("running")
+      console.log(`${name}: pending`);
     },
     fulfilled(value) {
-      node.classList.remove("running");
-      node.innerText = value;
+      console.log(`${name}: fullfilled`, value);
     },
     rejected(error) {
-      node.classList.remove("running");
-      node.classList.add("error");
-      node.textContent = error.message;
+      console.error(`${name}: rejected`, error);
     }
   };
 });
