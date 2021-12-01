@@ -1,6 +1,7 @@
-export function RuntimeError(message, input) {
+export function RuntimeError(message, input, cause = undefined) {
   this.message = message + "";
   this.input = input;
+  this.cause = cause;
 }
 
 RuntimeError.prototype = Object.create(Error.prototype);
