@@ -1,4 +1,4 @@
-export function RuntimeError(message, input, cause = undefined) {
+export function RuntimeError(message, input, cause) {
   this.message = message + "";
   this.input = input;
   this.cause = cause;
