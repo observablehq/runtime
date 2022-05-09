@@ -287,12 +287,13 @@ function variable_compute(variable) {
 
 function variable_generate(variable, version, generator) {
   const runtime = variable._module._runtime;
+  let currentValue; // so that yield resolves to the yielded value
 
   // Retrieve the next value from the generator; if successful, invoke the
   // specified callback. The returned promise resolves to the yielded value, or
   // to undefined if the generator is done.
   function compute(onfulfilled) {
-    return new Promise(resolve => resolve(generator.next())).then(({done, value}) => {
+    return new Promise(resolve => resolve(generator.next(currentValue))).then(({done, value}) => {
       return done ? undefined : Promise.resolve(value).then(onfulfilled);
     });
   }
@@ -304,6 +305,7 @@ function variable_generate(variable, version, generator) {
   function recompute() {
     const promise = compute((value) => {
       if (variable._version !== version) return;
+      currentValue = value;
       postcompute(value, promise).then(() => runtime._precompute(recompute));
       variable._fulfilled(value);
       return value;
@@ -328,6 +330,7 @@ function variable_generate(variable, version, generator) {
   // already established, so we only need to queue the next pull.
   return compute((value) => {
     if (variable._version !== version) return;
+    currentValue = value;
     runtime._precompute(recompute);
     return value;
   });
