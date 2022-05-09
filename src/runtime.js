@@ -6,7 +6,9 @@ import Module from "./module";
 import noop from "./noop";
 import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
 
-const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame : setImmediate;
+const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame
+  : typeof setImmediate === "function" ? setImmediate
+  : f => setTimeout(f, 0);
 
 export var variable_invalidation = {};
 export var variable_visibility = {};
