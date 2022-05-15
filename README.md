@@ -110,7 +110,7 @@ A module is a namespace for [variables](#variables); within a module, variables 
 
 Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
-If *observer* is specified, the specified [observer](#observer) will be notified when the returned variable changes state, via the [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods. See the [standard inspector](https://github.com/observablehq/inspector/blob/master/README.md) for a convenient default observer implementation.
+If *observer* is specified, the specified [observer](#observers) will be notified when the returned variable changes state, via the [observer.*pending*](#observer_pending), [observer.*fulfilled*](#observer_fulfilled) and [observer.*rejected*](#observer_rejected) methods. See the [standard inspector](https://github.com/observablehq/inspector/blob/master/README.md) for a convenient default observer implementation.
 
 A variable without an associated *observer* is only computed if any transitive output of the variable has an *observer*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
