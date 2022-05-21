@@ -59,8 +59,20 @@ async function module_value(name) {
     v._observer = true;
     this._runtime._dirty.add(v);
   }
-  await this._runtime._compute();
-  return v._promise;
+  return module_revalue(this._runtime, v);
+}
+
+// If the variable is redefined before its value resolves, try again.
+async function module_revalue(runtime, variable) {
+  await runtime._compute();
+  const version = variable._version;
+  return variable._promise.then((value) => {
+    if (variable._version !== version) return module_revalue(runtime, variable);
+    return value;
+  }, (error) => {
+    if (variable._version !== version) return module_revalue(runtime, variable);
+    throw error;
+  });
 }
 
 function module_derive(injects, injectModule) {
