@@ -65,10 +65,12 @@ async function module_value(name) {
 // If the variable is redefined before its value resolves, try again.
 async function module_revalue(runtime, variable) {
   await runtime._compute();
-  return variable._promise.catch((error) => {
+  try {
+    return await variable._promise;
+  } catch (error) {
     if (error === variable_stale) return module_revalue(runtime, variable);
     throw error;
-  });
+  }
 }
 
 function module_derive(injects, injectModule) {
