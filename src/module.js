@@ -4,7 +4,7 @@ import {RuntimeError} from "./errors";
 import identity from "./identity";
 import rethrow from "./rethrow";
 import {variable_invalidation, variable_visibility} from "./runtime";
-import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer} from "./variable";
+import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable";
 
 export default function Module(runtime, builtins = []) {
   Object.defineProperties(this, {
@@ -65,12 +65,8 @@ async function module_value(name) {
 // If the variable is redefined before its value resolves, try again.
 async function module_revalue(runtime, variable) {
   await runtime._compute();
-  const version = variable._version;
-  return variable._promise.then((value) => {
-    if (variable._version !== version) return module_revalue(runtime, variable);
-    return value;
-  }, (error) => {
-    if (variable._version !== version) return module_revalue(runtime, variable);
+  return variable._promise.catch((error) => {
+    if (error === variable_stale) return module_revalue(runtime, variable);
     throw error;
   });
 }
