@@ -4,7 +4,7 @@ import generatorish from "./generatorish";
 import load from "./load";
 import Module from "./module";
 import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, no_observer} from "./variable";
+import Variable, {TYPE_IMPLICIT, no_observer, variable_stale} from "./variable";
 
 const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame
   : typeof setImmediate === "function" ? setImmediate
@@ -243,7 +243,7 @@ function variable_compute(variable) {
 
   // Compute the initial value of the variable.
   function define(inputs) {
-    if (variable._version !== version) return;
+    if (variable._version !== version) throw variable_stale;
 
     // Replace any reference to invalidation with the promise, lazily.
     for (var i = 0, n = inputs.length; i < n; ++i) {
@@ -268,8 +268,8 @@ function variable_compute(variable) {
   // already have been invalidated here, in which case we need to terminate the
   // generator immediately!
   function generate(value) {
+    if (variable._version !== version) throw variable_stale;
     if (generatorish(value)) {
-      if (variable._version !== version) return void value.return();
       (invalidation || variable_invalidator(variable)).then(variable_return(value));
       return variable_generate(variable, version, value);
     }
@@ -277,11 +277,10 @@ function variable_compute(variable) {
   }
 
   promise.then((value) => {
-    if (variable._version !== version) return;
     variable._value = value;
     variable._fulfilled(value);
   }, (error) => {
-    if (variable._version !== version) return;
+    if (error === variable_stale) return;
     variable._value = undefined;
     variable._rejected(error);
   });
@@ -306,14 +305,15 @@ function variable_generate(variable, version, generator) {
   // successful, reject the variable, compute downstream variables, and return.
   function recompute() {
     const promise = compute((value) => {
-      if (variable._version !== version) return;
+      if (variable._version !== version) throw variable_stale;
       currentValue = value;
       postcompute(value, promise).then(() => runtime._precompute(recompute));
       variable._fulfilled(value);
       return value;
     });
     promise.catch((error) => {
-      if (variable._version !== version) return;
+      if (error === variable_stale) throw error;
+      if (variable._version !== version) throw variable_stale;
       postcompute(undefined, promise);
       variable._rejected(error);
     });
@@ -331,7 +331,7 @@ function variable_generate(variable, version, generator) {
   // When retrieving the first value from the generator, the promise graph is
   // already established, so we only need to queue the next pull.
   return compute((value) => {
-    if (variable._version !== version) return;
+    if (variable._version !== version) throw variable_stale;
     currentValue = value;
     runtime._precompute(recompute);
     return value;

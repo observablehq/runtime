@@ -55,8 +55,13 @@ function variable_undefined() {
   throw variable_undefined;
 }
 
+export function variable_stale() {
+  throw variable_stale;
+}
+
 function variable_rejector(variable) {
   return function(error) {
+    if (error === variable_stale) throw error;
     if (error === variable_undefined) throw new RuntimeError(variable._name + " is not defined", variable._name);
     if (error instanceof Error && error.message) throw new RuntimeError(error.message, variable._name);
     throw new RuntimeError(variable._name + " could not be resolved", variable._name);
@@ -166,6 +171,11 @@ function variable_defineImpl(name, inputs, definition) {
 
     this._name = name;
   }
+
+  // If this redefined variable was previously evaluated, invalidate it. (If the
+  // variable was never evaluated, then the invalidated value could never have
+  // been exposed and we can avoid this extra work.)
+  if (this._version > 0) ++this._version;
 
   runtime._updates.add(this);
   runtime._compute();

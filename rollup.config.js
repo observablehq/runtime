@@ -19,7 +19,13 @@ function config(output) {
             "SQLiteDatabaseClient",
             "Workbook",
             "ZipArchive",
-            "ZipArchiveEntry"
+            "ZipArchiveEntry",
+            "Runtime",
+            "RuntimeError",
+            "Variable",
+            "Module",
+            "Library",
+            "Inspector",
           ]
         }
       })
