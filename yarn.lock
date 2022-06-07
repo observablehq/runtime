@@ -67,9 +67,9 @@
     isoformat "^0.2.0"
 
 "@observablehq/stdlib@^3.4.1":
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.18.0.tgz#220394e4be10f7c89991b9e91399ddd89aca8b4b"
-  integrity sha512-CERYLMvRiEWKuvQoE8DU8llXhAZgK+Q56scrX+tOzqrns20QJErXSCojSBj4jbHiWjd+7vWpLKFT0o5x2naLIw==
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.19.0.tgz#69b7342ab637461932fa7bb186c682e96dbfdcc8"
+  integrity sha512-CZta2yJHetwNEulI10Xl00u+0c0wuQZy1BHNfHH0LTWI88AgZFlmP4eAsM7gfT/buSQRWdqtPPZM0lcAi97Tng==
   dependencies:
     d3-dsv "^2.0.0"
     d3-require "^1.2.4"
@@ -327,9 +327,9 @@ d3-dsv@^2.0.0:
     rw "1"
 
 d3-require@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.2.4.tgz#59afc591d5089f99fecd8c45ef7539e1fee112b3"
-  integrity sha512-8UseEGCkBkBxIMouLMPONUBmU8DUPC1q12LARV1Lk/2Jwa32SVgmRfX8GdIeR06ZP+CG85YD3N13K2s14qCNyA==
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/d3-require/-/d3-require-1.3.0.tgz#2b97f5e2ebcb64ac0c63c11f30056aea1c74f0ec"
+  integrity sha512-XaNc2azaAwXhGjmCMtxlD+AowpMfLimVsAoTMpqrvb8CWoA4QqyV12mc4Ue6KSoDvfuS831tsumfhDYxGd4FGA==
 
 data-urls@^3.0.0:
   version "3.0.1"
