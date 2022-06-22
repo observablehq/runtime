@@ -56,10 +56,15 @@ async function module_value(name) {
   var v = this._scope.get(name);
   if (!v) throw new RuntimeError(name + " is not defined");
   if (v._observer === no_observer) {
-    v._observer = true;
-    this._runtime._dirty.add(v);
+    v = this.variable(true).define([name], identity);
+    try {
+      return await module_revalue(this._runtime, v);
+    } finally {
+      v.delete();
+    }
+  } else {
+    return module_revalue(this._runtime, v);
   }
-  return module_revalue(this._runtime, v);
 }
 
 // If the variable is redefined before its value resolves, try again.
