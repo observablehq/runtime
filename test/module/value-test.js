@@ -115,3 +115,36 @@ tape("module.value(name) does not force recomputation", async test => {
   test.deepEqual(await module.value("foo"), 1);
   test.deepEqual(await module.value("foo"), 1);
 });
+
+tape("module.value(name) does not expose stale values", async test => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  let resolve;
+  const variable = module.define("foo", [], new Promise((y) => (resolve = y)));
+  const value = module.value("foo");
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  variable.define("foo", [], () => "fresh");
+  resolve("stale");
+  test.strictEqual(await value, "fresh");
+});
+
+tape("module.value(name) does not continue observing", async test => {
+  const foos = [];
+  const runtime = new Runtime();
+  const module = runtime.module();
+  module.define("foo", [], async function*() {
+    try {
+      foos.push(1), yield 1;
+      foos.push(2), yield 2;
+      foos.push(3), yield 3;
+    } finally {
+      foos.push(-1);
+    }
+  });
+  test.strictEqual(await module.value("foo"), 1);
+  test.deepEqual(foos, [1]);
+  await runtime._compute();
+  test.deepEqual(foos, [1, 2, -1]); // 2 computed prior to being unobserved
+  await runtime._compute();
+  test.deepEqual(foos, [1, 2, -1]); // any change would represent a leak
+});
