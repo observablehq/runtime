@@ -129,18 +129,22 @@ tape("module.value(name) does not expose stale values", async test => {
 });
 
 tape("module.value(name) does not continue observing", async test => {
-  let foo;
+  const foos = [];
   const runtime = new Runtime();
   const module = runtime.module();
   module.define("foo", [], async function*() {
-    yield foo = 1;
-    yield foo = 2;
-    yield foo = 3;
+    try {
+      foos.push(1), yield 1;
+      foos.push(2), yield 2;
+      foos.push(3), yield 3;
+    } finally {
+      foos.push(-1);
+    }
   });
   test.strictEqual(await module.value("foo"), 1);
-  test.strictEqual(foo, 1);
+  test.deepEqual(foos, [1]);
   await runtime._compute();
-  test.strictEqual(foo, 2); // computed prior to being unobserved
+  test.deepEqual(foos, [1, 2, -1]); // 2 computed prior to being unobserved
   await runtime._compute();
-  test.strictEqual(foo, 2); // 3 here would indicate a leak
+  test.deepEqual(foos, [1, 2, -1]); // any change would represent a leak
 });
