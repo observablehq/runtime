@@ -107,9 +107,9 @@
     isoformat "^0.2.0"
 
 "@observablehq/stdlib@^3.4.1":
-  version "3.19.6"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.19.6.tgz#79aa23089e8b4ad7f15653e058c714de54e64228"
-  integrity sha512-e1EPc88StIQPLaxAnXtrW1hwI9PJDrSCGbM+WUnTq0gNvh69CmleW2SJ3IHxnoGuPFtgnqFaFpAdEbCxCnsWgA==
+  version "3.19.8"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.19.8.tgz#511fae43ffbd7103d9169a833b2dfe9af2e0d265"
+  integrity sha512-PJTvdkgiI+zFk7KfvIb9rVqy7Wc0cp+hsWRiGFME8TeaFCsiC6gjcjRy5Wj+h9MPAo7/2dsrur2C7+gk8dmUzA==
   dependencies:
     d3-dsv "^2.0.0"
     d3-require "^1.3.0"
