@@ -312,8 +312,7 @@ function variable_generate(variable, version, generator) {
       return value;
     });
     promise.catch((error) => {
-      if (error === variable_stale) throw error;
-      if (variable._version !== version) throw variable_stale;
+      if (error === variable_stale || variable._version !== version) return;
       postcompute(undefined, promise);
       variable._rejected(error);
     });
