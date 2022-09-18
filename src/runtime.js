@@ -10,6 +10,7 @@ const frame = typeof requestAnimationFrame === "function" ? requestAnimationFram
   : typeof setImmediate === "function" ? setImmediate
   : f => setTimeout(f, 0);
 
+export var variable_variable = {};
 export var variable_invalidation = {};
 export var variable_visibility = {};
 
@@ -255,6 +256,10 @@ function variable_compute(variable) {
         case variable_visibility: {
           if (!invalidation) invalidation = variable_invalidator(variable);
           inputs[i] = variable_intersector(invalidation, variable);
+          break;
+        }
+        case variable_variable: {
+          inputs[i] = variable;
           break;
         }
       }
