@@ -1,9 +1,8 @@
-import {forEach} from "./array";
 import constant from "./constant";
 import {RuntimeError} from "./errors";
 import identity from "./identity";
 import rethrow from "./rethrow";
-import {variable_invalidation, variable_visibility} from "./runtime";
+import {variable_variable, variable_invalidation, variable_visibility} from "./runtime";
 import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable";
 
 export default function Module(runtime, builtins = []) {
@@ -11,6 +10,7 @@ export default function Module(runtime, builtins = []) {
     _runtime: {value: runtime},
     _scope: {value: new Map},
     _builtins: {value: new Map([
+      ["@variable", variable_variable],
       ["invalidation", variable_invalidation],
       ["visibility", variable_visibility],
       ...builtins
@@ -20,7 +20,6 @@ export default function Module(runtime, builtins = []) {
 }
 
 Object.defineProperties(Module.prototype, {
-  _copy: {value: module_copy, writable: true, configurable: true},
   _resolve: {value: module_resolve, writable: true, configurable: true},
   redefine: {value: module_redefine, writable: true, configurable: true},
   define: {value: module_define, writable: true, configurable: true},
@@ -79,51 +78,62 @@ async function module_revalue(runtime, variable) {
 }
 
 function module_derive(injects, injectModule) {
-  var copy = new Module(this._runtime, this._builtins);
-  copy._source = this;
-  forEach.call(injects, function(inject) {
-    if (typeof inject !== "object") inject = {name: inject + ""};
-    if (inject.alias == null) inject.alias = inject.name;
-    copy.import(inject.name, inject.alias, injectModule);
-  });
-  Promise.resolve().then(() => {
-    const modules = new Set([this]);
-    for (const module of modules) {
-      for (const variable of module._scope.values()) {
-        if (variable._definition === identity) { // import
-          const module = variable._inputs[0]._module;
-          const source = module._source || module;
-          if (source === this) { // circular import-with!
-            console.warn("circular module definition; ignoring"); // eslint-disable-line no-console
-            return;
-          }
-          modules.add(source);
-        }
+  const map = new Map();
+  const modules = new Set();
+  const copies = [];
+
+  // Given a module, derives an alias of that module with an initially-empty
+  // definition. The variables will be copied later in a second pass below.
+  function alias(source) {
+    let target = map.get(source);
+    if (target) return target;
+    target = new Module(source._runtime, source._builtins);
+    target._source = source;
+    map.set(source, target);
+    copies.push([target, source]);
+    modules.add(source);
+    return target;
+  }
+
+  // Inject the given variables as reverse imports into the derived module.
+  const derive = alias(this);
+  for (const inject of injects) {
+    const {alias, name} = typeof inject === "object" ? inject : {name: inject};
+    derive.import(name, alias == null ? name : alias, injectModule);
+  }
+
+  // Iterate over all the variables (currently) in this module. If any
+  // represents an import-with (i.e., an import of a module with a _source), the
+  // transitive import-with must be copied, too, as direct injections may affect
+  // transitive injections. Note that an import-with can only be created with
+  // module.derive and hence it’s not possible for an import-with to be added
+  // later; therefore we only need to apply this check once, now.
+  for (const module of modules) {
+    for (const [name, variable] of module._scope) {
+      if (variable._definition === identity) { // import
+        if (module === this && derive._scope.has(name)) continue; // overridden by injection
+        const importedModule = variable._inputs[0]._module;
+        if (importedModule._source) alias(importedModule);
       }
     }
-    this._copy(copy, new Map);
-  });
-  return copy;
-}
+  }
 
-function module_copy(copy, map) {
-  copy._source = this;
-  map.set(this, copy);
-  for (const [name, source] of this._scope) {
-    var target = copy._scope.get(name);
-    if (target && target._type === TYPE_NORMAL) continue; // injection
-    if (source._definition === identity) { // import
-      var sourceInput = source._inputs[0],
-          sourceModule = sourceInput._module;
-      copy.import(sourceInput._name, name, map.get(sourceModule)
-        || (sourceModule._source
-           ? sourceModule._copy(new Module(copy._runtime, copy._builtins), map) // import-with
-           : sourceModule));
-    } else {
-      copy.define(name, source._inputs.map(variable_name), source._definition);
+  // Finally, with the modules resolved, copy the variable definitions.
+  for (const [target, source] of copies) {
+    for (const [name, sourceVariable] of source._scope) {
+      const targetVariable = target._scope.get(name);
+      if (targetVariable && targetVariable._type !== TYPE_IMPLICIT) continue; // preserve injection
+      if (sourceVariable._definition === identity) { // import
+        const sourceInput = sourceVariable._inputs[0];
+        const sourceModule = sourceInput._module;
+        target.import(sourceInput._name, name, map.get(sourceModule) || sourceModule);
+      } else { // non-import
+        target.define(name, sourceVariable._inputs.map(variable_name), sourceVariable._definition);
+      }
     }
   }
-  return copy;
+
+  return derive;
 }
 
 function module_resolve(name) {
