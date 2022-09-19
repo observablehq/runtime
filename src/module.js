@@ -111,7 +111,7 @@ function module_derive(injects, injectModule) {
   for (const module of modules) {
     for (const variable of module._scope.values()) {
       if (variable._definition === identity) { // import
-        if (derive._scope.has(variable._name)) continue; // overridden by injection
+        if (module === this && derive._scope.has(variable._name)) continue; // overridden by injection
         const importedModule = variable._inputs[0]._module;
         if (importedModule._source) alias(importedModule);
       }
