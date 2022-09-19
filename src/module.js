@@ -109,9 +109,9 @@ function module_derive(injects, injectModule) {
   // module.derive and hence it’s not possible for an import-with to be added
   // later; therefore we only need to apply this check once, now.
   for (const module of modules) {
-    for (const variable of module._scope.values()) {
+    for (const [name, variable] of module._scope) {
       if (variable._definition === identity) { // import
-        if (module === this && derive._scope.has(variable._name)) continue; // overridden by injection
+        if (module === this && derive._scope.has(name)) continue; // overridden by injection
         const importedModule = variable._inputs[0]._module;
         if (importedModule._source) alias(importedModule);
       }
