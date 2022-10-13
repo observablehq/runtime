@@ -107,11 +107,10 @@
     isoformat "^0.2.0"
 
 "@observablehq/stdlib@^3.4.1":
-  version "3.21.0"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.21.0.tgz#a735dda48439a9ab969b44375e76adf7835e62b2"
-  integrity sha512-nqtpX/FGU1lq/P4HP2xq1z3wSwGCqrB+GO4mCYLlJNbN5A6ZwzQ2uR5zQKyAAnQWZ7CoVrz2uqPBQXih15RT9g==
+  version "3.22.1"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-3.22.1.tgz#71625c5ddfb2fe0f312247e4a0f696acbd89b224"
+  integrity sha512-k+sEeqVFqI8D2jA5uxlxTfZ5QIuiHnWuqT7G6WAMqRoEjzyPvvBw9Dnj6CzClig1pxpgcifhYXWKh5c/KYpG9w==
   dependencies:
-    d3-array "^3.2.0"
     d3-dsv "^2.0.0"
     d3-require "^1.3.0"
 
@@ -357,13 +356,6 @@ cssstyle@^2.3.0:
   integrity sha512-AZL67abkUzIuvcHqk7c09cezpGNcxUxU4Ioi/05xHk4DQeTkWmGYftIE6ctU6AEt+Gn4n1lDStOtj7FKycP71A==
   dependencies:
     cssom "~0.3.6"
-
-d3-array@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.2.0.tgz#15bf96cd9b7333e02eb8de8053d78962eafcff14"
-  integrity sha512-3yXFQo0oG3QCxbF06rMPFyGRMGJNS7NvsV1+2joOjbBE+9xvWQ8+GcMJAjRCzw06zQ3/arXeJgbPYcjUCuC+3g==
-  dependencies:
-    internmap "1 - 2"
 
 d3-dsv@^2.0.0:
   version "2.0.0"
@@ -892,11 +884,6 @@ internal-slot@^1.0.3:
     get-intrinsic "^1.1.0"
     has "^1.0.3"
     side-channel "^1.0.4"
-
-"internmap@1 - 2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/internmap/-/internmap-2.0.3.tgz#6685f23755e43c524e251d29cbc97248e3061009"
-  integrity sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==
 
 is-arguments@^1.0.4:
   version "1.1.1"
