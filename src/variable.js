@@ -1,16 +1,16 @@
-import {map} from "./array";
-import constant from "./constant";
-import {RuntimeError} from "./errors";
-import identity from "./identity";
-import noop from "./noop";
+import {map} from "./array.js";
+import {constant} from "./constant.js";
+import {RuntimeError} from "./errors.js";
+import {identity} from "./identity.js";
+import {noop} from "./noop.js";
 
-export var TYPE_NORMAL = 1; // a normal variable
-export var TYPE_IMPLICIT = 2; // created on reference
-export var TYPE_DUPLICATE = 3; // created on duplicate definition
+export const TYPE_NORMAL = 1; // a normal variable
+export const TYPE_IMPLICIT = 2; // created on reference
+export const TYPE_DUPLICATE = 3; // created on duplicate definition
 
-export var no_observer = {};
+export const no_observer = Symbol("no-observer");
 
-export default function Variable(type, module, observer) {
+export function Variable(type, module, observer) {
   if (!observer) observer = no_observer;
   Object.defineProperties(this, {
     _observer: {value: observer, writable: true},
@@ -60,17 +60,17 @@ export function variable_stale() {
 }
 
 function variable_rejector(variable) {
-  return function(error) {
+  return (error) => {
     if (error === variable_stale) throw error;
-    if (error === variable_undefined) throw new RuntimeError(variable._name + " is not defined", variable._name);
+    if (error === variable_undefined) throw new RuntimeError(`${variable._name} is not defined`, variable._name);
     if (error instanceof Error && error.message) throw new RuntimeError(error.message, variable._name);
-    throw new RuntimeError(variable._name + " could not be resolved", variable._name);
+    throw new RuntimeError(`${variable._name} could not be resolved`, variable._name);
   };
 }
 
 function variable_duplicate(name) {
-  return function() {
-    throw new RuntimeError(name + " is defined more than once");
+  return () => {
+    throw new RuntimeError(`${name} is defined more than once`);
   };
 }
 
@@ -88,14 +88,14 @@ function variable_define(name, inputs, definition) {
     }
   }
   return variable_defineImpl.call(this,
-    name == null ? null : name + "",
+    name == null ? null : String(name),
     inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
     typeof definition === "function" ? definition : constant(definition)
   );
 }
 
 function variable_defineImpl(name, inputs, definition) {
-  var scope = this._module._scope, runtime = this._module._runtime;
+  const scope = this._module._scope, runtime = this._module._runtime;
 
   this._inputs.forEach(variable_detach, this);
   inputs.forEach(variable_attach, this);
@@ -109,7 +109,7 @@ function variable_defineImpl(name, inputs, definition) {
 
   // Did the variable’s name change? Time to patch references!
   if (name !== this._name || scope.get(name) !== this) {
-    var error, found;
+    let error, found;
 
     if (this._name) { // Did this variable previously have a name?
       if (this._outputs.size) { // And did other variables reference this variable?
@@ -184,7 +184,7 @@ function variable_defineImpl(name, inputs, definition) {
 
 function variable_import(remote, name, module) {
   if (arguments.length < 3) module = name, name = remote;
-  return variable_defineImpl.call(this, name + "", [module._resolve(remote + "")], identity);
+  return variable_defineImpl.call(this, String(name), [module._resolve(String(remote))], identity);
 }
 
 function variable_delete() {

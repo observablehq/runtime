@@ -1,5 +1,5 @@
-export default function(e) {
-  return function() {
-    throw e;
+export function rethrow(error) {
+  return () => {
+    throw error;
   };
 }

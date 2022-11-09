@@ -1,9 +1,9 @@
-import {Runtime} from "../../src/";
-import identity from "../../src/identity";
-import tape from "../tape";
-import valueof, {delay, promiseInspector, sleep} from "./valueof";
+import {Runtime} from "@observablehq/runtime";
+import assert from "assert";
+import {identity} from "../../src/identity.js";
+import {valueof, promiseInspector, sleep} from "./valueof.js";
 
-tape("module.derive(overrides, module) injects variables into a copied module", async test => {
+it("module.derive(overrides, module) injects variables into a copied module", async () => {
   const runtime = new Runtime();
   const module0 = runtime.module();
   const a0 = module0.variable(true).define("a", [], () => 1);
@@ -13,25 +13,25 @@ tape("module.derive(overrides, module) injects variables into a copied module", 
   const module1_0 = module0.derive([{name: "d", alias: "b"}], module1);
   const c1 = module1_0.variable(true).define(null, ["c"], c => c);
   const d1 = module1.define("d", [], () => 42);
-  test.deepEqual(await valueof(a0), {value: 1});
-  test.deepEqual(await valueof(b0), {value: 2});
-  test.deepEqual(await valueof(c0), {value: 3});
-  test.deepEqual(await valueof(c1), {value: 43});
-  test.deepEqual(await valueof(d1), {value: 42});
+  assert.deepStrictEqual(await valueof(a0), {value: 1});
+  assert.deepStrictEqual(await valueof(b0), {value: 2});
+  assert.deepStrictEqual(await valueof(c0), {value: 3});
+  assert.deepStrictEqual(await valueof(c1), {value: 43});
+  assert.deepStrictEqual(await valueof(d1), {value: 42});
 });
 
-tape("module.derive(…) copies module-specific builtins", async test => {
+it("module.derive(…) copies module-specific builtins", async () => {
   const runtime = new Runtime();
   const module0 = runtime.module();
   module0.builtin("a", 1);
   const b0 = module0.variable(true).define("b", ["a"], a => a + 1);
   const module1_0 = module0.derive([], module0);
   const c1 = module1_0.variable(true).define("c", ["a"], a => a + 2);
-  test.deepEqual(await valueof(b0), {value: 2});
-  test.deepEqual(await valueof(c1), {value: 3});
+  assert.deepStrictEqual(await valueof(b0), {value: 2});
+  assert.deepStrictEqual(await valueof(c1), {value: 3});
 });
 
-tape("module.derive(…) can inject into modules that inject into modules", async test => {
+it("module.derive(…) can inject into modules that inject into modules", async () => {
   const runtime = new Runtime();
 
   // Module A
@@ -59,16 +59,16 @@ tape("module.derive(…) can inject into modules that inject into modules", asyn
   const CB = B.derive([{name: "f", alias: "d"}], C);
   const g = C.variable(true).import("e", "g", CB);
 
-  test.deepEqual(await valueof(g), {value: 5});
-  test.strictEqual(g._module, C);
-  test.strictEqual(g._inputs[0]._module, CB);
-  test.strictEqual(g._inputs[0]._inputs[0]._module._source, BA);
-  test.strictEqual(C._source, null);
-  test.strictEqual(CB._source, B);
-  test.strictEqual(BA._source, A);
+  assert.deepStrictEqual(await valueof(g), {value: 5});
+  assert.strictEqual(g._module, C);
+  assert.strictEqual(g._inputs[0]._module, CB);
+  assert.strictEqual(g._inputs[0]._inputs[0]._module._source, BA);
+  assert.strictEqual(C._source, null);
+  assert.strictEqual(CB._source, B);
+  assert.strictEqual(BA._source, A);
 });
 
-tape("module.derive(…) can inject into modules that inject into modules that inject into modules", async test => {
+it("module.derive(…) can inject into modules that inject into modules that inject into modules", async () => {
   const runtime = new Runtime();
 
   // Module A
@@ -104,15 +104,15 @@ tape("module.derive(…) can inject into modules that inject into modules that i
   const DC = C.derive([{name: "h", alias: "f"}], D);
   const i = D.variable(true).import("g", "i", DC);
 
-  test.deepEqual(await valueof(i), {value: 6});
-  test.strictEqual(i._module, D);
-  test.strictEqual(i._inputs[0]._module, DC);
-  test.strictEqual(i._inputs[0]._module._source, C);
-  test.strictEqual(i._inputs[0]._inputs[0]._module._source, CB);
-  test.strictEqual(i._inputs[0]._inputs[0]._module._source._source, B);
+  assert.deepStrictEqual(await valueof(i), {value: 6});
+  assert.strictEqual(i._module, D);
+  assert.strictEqual(i._inputs[0]._module, DC);
+  assert.strictEqual(i._inputs[0]._module._source, C);
+  assert.strictEqual(i._inputs[0]._inputs[0]._module._source, CB);
+  assert.strictEqual(i._inputs[0]._inputs[0]._module._source._source, B);
 });
 
-tape("module.derive(…) does not copy non-injected modules", async test => {
+it("module.derive(…) does not copy non-injected modules", async () => {
   const runtime = new Runtime();
 
   // Module A
@@ -137,13 +137,13 @@ tape("module.derive(…) does not copy non-injected modules", async test => {
   const CB = B.derive([{name: "f", alias: "d"}], C);
   const g = C.variable(true).import("e", "g", CB);
 
-  test.deepEqual(await valueof(g), {value: 3});
-  test.strictEqual(g._module, C);
-  test.strictEqual(g._inputs[0]._module, CB);
-  test.strictEqual(g._inputs[0]._inputs[0]._module, A);
+  assert.deepStrictEqual(await valueof(g), {value: 3});
+  assert.strictEqual(g._module, C);
+  assert.strictEqual(g._inputs[0]._module, CB);
+  assert.strictEqual(g._inputs[0]._inputs[0]._module, A);
 });
 
-tape("module.derive(…) does not copy non-injected modules, again", async test => {
+it("module.derive(…) does not copy non-injected modules, again", async () => {
   const runtime = new Runtime();
   const A = runtime.module();
   A.define("a", () => ({}));
@@ -155,11 +155,11 @@ tape("module.derive(…) does not copy non-injected modules, again", async test 
   const a2 = C.variable(true).import("a", "a2", A);
   const {value: v1} = await valueof(a1);
   const {value: v2} = await valueof(a2);
-  test.deepEqual(v1, {});
-  test.strictEqual(v1, v2);
+  assert.deepStrictEqual(v1, {});
+  assert.strictEqual(v1, v2);
 });
 
-tape("module.derive() supports lazy import-with", async test => {
+it("module.derive() supports lazy import-with", async () => {
   let resolve2, promise2 = new Promise((resolve) => resolve2 = resolve);
 
   function define1(runtime, observer) {
@@ -189,10 +189,10 @@ tape("module.derive() supports lazy import-with", async test => {
 
   await sleep();
   resolve2(define2);
-  test.deepEqual(await inspectorC, 4);
+  assert.deepStrictEqual(await inspectorC, 4);
 });
 
-tape("module.derive() supports lazy transitive import-with", async test => {
+it("module.derive() supports lazy transitive import-with", async () => {
   let resolve2, promise2 = new Promise((resolve) => resolve2 = resolve);
   let resolve3, promise3 = new Promise((resolve) => resolve3 = resolve);
   let module2_1;
@@ -251,9 +251,9 @@ tape("module.derive() supports lazy transitive import-with", async test => {
   await sleep();
   const module1 = runtime.module(define1);
   const c1 = module1._scope.get("c");
-  test.strictEqual(c1, variableC_1);
-  test.deepEqual(c1._inputs.map(i => i._name), ["module 2", "@variable"]);
-  test.strictEqual(runtime._modules.size, 1);
+  assert.strictEqual(c1, variableC_1);
+  assert.deepStrictEqual(c1._inputs.map(i => i._name), ["module 2", "@variable"]);
+  assert.strictEqual(runtime._modules.size, 1);
 
   // After module 2 loads, the variable c in module 1 has been redefined; it is
   // now an import of c from a derived copy of module 2, module 2'. In addition,
@@ -261,15 +261,15 @@ tape("module.derive() supports lazy transitive import-with", async test => {
   resolve2(define2);
   await sleep();
   const module2 = runtime.module(define2);
-  test.deepEqual(c1._inputs.map(i => i._name), ["c"]);
-  test.strictEqual(c1._definition, identity);
-  test.strictEqual(c1._inputs[0]._module, module2_1);
-  test.strictEqual(module2_1._source, module2);
-  test.strictEqual(runtime._modules.size, 2);
+  assert.deepStrictEqual(c1._inputs.map(i => i._name), ["c"]);
+  assert.strictEqual(c1._definition, identity);
+  assert.strictEqual(c1._inputs[0]._module, module2_1);
+  assert.strictEqual(module2_1._source, module2);
+  assert.strictEqual(runtime._modules.size, 2);
   const b2_1 = module2_1._scope.get("b");
-  test.deepEqual(b2_1._inputs.map(i => i._name), ["b"]);
-  test.deepEqual(b2_1._definition, identity);
-  test.deepEqual(b2_1._inputs[0]._module, module1);
+  assert.deepStrictEqual(b2_1._inputs.map(i => i._name), ["b"]);
+  assert.deepStrictEqual(b2_1._definition, identity);
+  assert.deepStrictEqual(b2_1._inputs[0]._module, module1);
 
   // After module 3 loads, the variable c in module 2' has been redefined; it is
   // now an import of c from a derived copy of module 3, module 3'. In addition,
@@ -278,13 +278,13 @@ tape("module.derive() supports lazy transitive import-with", async test => {
   await sleep();
   const module3 = runtime.module(define3);
   const c2_1 = module2_1._scope.get("c");
-  test.strictEqual(c2_1._module, module2_1);
-  test.strictEqual(c2_1._definition, identity);
-  test.strictEqual(c2_1._inputs[0]._module, module3_2);
-  test.strictEqual(module3_2._source, module3);
+  assert.strictEqual(c2_1._module, module2_1);
+  assert.strictEqual(c2_1._definition, identity);
+  assert.strictEqual(c2_1._inputs[0]._module, module3_2);
+  assert.strictEqual(module3_2._source, module3);
   const b3_2 = module3_2._scope.get("b");
-  test.deepEqual(b3_2._inputs.map(i => i._name), ["b"]);
-  test.deepEqual(b3_2._definition, identity);
-  test.deepEqual(b3_2._inputs[0]._module, module2_1);
-  test.deepEqual(await inspectorC, 5);
+  assert.deepStrictEqual(b3_2._inputs.map(i => i._name), ["b"]);
+  assert.deepStrictEqual(b3_2._definition, identity);
+  assert.deepStrictEqual(b3_2._inputs[0]._module, module2_1);
+  assert.deepStrictEqual(await inspectorC, 5);
 });

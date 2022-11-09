@@ -1,90 +1,90 @@
-import {Runtime} from "../../src/";
-import tape from "../tape";
-import valueof from "./valueof";
+import {Runtime} from "@observablehq/runtime";
+import assert from "assert";
+import {valueof} from "./valueof.js";
 
-tape("variable.define(name, inputs, definition) can define a variable", async test => {
+it("variable.define(name, inputs, definition) can define a variable", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define("foo", [], () => 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(inputs, function) can define an anonymous variable", async test => {
+it("variable.define(inputs, function) can define an anonymous variable", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define([], () => 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(name, function) can define a named variable", async test => {
+it("variable.define(name, function) can define a named variable", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define("foo", () => 42);
   const bar = module.variable(true).define("bar", ["foo"], foo => foo);
-  test.deepEqual(await valueof(foo), {value: 42});
-  test.deepEqual(await valueof(bar), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(bar), {value: 42});
 });
 
-tape("variable.define(function) can define an anonymous variable", async test => {
+it("variable.define(function) can define an anonymous variable", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define(() => 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(null, inputs, value) can define an anonymous constant", async test => {
+it("variable.define(null, inputs, value) can define an anonymous constant", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define(null, [], 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(inputs, value) can define an anonymous constant", async test => {
+it("variable.define(inputs, value) can define an anonymous constant", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define([], 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(null, value) can define an anonymous constant", async test => {
+it("variable.define(null, value) can define an anonymous constant", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define(null, 42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define(value) can define an anonymous constant", async test => {
+it("variable.define(value) can define an anonymous constant", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define(42);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define detects missing inputs", async test => {
+it("variable.define detects missing inputs", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true);
   const bar = module.variable(true).define("bar", ["foo"], foo => foo);
-  test.deepEqual(await valueof(foo), {value: undefined});
-  test.deepEqual(await valueof(bar), {error: "RuntimeError: foo is not defined"});
+  assert.deepStrictEqual(await valueof(foo), {value: undefined});
+  assert.deepStrictEqual(await valueof(bar), {error: "RuntimeError: foo is not defined"});
   foo.define("foo", 1);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: 1});
 });
 
-tape("variable.define detects duplicate names", async test => {
+it("variable.define detects duplicate names", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define("foo", 1);
   const bar = module.variable(true).define("foo", 2);
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: foo is defined more than once"});
-  test.deepEqual(await valueof(bar), {error: "RuntimeError: foo is defined more than once"});
+  assert.deepStrictEqual(await valueof(foo), {error: "RuntimeError: foo is defined more than once"});
+  assert.deepStrictEqual(await valueof(bar), {error: "RuntimeError: foo is defined more than once"});
   bar.define("bar", 2);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: 2});
 });
 
-tape("variable.define recomputes reachability as expected", async test => {
+it("variable.define recomputes reachability as expected", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const module = runtime.module();
@@ -96,21 +96,21 @@ tape("variable.define recomputes reachability as expected", async test => {
   main.variable().import("baz", module);
   main.variable().import("quux", module);
   await runtime._compute();
-  test.equal(quux._reachable, true);
-  test.equal(baz._reachable, true);
-  test.equal(bar._reachable, true);
-  test.equal(foo._reachable, true);
-  test.deepEqual(await valueof(foo), {value: ["bar-42", "baz-42", 42]});
+  assert.strictEqual(quux._reachable, true);
+  assert.strictEqual(baz._reachable, true);
+  assert.strictEqual(bar._reachable, true);
+  assert.strictEqual(foo._reachable, true);
+  assert.deepStrictEqual(await valueof(foo), {value: ["bar-42", "baz-42", 42]});
   foo.define("foo", [], () => "foo");
   await runtime._compute();
-  test.equal(quux._reachable, false);
-  test.equal(baz._reachable, false);
-  test.equal(bar._reachable, false);
-  test.equal(foo._reachable, true);
-  test.deepEqual(await valueof(foo), {value: "foo"});
+  assert.strictEqual(quux._reachable, false);
+  assert.strictEqual(baz._reachable, false);
+  assert.strictEqual(bar._reachable, false);
+  assert.strictEqual(foo._reachable, true);
+  assert.deepStrictEqual(await valueof(foo), {value: "foo"});
 });
 
-tape("variable.define correctly detects reachability for unreachable cycles", async test => {
+it("variable.define correctly detects reachability for unreachable cycles", async () => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
@@ -120,43 +120,43 @@ tape("variable.define correctly detects reachability for unreachable cycles", as
   const quux = module.define("quux", ["zapp"], function*(zapp) { try { while (true) yield `quux-${zapp}`; } finally { returned = true; }});
   const zapp = module.define("zapp", ["bar"], bar => `zaap-${bar}`);
   await runtime._compute();
-  test.equal(bar._reachable, false);
-  test.equal(baz._reachable, false);
-  test.equal(quux._reachable, false);
-  test.equal(zapp._reachable, false);
-  test.deepEqual(await valueof(bar), {value: undefined});
-  test.deepEqual(await valueof(baz), {value: undefined});
-  test.deepEqual(await valueof(quux), {value: undefined});
-  test.deepEqual(await valueof(zapp), {value: undefined});
+  assert.strictEqual(bar._reachable, false);
+  assert.strictEqual(baz._reachable, false);
+  assert.strictEqual(quux._reachable, false);
+  assert.strictEqual(zapp._reachable, false);
+  assert.deepStrictEqual(await valueof(bar), {value: undefined});
+  assert.deepStrictEqual(await valueof(baz), {value: undefined});
+  assert.deepStrictEqual(await valueof(quux), {value: undefined});
+  assert.deepStrictEqual(await valueof(zapp), {value: undefined});
   main.variable().import("bar", module);
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   await runtime._compute();
-  test.equal(foo._reachable, true);
-  test.equal(bar._reachable, true);
-  test.equal(baz._reachable, true);
-  test.equal(quux._reachable, true);
-  test.equal(zapp._reachable, true);
-  test.deepEqual(await valueof(bar), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: circular definition"});
+  assert.strictEqual(foo._reachable, true);
+  assert.strictEqual(bar._reachable, true);
+  assert.strictEqual(baz._reachable, true);
+  assert.strictEqual(quux._reachable, true);
+  assert.strictEqual(zapp._reachable, true);
+  assert.deepStrictEqual(await valueof(bar), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(foo), {error: "RuntimeError: circular definition"});
   foo.define("foo", [], () => "foo");
   await runtime._compute();
-  test.equal(foo._reachable, true);
-  test.equal(bar._reachable, false);
-  test.equal(baz._reachable, false);
-  test.equal(quux._reachable, false);
-  test.equal(zapp._reachable, false);
-  test.deepEqual(await valueof(bar), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
-  test.deepEqual(await valueof(foo), {value: "foo"});
-  test.equal(returned, false); // Generator is never finalized because it has never run.
+  assert.strictEqual(foo._reachable, true);
+  assert.strictEqual(bar._reachable, false);
+  assert.strictEqual(baz._reachable, false);
+  assert.strictEqual(quux._reachable, false);
+  assert.strictEqual(zapp._reachable, false);
+  assert.deepStrictEqual(await valueof(bar), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(baz), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(quux), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(zapp), {error: "RuntimeError: circular definition"});
+  assert.deepStrictEqual(await valueof(foo), {value: "foo"});
+  assert.strictEqual(returned, false); // Generator is never finalized because it has never run.
 });
 
-tape("variable.define terminates previously reachable generators", async test => {
+it("variable.define terminates previously reachable generators", async () => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
@@ -164,14 +164,14 @@ tape("variable.define terminates previously reachable generators", async test =>
   const bar = module.define("bar", [], function*() { try { while (true) yield 1; } finally { returned = true; }});
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   main.variable().import("bar", module);
-  test.deepEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
   foo.define("foo", [], () => "foo");
-  test.deepEqual(await valueof(foo), {value: "foo"});
-  test.equal(bar._generator, undefined);
-  test.equal(returned, true);
+  assert.deepStrictEqual(await valueof(foo), {value: "foo"});
+  assert.strictEqual(bar._generator, undefined);
+  assert.strictEqual(returned, true);
 });
 
-tape("variable.define does not terminate reachable generators", async test => {
+it("variable.define does not terminate reachable generators", async () => {
   let returned = false;
   const runtime = new Runtime();
   const main = runtime.module();
@@ -180,133 +180,133 @@ tape("variable.define does not terminate reachable generators", async test => {
   const baz = main.variable(true).define("baz", ["bar"], bar => bar);
   const foo = main.variable(true).define("foo", ["bar"], bar => bar);
   main.variable().import("bar", module);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(baz), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(baz), {value: 1});
   foo.define("foo", [], () => "foo");
-  test.deepEqual(await valueof(foo), {value: "foo"});
-  test.deepEqual(await valueof(baz), {value: 1});
-  test.equal(returned, false);
+  assert.deepStrictEqual(await valueof(foo), {value: "foo"});
+  assert.deepStrictEqual(await valueof(baz), {value: 1});
+  assert.strictEqual(returned, false);
   bar._invalidate();
   await runtime._compute();
-  test.equal(returned, true);
+  assert.strictEqual(returned, true);
 });
 
-tape("variable.define detects duplicate declarations", async test => {
+it("variable.define detects duplicate declarations", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const v1 = main.variable(true).define("foo", [], () => 1);
   const v2 = main.variable(true).define("foo", [], () => 2);
   const v3 = main.variable(true).define(null, ["foo"], foo => foo);
-  test.deepEqual(await valueof(v1), {error: "RuntimeError: foo is defined more than once"});
-  test.deepEqual(await valueof(v2), {error: "RuntimeError: foo is defined more than once"});
-  test.deepEqual(await valueof(v3), {error: "RuntimeError: foo is defined more than once"});
+  assert.deepStrictEqual(await valueof(v1), {error: "RuntimeError: foo is defined more than once"});
+  assert.deepStrictEqual(await valueof(v2), {error: "RuntimeError: foo is defined more than once"});
+  assert.deepStrictEqual(await valueof(v3), {error: "RuntimeError: foo is defined more than once"});
 });
 
-tape("variable.define detects missing inputs and erroneous inputs", async test => {
+it("variable.define detects missing inputs and erroneous inputs", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const v1 = main.variable(true).define("foo", ["baz"], () => 1);
   const v2 = main.variable(true).define("bar", ["foo"], () => 2);
-  test.deepEqual(await valueof(v1), {error: "RuntimeError: baz is not defined"});
-  test.deepEqual(await valueof(v2), {error: "RuntimeError: baz is not defined"});
+  assert.deepStrictEqual(await valueof(v1), {error: "RuntimeError: baz is not defined"});
+  assert.deepStrictEqual(await valueof(v2), {error: "RuntimeError: baz is not defined"});
 });
 
-tape("variable.define allows masking of builtins", async test => {
+it("variable.define allows masking of builtins", async () => {
   const runtime = new Runtime({color: "red"});
   const main = runtime.module();
   const mask = main.define("color", "green");
   const foo = main.variable(true).define(null, ["color"], color => color);
-  test.deepEqual(await valueof(foo), {value: "green"});
+  assert.deepStrictEqual(await valueof(foo), {value: "green"});
   mask.delete();
-  test.deepEqual(await valueof(foo), {value: "red"});
+  assert.deepStrictEqual(await valueof(foo), {value: "red"});
 });
 
-tape("variable.define supports promises", async test => {
+it("variable.define supports promises", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setImmediate(() => resolve(42))));
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define supports generator cells", async test => {
+it("variable.define supports generator cells", async () => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield ++i; });
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(foo), {value: 2});
-  test.deepEqual(await valueof(foo), {value: 3});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 3});
 });
 
-tape("variable.define supports generator objects", async test => {
+it("variable.define supports generator objects", async () => {
   function* range(n) { for (let i = 0; i < n; ++i) yield i; }
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => range(3));
-  test.deepEqual(await valueof(foo), {value: 0});
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 0});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define supports a promise that resolves to a generator object", async test => {
+it("variable.define supports a promise that resolves to a generator object", async () => {
   function* range(n) { for (let i = 0; i < n; ++i) yield i; }
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], async () => range(3));
-  test.deepEqual(await valueof(foo), {value: 0});
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 0});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define supports generators that yield promises", async test => {
+it("variable.define supports generators that yield promises", async () => {
   let i = 0;
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], function*() { while (i < 3) yield Promise.resolve(++i); });
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(foo), {value: 2});
-  test.deepEqual(await valueof(foo), {value: 3});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 3});
 });
 
-tape("variable.define allows a variable to be redefined", async test => {
+it("variable.define allows a variable to be redefined", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable(true).define("bar", ["foo"], foo => new Promise(resolve => setImmediate(() => resolve(foo))));
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: 1});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: 1});
   foo.define("foo", [], () => 2);
-  test.deepEqual(await valueof(foo), {value: 2});
-  test.deepEqual(await valueof(bar), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(bar), {value: 2});
 });
 
-tape("variable.define recomputes downstream values when a variable is renamed", async test => {
+it("variable.define recomputes downstream values when a variable is renamed", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable(true).define("bar", [], () => 2);
   const baz = main.variable(true).define("baz", ["foo", "bar"], (foo, bar) => foo + bar);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: 2});
-  test.deepEqual(await valueof(baz), {value: 3});
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: 2});
+  assert.deepStrictEqual(await valueof(baz), {value: 3});
   foo.define("quux", [], () => 10);
-  test.deepEqual(await valueof(foo), {value: 10});
-  test.deepEqual(await valueof(bar), {value: 2});
-  test.deepEqual(await valueof(baz), {error: "RuntimeError: foo is not defined"});
+  assert.deepStrictEqual(await valueof(foo), {value: 10});
+  assert.deepStrictEqual(await valueof(bar), {value: 2});
+  assert.deepStrictEqual(await valueof(baz), {error: "RuntimeError: foo is not defined"});
 });
 
-tape("variable.define ignores an asynchronous result from a redefined variable", async test => {
+it("variable.define ignores an asynchronous result from a redefined variable", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const foo = main.variable(true).define("foo", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
   await new Promise(setImmediate);
   foo.define("foo", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
-  test.deepEqual(await valueof(foo), {value: "success"});
-  test.deepEqual(foo._value, "success");
+  assert.deepStrictEqual(await valueof(foo), {value: "success"});
+  assert.deepStrictEqual(foo._value, "success");
 });
 
-tape("variable.define ignores an asynchronous result from a redefined input", async test => {
+it("variable.define ignores an asynchronous result from a redefined input", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   const bar = main.variable().define("bar", [], () => new Promise(resolve => setTimeout(() => resolve("fail"), 150)));
@@ -314,82 +314,82 @@ tape("variable.define ignores an asynchronous result from a redefined input", as
   await new Promise(setImmediate);
   bar.define("bar", [], () => "success");
   await new Promise(resolve => setTimeout(resolve, 250));
-  test.deepEqual(await valueof(foo), {value: "success"});
-  test.deepEqual(foo._value, "success");
+  assert.deepStrictEqual(await valueof(foo), {value: "success"});
+  assert.deepStrictEqual(foo._value, "success");
 });
 
-tape("variable.define does not try to compute unreachable variables", async test => {
+it("variable.define does not try to compute unreachable variables", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   let evaluated = false;
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable().define("bar", ["foo"], (foo) => evaluated = foo);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: undefined});
-  test.equals(evaluated, false);
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: undefined});
+  assert.strictEqual(evaluated, false);
 });
 
-tape("variable.define does not try to compute unreachable variables that are outputs of reachable variables", async test => {
+it("variable.define does not try to compute unreachable variables that are outputs of reachable variables", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   let evaluated = false;
   const foo = main.variable(true).define("foo", [], () => 1);
   const bar = main.variable(true).define("bar", [], () => 2);
   const baz = main.variable().define("baz", ["foo", "bar"], (foo, bar) => evaluated = foo + bar);
-  test.deepEqual(await valueof(foo), {value: 1});
-  test.deepEqual(await valueof(bar), {value: 2});
-  test.deepEqual(await valueof(baz), {value: undefined});
-  test.equals(evaluated, false);
+  assert.deepStrictEqual(await valueof(foo), {value: 1});
+  assert.deepStrictEqual(await valueof(bar), {value: 2});
+  assert.deepStrictEqual(await valueof(baz), {value: undefined});
+  assert.strictEqual(evaluated, false);
 });
 
-tape("variable.define can reference whitelisted globals", async test => {
+it("variable.define can reference whitelisted globals", async () => {
   const runtime = new Runtime(null, name => name === "magic" ? 21 : undefined);
   const module = runtime.module();
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
-  test.deepEqual(await valueof(foo), {value: 42});
+  assert.deepStrictEqual(await valueof(foo), {value: 42});
 });
 
-tape("variable.define captures the value of whitelisted globals", async test => {
+it("variable.define captures the value of whitelisted globals", async () => {
   let magic = 0;
   const runtime = new Runtime(null, name => name === "magic" ? ++magic : undefined);
   const module = runtime.module();
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
-  test.deepEqual(await valueof(foo), {value: 2});
-  test.deepEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
 });
 
-tape("variable.define can override whitelisted globals", async test => {
+it("variable.define can override whitelisted globals", async () => {
   const runtime = new Runtime(null, name => name === "magic" ? 1 : undefined);
   const module = runtime.module();
   module.variable().define("magic", [], () => 2);
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
-  test.deepEqual(await valueof(foo), {value: 4});
+  assert.deepStrictEqual(await valueof(foo), {value: 4});
 });
 
-tape("variable.define can dynamically override whitelisted globals", async test => {
+it("variable.define can dynamically override whitelisted globals", async () => {
   const runtime = new Runtime(null, name => name === "magic" ? 1 : undefined);
   const module = runtime.module();
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
-  test.deepEqual(await valueof(foo), {value: 2});
+  assert.deepStrictEqual(await valueof(foo), {value: 2});
   module.variable().define("magic", [], () => 2);
-  test.deepEqual(await valueof(foo), {value: 4});
+  assert.deepStrictEqual(await valueof(foo), {value: 4});
 });
 
-tape("variable.define cannot reference non-whitelisted globals", async test => {
+it("variable.define cannot reference non-whitelisted globals", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const foo = module.variable(true).define(["magic"], magic => magic * 2);
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: magic is not defined"});
+  assert.deepStrictEqual(await valueof(foo), {error: "RuntimeError: magic is not defined"});
 });
 
-tape("variable.define correctly handles globals that throw", async test => {
+it("variable.define correctly handles globals that throw", async () => {
   const runtime = new Runtime(null, name => { if (name === "oops") throw new Error("oops"); });
   const module = runtime.module();
   const foo = module.variable(true).define(["oops"], oops => oops);
-  test.deepEqual(await valueof(foo), {error: "RuntimeError: oops"});
+  assert.deepStrictEqual(await valueof(foo), {error: "RuntimeError: oops"});
 });
 
-tape("variable.define allows other variables to begin computation before a generator may resume", async test => {
+it("variable.define allows other variables to begin computation before a generator may resume", async () => {
   const runtime = new Runtime();
   const module = runtime.module();
   const main = runtime.module();
@@ -398,37 +398,37 @@ tape("variable.define allows other variables to begin computation before a gener
   let valIteration = 0;
   const onGenFulfilled = value => {
     if (genIteration === 0) {
-      test.equals(valIteration, 0);
-      test.equals(value, 1);
-      test.equals(i, 1);
+      assert.strictEqual(valIteration, 0);
+      assert.strictEqual(value, 1);
+      assert.strictEqual(i, 1);
     } else if (genIteration === 1) {
-      test.equals(valIteration, 1);
-      test.equals(value, 2);
-      test.equals(i, 2);
+      assert.strictEqual(valIteration, 1);
+      assert.strictEqual(value, 2);
+      assert.strictEqual(i, 2);
     } else if (genIteration === 2) {
-      test.equals(valIteration, 2);
-      test.equals(value, 3);
-      test.equals(i, 3);
+      assert.strictEqual(valIteration, 2);
+      assert.strictEqual(value, 3);
+      assert.strictEqual(i, 3);
     } else {
-      test.fail();
+      assert.fail();
     }
     genIteration++;
   };
   const onValFulfilled = value => {
     if (valIteration === 0) {
-      test.equals(genIteration, 1);
-      test.equals(value, 1);
-      test.equals(i, 1);
+      assert.strictEqual(genIteration, 1);
+      assert.strictEqual(value, 1);
+      assert.strictEqual(i, 1);
     } else if (valIteration === 1) {
-      test.equals(genIteration, 2);
-      test.equals(value, 2);
-      test.equals(i, 2);
+      assert.strictEqual(genIteration, 2);
+      assert.strictEqual(value, 2);
+      assert.strictEqual(i, 2);
     } else if (valIteration === 2) {
-      test.equals(genIteration, 3);
-      test.equals(value, 3);
-      test.equals(i, 3);
+      assert.strictEqual(genIteration, 3);
+      assert.strictEqual(value, 3);
+      assert.strictEqual(i, 3);
     } else {
-      test.fail();
+      assert.fail();
     }
     valIteration++;
   };
@@ -442,20 +442,20 @@ tape("variable.define allows other variables to begin computation before a gener
   });
   main.variable().import("gen", module);
   const val = main.variable({fulfilled: onValFulfilled}).define("val", ["gen"], i => i);
-  test.equals(await gen._promise, undefined, "gen cell undefined");
-  test.equals(await val._promise, undefined, "val cell undefined");
+  assert.strictEqual(await gen._promise, undefined, "gen cell undefined");
+  assert.strictEqual(await val._promise, undefined, "val cell undefined");
   await runtime._compute();
-  test.equals(await gen._promise, 1, "gen cell 1");
-  test.equals(await val._promise, 1, "val cell 1");
+  assert.strictEqual(await gen._promise, 1, "gen cell 1");
+  assert.strictEqual(await val._promise, 1, "val cell 1");
   await runtime._compute();
-  test.equals(await gen._promise, 2, "gen cell 2");
-  test.equals(await val._promise, 2, "val cell 2");
+  assert.strictEqual(await gen._promise, 2, "gen cell 2");
+  assert.strictEqual(await val._promise, 2, "val cell 2");
   await runtime._compute();
-  test.equals(await gen._promise, 3, "gen cell 3");
-  test.equals(await val._promise, 3, "val cell 3");
+  assert.strictEqual(await gen._promise, 3, "gen cell 3");
+  assert.strictEqual(await val._promise, 3, "val cell 3");
 });
 
-tape("variable.define allows other variables to begin computation before a generator may resume", async test => {
+it("variable.define allows other variables to begin computation before a generator may resume", async () => {
   const runtime = new Runtime();
   const main = runtime.module();
   let i = 0;
@@ -470,19 +470,19 @@ tape("variable.define allows other variables to begin computation before a gener
   });
   const val = main.variable(true).define("val", ["gen"], gen => {
     j++;
-    test.equals(gen, j, "gen = j");
-    test.equals(gen, i, "gen = i");
+    assert.strictEqual(gen, j, "gen = j");
+    assert.strictEqual(gen, i, "gen = i");
     return gen;
   });
-  test.equals(await gen._promise, undefined, "gen = undefined");
-  test.equals(await val._promise, undefined, "val = undefined");
+  assert.strictEqual(await gen._promise, undefined, "gen = undefined");
+  assert.strictEqual(await val._promise, undefined, "val = undefined");
   await runtime._compute();
-  test.equals(await gen._promise, 1, "gen cell 1");
-  test.equals(await val._promise, 1, "val cell 1");
+  assert.strictEqual(await gen._promise, 1, "gen cell 1");
+  assert.strictEqual(await val._promise, 1, "val cell 1");
   await runtime._compute();
-  test.equals(await gen._promise, 2, "gen cell 2");
-  test.equals(await val._promise, 2, "val cell 2");
+  assert.strictEqual(await gen._promise, 2, "gen cell 2");
+  assert.strictEqual(await val._promise, 2, "val cell 2");
   await runtime._compute();
-  test.equals(await gen._promise, 3, "gen cell 3");
-  test.equals(await val._promise, 3, "val cell 3");
+  assert.strictEqual(await gen._promise, 3, "gen cell 3");
+  assert.strictEqual(await val._promise, 3, "val cell 3");
 });
