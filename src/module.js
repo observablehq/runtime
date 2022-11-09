@@ -2,8 +2,11 @@ import {constant} from "./constant.js";
 import {RuntimeError} from "./errors.js";
 import {identity} from "./identity.js";
 import {rethrow} from "./rethrow.js";
-import {variable_variable, variable_invalidation, variable_visibility} from "./runtime.js";
 import {Variable, TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable.js";
+
+export const variable_variable = Symbol("variable");
+export const variable_invalidation = Symbol("invalidation");
+export const variable_visibility = Symbol("visibility");
 
 export function Module(runtime, builtins = []) {
   Object.defineProperties(this, {

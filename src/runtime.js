@@ -1,17 +1,13 @@
 import {Library, FileAttachments} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors.js";
 import {generatorish} from "./generatorish.js";
-import {Module} from "./module.js";
+import {Module, variable_variable, variable_invalidation, variable_visibility} from "./module.js";
 import {noop} from "./noop.js";
 import {Variable, TYPE_IMPLICIT, no_observer, variable_stale} from "./variable.js";
 
 const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame
   : typeof setImmediate === "function" ? setImmediate
   : f => setTimeout(f, 0);
-
-export const variable_variable = Symbol("variable");
-export const variable_invalidation = Symbol("invalidation");
-export const variable_visibility = Symbol("visibility");
 
 export function Runtime(builtins = new Library, global = window_global) {
   const builtin = this.module();
