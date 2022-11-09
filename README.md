@@ -9,12 +9,12 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 ```html
 <!DOCTYPE html>
 <meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@3/dist/inspector.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@4/dist/inspector.css">
 <body>
 <script type="module">
 
-import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-import define from "https://api.observablehq.com/@observablehq/hello-world.js?v=3";
+import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@5/dist/runtime.js";
+import define from "https://api.observablehq.com/@observablehq/hello-world.js?v=4";
 
 const runtime = new Runtime();
 const main = runtime.module(define, name => {
