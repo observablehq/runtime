@@ -38,7 +38,6 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
     "eslint": "^8.27.0",
-    "jsdom": "^20.0.2",
     "mocha": "^10.1.0",
     "module-alias": "^2.2.2",
     "rollup": "^3.2.5",
