@@ -32,8 +32,8 @@
     "@observablehq/runtime": "./src/index.js"
   },
   "dependencies": {
-    "@observablehq/inspector": "4.0.0-rc.2",
-    "@observablehq/stdlib": "4.0.0-rc.2"
+    "@observablehq/inspector": "^5.0.0",
+    "@observablehq/stdlib": "^5.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
@@ -42,8 +42,5 @@
     "module-alias": "^2.2.2",
     "rollup": "^3.2.5",
     "rollup-plugin-terser": "^7.0.2"
-  },
-  "publishConfig": {
-    "tag": "next"
   }
 }

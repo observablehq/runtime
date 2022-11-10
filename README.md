@@ -9,7 +9,7 @@ For example, to render the “hello” cell from the [“Hello World” notebook
 ```html
 <!DOCTYPE html>
 <meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@4/dist/inspector.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@5/dist/inspector.css">
 <body>
 <script type="module">
 

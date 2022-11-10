@@ -118,17 +118,17 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@observablehq/inspector@4.0.0-rc.2":
-  version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-4.0.0-rc.2.tgz#8321ab0d5f86e9062ba843f0b6b77a7bc109ee12"
-  integrity sha512-5I92BksdoyjU+MD1dA1FUVXIxdHQjuAdQXiRle9eo3FaL7g0L5CFOYFjxnI9KC/gFnufguo9zHbbsMC/UkdUzA==
+"@observablehq/inspector@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/inspector/-/inspector-5.0.0.tgz#7dec08d4fa20dfb79977ce62f7cc4a814b44e595"
+  integrity sha512-Vvg/TQdsZTUaeYbH0IKxYEz37FbRO6kdowoz2PrHLQif54NC1CjEihEjg+ZMSBn587GQxTFABu0CGkFZgtR1UQ==
   dependencies:
     isoformat "^0.2.0"
 
-"@observablehq/stdlib@4.0.0-rc.2":
-  version "4.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-4.0.0-rc.2.tgz#6eaec23fc7c8605584328ae859aa613a39a2dc7c"
-  integrity sha512-tSBYPXOdkpUsW3/kAkydFDkAgtNJvo6cmsEyQ2jeoNgk8qPgqWrqLsVRaaUMgd17o7Z2Jzhu535OylMxeFyvbQ==
+"@observablehq/stdlib@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-5.0.0.tgz#35118ae3f00ba71a84c25786ea054c59512c0caa"
+  integrity sha512-OMdrieCV6i4MvlShY4XTn5oU1jSxtBKim9Y9KuJor/Kge0J6HtcdCnfWpJrB5wUtHVc20KGVeYTH/6j202+yUQ==
   dependencies:
     d3-array "^3.2.0"
     d3-dsv "^3.0.1"
