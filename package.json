@@ -32,8 +32,8 @@
     "@observablehq/runtime": "./src/index.js"
   },
   "dependencies": {
-    "@observablehq/inspector": "4.0.0-rc.1",
-    "@observablehq/stdlib": "4.0.0-rc.1"
+    "@observablehq/inspector": "4.0.0-rc.2",
+    "@observablehq/stdlib": "4.0.0-rc.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.1",
