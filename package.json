@@ -1,38 +1,49 @@
 {
   "name": "@observablehq/runtime",
-  "version": "4.28.0",
-  "license": "ISC",
-  "main": "dist/runtime.umd.js",
-  "module": "src/index.js",
+  "version": "5.0.0-rc.1",
   "author": {
     "name": "Observable, Inc.",
     "url": "https://observablehq.com"
+  },
+  "license": "ISC",
+  "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "jsdelivr": "dist/runtime.umd.js",
+  "unpkg": "dist/runtime.umd.js",
+  "exports": {
+    "umd": "./dist/runtime.umd.js",
+    "default": "./src/index.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/observablehq/runtime.git"
   },
+  "files": [
+    "dist/**/*.js",
+    "src/**/*.js"
+  ],
   "scripts": {
-    "test": "tape -r esm 'test/**/*-test.js'",
+    "test": "mocha 'test/**/*-test.js' && eslint src test",
     "prepublishOnly": "rm -rf dist && rollup -c",
     "postpublish": "git push && git push --tags"
   },
-  "files": [
-    "src/**/*.js",
-    "dist/**/*.js"
-  ],
+  "_moduleAliases": {
+    "@observablehq/runtime": "./src/index.js"
+  },
   "dependencies": {
-    "@observablehq/inspector": "^3.2.2",
-    "@observablehq/stdlib": "^3.4.1"
+    "@observablehq/inspector": "4.0.0-rc.1",
+    "@observablehq/stdlib": "4.0.0-rc.1"
   },
   "devDependencies": {
-    "eslint": "^7.18.0",
-    "esm": "^3.2.25",
-    "jsdom": "^17.0.0",
-    "rollup": "^2.37.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "tape": "^4.13.3",
-    "tape-await": "^0.1.2"
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "eslint": "^8.27.0",
+    "mocha": "^10.1.0",
+    "module-alias": "^2.2.2",
+    "rollup": "^3.2.5",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "publishConfig": {
+    "tag": "next"
   }
 }

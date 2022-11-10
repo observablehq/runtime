@@ -1,21 +1,16 @@
 import {Library, FileAttachments} from "@observablehq/stdlib";
-import {RuntimeError} from "./errors";
-import generatorish from "./generatorish";
-import load from "./load";
-import Module from "./module";
-import noop from "./noop";
-import Variable, {TYPE_IMPLICIT, no_observer, variable_stale} from "./variable";
+import {RuntimeError} from "./errors.js";
+import {generatorish} from "./generatorish.js";
+import {Module, variable_variable, variable_invalidation, variable_visibility} from "./module.js";
+import {noop} from "./noop.js";
+import {Variable, TYPE_IMPLICIT, no_observer, variable_stale} from "./variable.js";
 
 const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame
   : typeof setImmediate === "function" ? setImmediate
   : f => setTimeout(f, 0);
 
-export var variable_variable = {};
-export var variable_invalidation = {};
-export var variable_visibility = {};
-
-export default function Runtime(builtins = new Library, global = window_global) {
-  var builtin = this.module();
+export function Runtime(builtins = new Library, global = window_global) {
+  const builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
     _updates: {value: new Set},
@@ -28,14 +23,10 @@ export default function Runtime(builtins = new Library, global = window_global) 
     _builtin: {value: builtin},
     _global: {value: global}
   });
-  if (builtins) for (var name in builtins) {
+  if (builtins) for (const name in builtins) {
     (new Variable(TYPE_IMPLICIT, builtin)).define(name, [], builtins[name]);
   }
 }
-
-Object.defineProperties(Runtime, {
-  load: {value: load, writable: true, configurable: true}
-});
 
 Object.defineProperties(Runtime.prototype, {
   _precompute: {value: runtime_precompute, writable: true, configurable: true},
@@ -91,7 +82,7 @@ function runtime_computeSoon() {
 }
 
 async function runtime_computeNow() {
-  var queue = [],
+  let queue = [],
       variables,
       variable,
       precomputes = this._precomputes;
@@ -247,7 +238,7 @@ function variable_compute(variable) {
     if (variable._version !== version) throw variable_stale;
 
     // Replace any reference to invalidation with the promise, lazily.
-    for (var i = 0, n = inputs.length; i < n; ++i) {
+    for (let i = 0, n = inputs.length; i < n; ++i) {
       switch (inputs[i]) {
         case variable_invalidation: {
           inputs[i] = invalidation = variable_invalidator(variable);
@@ -361,7 +352,7 @@ function variable_return(generator) {
 
 function variable_reachable(variable) {
   if (variable._observer !== no_observer) return true; // Directly reachable.
-  var outputs = new Set(variable._outputs);
+  const outputs = new Set(variable._outputs);
   for (const output of outputs) {
     if (output._observer !== no_observer) return true;
     output._outputs.forEach(outputs.add, outputs);
@@ -370,5 +361,5 @@ function variable_reachable(variable) {
 }
 
 function window_global(name) {
-  return window[name];
+  return globalThis[name];
 }

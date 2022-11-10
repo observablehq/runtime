@@ -1,11 +1,14 @@
-import constant from "./constant";
-import {RuntimeError} from "./errors";
-import identity from "./identity";
-import rethrow from "./rethrow";
-import {variable_variable, variable_invalidation, variable_visibility} from "./runtime";
-import Variable, {TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable";
+import {constant} from "./constant.js";
+import {RuntimeError} from "./errors.js";
+import {identity} from "./identity.js";
+import {rethrow} from "./rethrow.js";
+import {Variable, TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable.js";
 
-export default function Module(runtime, builtins = []) {
+export const variable_variable = Symbol("variable");
+export const variable_invalidation = Symbol("invalidation");
+export const variable_visibility = Symbol("visibility");
+
+export function Module(runtime, builtins = []) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
@@ -31,19 +34,19 @@ Object.defineProperties(Module.prototype, {
 });
 
 function module_redefine(name) {
-  var v = this._scope.get(name);
-  if (!v) throw new RuntimeError(name + " is not defined");
-  if (v._type === TYPE_DUPLICATE) throw new RuntimeError(name + " is defined more than once");
+  const v = this._scope.get(name);
+  if (!v) throw new RuntimeError(`${name} is not defined`);
+  if (v._type === TYPE_DUPLICATE) throw new RuntimeError(`${name} is defined more than once`);
   return v.define.apply(v, arguments);
 }
 
 function module_define() {
-  var v = new Variable(TYPE_NORMAL, this);
+  const v = new Variable(TYPE_NORMAL, this);
   return v.define.apply(v, arguments);
 }
 
 function module_import() {
-  var v = new Variable(TYPE_NORMAL, this);
+  const v = new Variable(TYPE_NORMAL, this);
   return v.import.apply(v, arguments);
 }
 
@@ -52,8 +55,8 @@ function module_variable(observer) {
 }
 
 async function module_value(name) {
-  var v = this._scope.get(name);
-  if (!v) throw new RuntimeError(name + " is not defined");
+  let v = this._scope.get(name);
+  if (!v) throw new RuntimeError(`${name} is not defined`);
   if (v._observer === no_observer) {
     v = this.variable(true).define([name], identity);
     try {
@@ -137,7 +140,7 @@ function module_derive(injects, injectModule) {
 }
 
 function module_resolve(name) {
-  var variable = this._scope.get(name), value;
+  let variable = this._scope.get(name), value;
   if (!variable) {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._builtins.has(name)) {

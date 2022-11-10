@@ -1,6 +1,5 @@
 {
-  "extends": "../.eslintrc.json",
-  "rules": {
-    "no-unreachable": 0
+  "env": {
+    "mocha": true
   }
 }
