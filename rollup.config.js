@@ -16,6 +16,7 @@ function config(output) {
           reserved: [
             "FileAttachment",
             "RequireError",
+            "DuckDBClient",
             "SQLiteDatabaseClient",
             "Workbook",
             "ZipArchive",
