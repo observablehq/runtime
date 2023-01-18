@@ -126,9 +126,9 @@
     isoformat "^0.2.0"
 
 "@observablehq/stdlib@^5.0.0":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-5.3.1.tgz#9f99524a6c8a3c79f6d795318ec9290426a5dcb1"
-  integrity sha512-pE8iK2lA1AOyUXZfKzKQictFLvKHBx9XicSuzUyV9kZ7AUY7f/uP22Gu1BV7P1uhGN//kRM6IShlpm9aweWY/w==
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-5.3.2.tgz#b2efbbcb84ec05ecf5d432545ad9fd03158088da"
+  integrity sha512-y+JknOAni0GB6L+qCoauBG17hwMD9fXCuTneTg2ZM6/UEFVVk4nEpK62AXm+Jky+sAVw8lfwu87KNu60FBlSeA==
   dependencies:
     d3-array "^3.2.0"
     d3-dsv "^3.0.1"
@@ -374,9 +374,9 @@ cross-spawn@^7.0.2:
     which "^2.0.1"
 
 d3-array@^3.2.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.2.1.tgz#39331ea706f5709417d31bbb6ec152e0328b39b3"
-  integrity sha512-gUY/qeHq/yNqqoCKNq4vtpFLdoCdvyNpWoC/KNjhGbhDuQpAM9sIQQKkXSNpXa9h5KySs/gzm7R88WkUutgwWQ==
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.2.2.tgz#f8ac4705c5b06914a7e0025bbf8d5f1513f6a86e"
+  integrity sha512-yEEyEAbDrF8C6Ob2myOBLjwBLck1Z89jMGFee0oPsn95GqjerpaOA4ch+vc2l0FNFFwMD5N7OCSEN5eAlsUbgQ==
   dependencies:
     internmap "1 - 2"
 
