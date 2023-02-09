@@ -19,6 +19,7 @@ export function Variable(type, module, observer) {
     _duplicates: {value: undefined, writable: true},
     _indegree: {value: NaN, writable: true}, // The number of computing inputs.
     _inputs: {value: [], writable: true},
+    _inputNames: {value: [], writable: true},
     _invalidate: {value: noop, writable: true},
     _module: {value: module},
     _name: {value: null, writable: true},
@@ -26,6 +27,7 @@ export function Variable(type, module, observer) {
     _promise: {value: Promise.resolve(undefined), writable: true},
     _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
+    _shadows: {value: new Map(), writable: true},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _version: {value: 0, writable: true}
@@ -36,9 +38,12 @@ Object.defineProperties(Variable.prototype, {
   _pending: {value: variable_pending, writable: true, configurable: true},
   _fulfilled: {value: variable_fulfilled, writable: true, configurable: true},
   _rejected: {value: variable_rejected, writable: true, configurable: true},
+  _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
-  import: {value: variable_import, writable: true, configurable: true}
+  import: {value: variable_import, writable: true, configurable: true},
+  shadow: {value: variable_shadow, writable: true, configurable: true},
+  unshadow: {value: variable_unshadow, writable: true, configurable: true}
 });
 
 function variable_attach(variable) {
@@ -75,6 +80,7 @@ function variable_duplicate(name) {
 }
 
 function variable_define(name, inputs, definition) {
+  this._inputNames = inputs;
   switch (arguments.length) {
     case 1: {
       definition = name, name = inputs = null;
@@ -89,9 +95,14 @@ function variable_define(name, inputs, definition) {
   }
   return variable_defineImpl.call(this,
     name == null ? null : String(name),
-    inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
+    inputs == null ? [] : map.call(inputs, this._resolve, this),
     typeof definition === "function" ? definition : constant(definition)
   );
+}
+
+function variable_resolve(input) {
+  if (this._shadows.has(input)) return this._shadows.get(input);
+  return this._module._resolve(input);
 }
 
 function variable_defineImpl(name, inputs, definition) {
@@ -188,7 +199,26 @@ function variable_import(remote, name, module) {
 }
 
 function variable_delete() {
+  // Delete any shadow inputs.
+  for (const [name, shadow] of this._shadows.entries()) {
+    shadow.delete();
+    this._shadows.delete(name);
+  }
   return variable_defineImpl.call(this, null, [], noop);
+}
+
+function variable_shadow(name, inputs, definition) {
+  if (arguments.length < 3) definition = inputs, inputs = [];
+  if (!this._shadows.has(name)) this._shadows.set(name, this._module.define(inputs, definition));
+  else this._shadows.get(name).define(inputs, definition);
+  this.define(this._name, this._inputNames, this._definition);
+  return this;
+}
+
+function variable_unshadow(name) {
+  if (!this._shadows.has(name)) throw new RuntimeError(`no shadow found for input ${name}`);
+  this._shadows.delete(name);
+  this.define(this._name, this._inputNames, this._definition);
 }
 
 function variable_pending() {
