@@ -2,50 +2,27 @@ import {Runtime, RuntimeError} from "@observablehq/runtime";
 import {valueof} from "./valueof.js";
 import assert from "assert";
 
-it("variable.shadow(…) can have a shadow definition for a variable", async () => {
+it("module.variable(…, {shadow}) can define a shadow input", async () => {
   const runtime = new Runtime();
-  const main = runtime.module();
+  const module = runtime.module();
 
-  main.define("val", [], 1000);
-  const a = main.variable(true).define("a", ["val"], (val) => val);
-
-  assert.deepStrictEqual(await valueof(a), {value: 1000});
-
-  // Shadow val.
-  a.shadow("val", 100);
+  module.define("val", [], 1000);
+  const a = module.variable(true, {shadow: {val: 100}}).define("a", ["val"], (val) => val);
 
   assert.deepStrictEqual(await valueof(a), {value: 100});
-
-  // Remove the shadow for val.
-  a.unshadow("val");
-
-  assert.deepStrictEqual(await valueof(a), {value: 1000});
 });
 
-it("variable.shadow(…) can have different shadows for different variables", async () => {
+it("module.variable(…, {shadow}) can define a shadow inputs that differ between variables", async () => {
   const runtime = new Runtime();
-  const main = runtime.module();
+  const module = runtime.module();
 
-  main.define("val", [], 1000);
-  const a = main.variable(true).define("a", ["val"], (val) => val);
-  const b = main.variable(true).define("b", ["val"], (val) => val);
+  module.define("val", [], 1000);
+  const a = module.variable(true, {shadow: {val: 100}}).define("a", ["val"], (val) => val);
+  const b = module.variable(true, {shadow: {val: 200}}).define("b", ["val"], (val) => val);
 
-  assert.deepStrictEqual(await valueof(a), {value: 1000});
-  assert.deepStrictEqual(await valueof(b), {value: 1000});
-
-  // Shadow val with different values for variables a and b.
-  a.shadow("val", 100);
-  b.shadow("val", 200);
 
   assert.deepStrictEqual(await valueof(a), {value: 100});
   assert.deepStrictEqual(await valueof(b), {value: 200});
-
-  // Remove the shadow for val.
-  a.unshadow("val");
-  b.unshadow("val");
-
-  assert.deepStrictEqual(await valueof(a), {value: 1000});
-  assert.deepStrictEqual(await valueof(b), {value: 1000});
 });
 
 it("variable.shadow(…) variables that are downstream will also use the shadow input", async () => {
