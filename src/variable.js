@@ -10,7 +10,7 @@ export const TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export const no_observer = Symbol("no-observer");
 
-export function Variable(type, module, observer, {shadow = {}} = {}) {
+export function Variable(type, module, observer, options) {
   if (!observer) observer = no_observer;
   Object.defineProperties(this, {
     _observer: {value: observer, writable: true},
@@ -26,7 +26,7 @@ export function Variable(type, module, observer, {shadow = {}} = {}) {
     _promise: {value: Promise.resolve(undefined), writable: true},
     _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
-    _shadow: {value: initShadow(shadow, module)},
+    _shadow: {value: initShadow(module, options)},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _version: {value: 0, writable: true}
@@ -43,9 +43,10 @@ Object.defineProperties(Variable.prototype, {
   import: {value: variable_import, writable: true, configurable: true}
 });
 
-function initShadow(shadow, module) {
+function initShadow(module, options) {
+  if (!options || !options.shadow) return null;
   return new Map(
-    Object.entries(shadow)
+    Object.entries(options.shadow)
       .map(([name, definition]) => [name, (new Variable(TYPE_IMPLICIT, module)).define([], definition)])
   );
 }
@@ -104,7 +105,7 @@ function variable_define(name, inputs, definition) {
 }
 
 function variable_resolve(name) {
-  return this._shadow.get(name) ?? this._module._resolve(name);
+  return (this._shadow && this._shadow.get(name)) ?? this._module._resolve(name);
 }
 
 function variable_defineImpl(name, inputs, definition) {
@@ -201,11 +202,6 @@ function variable_import(remote, name, module) {
 }
 
 function variable_delete() {
-  // Delete any shadow inputs.
-  for (const [name, shadow] of this._shadow) {
-    shadow.delete();
-    this._shadow.delete(name);
-  }
   return variable_defineImpl.call(this, null, [], noop);
 }
 
