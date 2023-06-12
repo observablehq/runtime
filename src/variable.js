@@ -105,7 +105,7 @@ function variable_define(name, inputs, definition) {
 }
 
 function variable_resolve(name) {
-  return (this._shadow && this._shadow.get(name)) ?? this._module._resolve(name);
+  return this._shadow?.get(name) ?? this._module._resolve(name);
 }
 
 function variable_defineImpl(name, inputs, definition) {
