@@ -19,8 +19,6 @@ it("module.variable(…, {shadow}) can define shadow inputs that differ between 
   module.define("val", [], 1000);
   const a = module.variable(true, {shadow: {val: 100}}).define("a", ["val"], (val) => val);
   const b = module.variable(true, {shadow: {val: 200}}).define("b", ["val"], (val) => val);
-
-
   assert.deepStrictEqual(await valueof(a), {value: 100});
   assert.deepStrictEqual(await valueof(b), {value: 200});
 });
