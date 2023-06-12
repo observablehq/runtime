@@ -10,7 +10,7 @@ export const TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export const no_observer = Symbol("no-observer");
 
-export function Variable(type, module, observer) {
+export function Variable(type, module, observer, options) {
   if (!observer) observer = no_observer;
   Object.defineProperties(this, {
     _observer: {value: observer, writable: true},
@@ -26,6 +26,7 @@ export function Variable(type, module, observer) {
     _promise: {value: Promise.resolve(undefined), writable: true},
     _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
+    _shadow: {value: initShadow(module, options)},
     _type: {value: type},
     _value: {value: undefined, writable: true},
     _version: {value: 0, writable: true}
@@ -36,10 +37,19 @@ Object.defineProperties(Variable.prototype, {
   _pending: {value: variable_pending, writable: true, configurable: true},
   _fulfilled: {value: variable_fulfilled, writable: true, configurable: true},
   _rejected: {value: variable_rejected, writable: true, configurable: true},
+  _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
 });
+
+function initShadow(module, options) {
+  if (!options?.shadow) return null;
+  return new Map(
+    Object.entries(options.shadow)
+      .map(([name, definition]) => [name, (new Variable(TYPE_IMPLICIT, module)).define([], definition)])
+  );
+}
 
 function variable_attach(variable) {
   variable._module._runtime._dirty.add(variable);
@@ -89,9 +99,13 @@ function variable_define(name, inputs, definition) {
   }
   return variable_defineImpl.call(this,
     name == null ? null : String(name),
-    inputs == null ? [] : map.call(inputs, this._module._resolve, this._module),
+    inputs == null ? [] : map.call(inputs, this._resolve, this),
     typeof definition === "function" ? definition : constant(definition)
   );
+}
+
+function variable_resolve(name) {
+  return this._shadow?.get(name) ?? this._module._resolve(name);
 }
 
 function variable_defineImpl(name, inputs, definition) {
