@@ -50,7 +50,7 @@ function module_import() {
   return v.import.apply(v, arguments);
 }
 
-function module_variable(observer, options = {}) {
+function module_variable(observer, options) {
   return new Variable(TYPE_NORMAL, this, observer, options);
 }
 
