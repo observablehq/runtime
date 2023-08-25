@@ -14,6 +14,12 @@ Run tests with Mocha:
 yarn test
 ```
 
+Build with Rollup:
+
+```
+yarn prepublishOnly
+```
+
 ## For internal use
 
 See our checklist for [publishing a new release](https://observablehq.com/@observablehq/publishing-new-open-source-releases).
