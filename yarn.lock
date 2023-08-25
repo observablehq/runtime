@@ -126,9 +126,9 @@
     isoformat "^0.2.0"
 
 "@observablehq/stdlib@^5.0.0":
-  version "5.8.1"
-  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-5.8.1.tgz#50002b0d2a021890052d6f96700d86d15ca18c7d"
-  integrity sha512-ng6QQSzFbPQnMMeCUhUl/EPzpyrwfmGsujztGdPXS1ZYrLoAc9co4rhUC5Vv6dBh8E4yzZkxwNyTs73bLN4alQ==
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/@observablehq/stdlib/-/stdlib-5.8.2.tgz#0e5f73064783ed9d23a20feecd4a42bdfb996a30"
+  integrity sha512-68Xo97UJzJNOTDkZFSOqpGifMJ7KCXGXB0EljWIYzu9CzpaAjiakdJgMm2h7xHdPRh8HKoFIEPqeVg7YKjQh0Q==
   dependencies:
     d3-array "^3.2.0"
     d3-dsv "^3.0.1"
