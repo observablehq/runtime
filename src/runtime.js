@@ -276,7 +276,7 @@ function variable_compute(variable) {
     variable._value = value;
     variable._fulfilled(value);
   }, (error) => {
-    if (error === variable_stale) return;
+    if (error === variable_stale || variable._version !== version) return;
     variable._value = undefined;
     variable._rejected(error);
   });
