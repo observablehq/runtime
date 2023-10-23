@@ -486,3 +486,49 @@ it("variable.define allows other variables to begin computation before a generat
   assert.strictEqual(await gen._promise, 3, "gen cell 3");
   assert.strictEqual(await val._promise, 3, "val cell 3");
 });
+
+it("variable.define does not report stale fulfillments", async () => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const values = [];
+  const errors = [];
+  const variable = module.variable({
+    fulfilled(value) {
+      values.push(value);
+    },
+    rejected(error) {
+      errors.push(error);
+    }
+  });
+  const promise = new Promise((resolve) => setTimeout(() => resolve("value1"), 250));
+  variable.define(() => promise);
+  await runtime._computing;
+  variable.define(() => "value2");
+  await promise;
+  assert.deepStrictEqual(await valueof(variable), {value: "value2"});
+  assert.deepStrictEqual(values, ["value2"]);
+  assert.deepStrictEqual(errors, []);
+});
+
+it("variable.define does not report stale rejections", async () => {
+  const runtime = new Runtime();
+  const module = runtime.module();
+  const values = [];
+  const errors = [];
+  const variable = module.variable({
+    fulfilled(value) {
+      values.push(value);
+    },
+    rejected(error) {
+      errors.push(error);
+    }
+  });
+  const promise = new Promise((resolve, reject) => setTimeout(() => reject("error1"), 250));
+  variable.define(() => promise);
+  await runtime._computing;
+  variable.define(() => Promise.reject("error2"));
+  await promise.catch(() => {});
+  assert.deepStrictEqual(await valueof(variable), {error: "error2"});
+  assert.deepStrictEqual(values, []);
+  assert.deepStrictEqual(errors, ["error2"]);
+});
