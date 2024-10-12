@@ -1,4 +1,3 @@
-import {Library, FileAttachments} from "@observablehq/stdlib";
 import {RuntimeError} from "./errors.js";
 import {generatorish} from "./generatorish.js";
 import {Module, variable_variable, variable_invalidation, variable_visibility} from "./module.js";
@@ -9,7 +8,7 @@ const frame = typeof requestAnimationFrame === "function" ? requestAnimationFram
   : typeof setImmediate === "function" ? setImmediate
   : f => setTimeout(f, 0);
 
-export function Runtime(builtins = new Library, global = window_global) {
+export function Runtime(builtins, global = window_global) {
   const builtin = this.module();
   Object.defineProperties(this, {
     _dirty: {value: new Set},
@@ -34,8 +33,7 @@ Object.defineProperties(Runtime.prototype, {
   _computeSoon: {value: runtime_computeSoon, writable: true, configurable: true},
   _computeNow: {value: runtime_computeNow, writable: true, configurable: true},
   dispose: {value: runtime_dispose, writable: true, configurable: true},
-  module: {value: runtime_module, writable: true, configurable: true},
-  fileAttachments: {value: FileAttachments, writable: true, configurable: true}
+  module: {value: runtime_module, writable: true, configurable: true}
 });
 
 function runtime_dispose() {
