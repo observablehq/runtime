@@ -221,15 +221,23 @@ function variable_compute(variable) {
 
   const value0 = variable._value;
   const version = ++variable._version;
+  const inputs = variable._inputs;
+  const definition = variable._definition;
 
   // Lazily-constructed invalidation variable; only constructed if referenced as an input.
   let invalidation = null;
 
-  // If the variable doesn’t have any inputs, we can optimize slightly.
-  const promise = variable._promise = (variable._inputs.length
-      ? Promise.all(variable._inputs.map(variable_value)).then(define)
-      : new Promise(resolve => resolve(variable._definition.call(value0))))
+  // Wait for the previous definition to compute before recomputing.
+  const promise = variable._promise = variable._promise
+    .then(init, init)
     .then(generate);
+
+  // If the variable doesn’t have any inputs, we can optimize slightly.
+  function init() {
+    return inputs.length
+      ? Promise.all(inputs.map(variable_value)).then(define)
+      : new Promise(resolve => resolve(definition.call(value0)));
+  }
 
   // Compute the initial value of the variable.
   function define(inputs) {
