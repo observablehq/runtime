@@ -230,13 +230,11 @@ function variable_compute(variable) {
   // Wait for the previous definition to compute before recomputing.
   const promise = variable._promise = variable._promise
     .then(init, init)
+    .then(define)
     .then(generate);
 
-  // If the variable doesn’t have any inputs, we can optimize slightly.
   function init() {
-    return inputs.length
-      ? Promise.all(inputs.map(variable_value)).then(define)
-      : new Promise(resolve => resolve(definition.call(value0)));
+    return Promise.all(inputs.map(variable_value));
   }
 
   // Compute the initial value of the variable.
@@ -262,7 +260,7 @@ function variable_compute(variable) {
       }
     }
 
-    return variable._definition.apply(value0, inputs);
+    return definition.apply(value0, inputs);
   }
 
   // If the value is a generator, then retrieve its first value, and dispose of
