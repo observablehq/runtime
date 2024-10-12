@@ -2,24 +2,14 @@ The Observable runtime is open source and released under the [ISC License](https
 
 ## Development
 
-Install dependencies:
+We use Yarn 1.x (Classic). To install dependencies:
 
 ```
 yarn
 ```
 
-Run tests with Mocha:
+To run tests with Mocha:
 
 ```
 yarn test
 ```
-
-Build with Rollup:
-
-```
-yarn prepublishOnly
-```
-
-## For internal use
-
-See our checklist for [publishing a new release](https://observablehq.com/@observablehq/publishing-new-open-source-releases).
