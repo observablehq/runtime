@@ -127,9 +127,7 @@ For example, consider the following module that starts with a single undefined v
 
 ```js
 const runtime = new Runtime(builtins);
-
 const module = runtime.module();
-
 const a = module.variable();
 ```
 
@@ -183,9 +181,7 @@ Likewise deleting *a* or *b* would allow the other variable to resolve to its de
 
 ```js
 const runtime = new Runtime(builtins);
-
 const module0 = runtime.module();
-
 module0.variable().define("foo", 42);
 ```
 
@@ -193,7 +189,6 @@ To import `foo` into another module:
 
 ```js
 const module1 = runtime.module();
-
 module1.variable().import("foo", module0);
 ```
 
