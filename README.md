@@ -97,6 +97,14 @@ module.variable().define(name, inputs, definition)
 module.variable().import(name, alias, from)
 ```
 
+#### module.builtin(name, value)
+
+[Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Defines a built-in constant that is visible to all variables in this module. _Caution: any built-ins must be defined before variables are defined, and must not be redefined after._ For example, to define a `FileAttachment` function:
+
+```js
+module.builtin("FileAttachment", (name) => FileAttachment(name))
+```
+
 #### module.redefine(name, inputs, definition)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Redefines the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
