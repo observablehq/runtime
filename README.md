@@ -6,7 +6,7 @@ The **Observable Runtime** implements reactivity in both [Observable Framework](
 
 ### Runtimes
 
-#### new Runtime(builtins, global)
+#### new Runtime(*builtins*, *global*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/runtime.js) · Returns a new [runtime](#runtimes). If *builtins* is specified, each property on the *builtins* object defines a builtin variable for the runtime. These builtins are available as named inputs to any [defined variables](#variable_define) on any [module](#modules) associated with this runtime. If a *global* function is specified, it will be invoked with the name of any unresolved reference, and must return the corresponding value or undefined (to trigger a ReferenceError); if *global* is not specified, unresolved values will be resolved from the global window.
 
@@ -30,7 +30,7 @@ This would produce the following output:
 
 Unlike [variables](#variables), builtins cannot depend on the value of other variables or builtins; they are defined with no inputs. If a builtin is defined as a function, it will be invoked lazily to determine the value of the builtin. If you wish for the value of a builtin to be a function, the builtin must be defined either as a promise that resolves to a function or as a function that returns a function. Builtins may also be defined as generators for dynamic values.
 
-#### runtime.module(define, observer)
+#### *runtime*.module(*define*, *observer*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/runtime.js) · Returns a new [module](#modules) for this [runtime](#runtimes).
 
@@ -38,7 +38,7 @@ If *define* is specified, it is a function which defines the new module’s [var
 
 If an *observer* factory function is specified, it is called for each named variable in the returned module, being passed the variable’s name.
 
-#### runtime.dispose()
+#### *runtime*.dispose()
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/runtime.js) · Disposes this runtime, invalidating all active variables and disabling future computation.
 
@@ -46,7 +46,7 @@ If an *observer* factory function is specified, it is called for each named vari
 
 A module is a namespace for [variables](#variables); within a module, variables should typically have unique names. [Imports](#variable_import) allow variables to be referenced across modules.
 
-#### module.variable(observer)
+#### *module*.variable(*observer*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Returns a new [variable](#variables) for this [module](#modules). The variable is initially undefined.
 
@@ -54,7 +54,7 @@ If *observer* is specified, the specified [observer](#observers) will be notifie
 
 A variable without an associated *observer* is only computed if any transitive output of the variable has an *observer*; variables are computed on an as-needed basis for display. This is particularly useful when the runtime has multiple modules (as with [imports](#variable_import)): only the needed variables from imported modules are computed.
 
-#### module.derive(specifiers, source)
+#### *module*.derive(*specifiers*, *source*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Returns a derived copy of this [module](#modules), where each variable in *specifiers* is replaced by an [import](#variable_import) from the specified *source* module. The *specifiers* are specified as an array of objects with the following properties:
 
@@ -81,7 +81,7 @@ module1.variable().import("c", module1_0);
 
 The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c* in the original module remains 1 + 2 = 3.
 
-#### module.define(name, inputs, definition)
+#### *module*.define(*name*, *inputs*, *definition*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · A convenience method for [*variable*.define](#variable_define); equivalent to:
 
@@ -89,7 +89,7 @@ The value of *c* in the derived module is now 1 + 3 = 4, whereas the value of *c
 module.variable().define(name, inputs, definition)
 ```
 
-#### module.import(name, alias, from)
+#### *module*.import(*name*, *alias*, *from*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · A convenience method for [*variable*.import](#variable_import); equivalent to:
 
@@ -97,7 +97,7 @@ module.variable().define(name, inputs, definition)
 module.variable().import(name, alias, from)
 ```
 
-#### module.builtin(name, value)
+#### *module*.builtin(*name*, *value*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Defines a built-in constant that is visible to all variables in this module. _Caution: any built-ins must be defined before variables are defined, and must not be redefined after._ For example, to define a `FileAttachment` function:
 
@@ -105,11 +105,11 @@ module.variable().import(name, alias, from)
 module.builtin("FileAttachment", (name) => FileAttachment(name))
 ```
 
-#### module.redefine(name, inputs, definition)
+#### *module*.redefine(*name*, *inputs*, *definition*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Redefines the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
 
-#### module.value(name)
+#### *module*.value(*name*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/module.js) · Returns a promise to the next value of the *variable* with the specified *name* on this module. If no such variable exists, or if more than one variable has the specified *name*, throws a runtime error.
 
@@ -117,7 +117,7 @@ module.builtin("FileAttachment", (name) => FileAttachment(name))
 
 A variable defines a piece of state in a reactive program, akin to a cell in a spreadsheet. Variables may be named to allow the definition of derived variables: variables whose value is computed from other variables’ values. Variables are scoped by a [module](#modules) and evaluated by a [runtime](#runtimes).
 
-#### variable.define(name, inputs, definition)
+#### *variable*.define(*name*, *inputs*, *definition*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Redefines this variable to have the specified *name*, taking the variables with the names specified in *inputs* as arguments to the specified *definition* function. If *name* is null or not specified, this variable is anonymous and may not be referred to by other variables. The named *inputs* refer to other variables (possibly [imported](#variable_import)) in this variable’s module. Circular inputs are not allowed; the variable will throw a ReferenceError upon evaluation. If *inputs* is not specified, it defaults to the empty array. If *definition* is not a function, the variable is defined to have the constant value of *definition*.
 
@@ -177,7 +177,7 @@ b.define("bar", 2);
 
 Likewise deleting *a* or *b* would allow the other variable to resolve to its desired value.
 
-#### variable.import(name, alias, module)
+#### *variable*.import(*name*, *alias*, *module*)
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Redefines this variable as an alias of the variable with the specified *name* in the specified [*module*](#modules). The subsequent name of this variable is the specified *name*, or if specified, the given *alias*. The order of arguments corresponds to the standard import statement: `import {name as alias} from "module"`. For example, consider a module which defines a variable named `foo`:
 
@@ -213,7 +213,7 @@ To import `foo` into *module1* under the alias `bar`:
 module1.variable().import("foo", "bar", module0);
 ```
 
-#### variable.delete()
+#### *variable*.delete()
 
 [Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
 
@@ -221,14 +221,14 @@ module1.variable().import("foo", "bar", module0);
 
 An observer watches a [variable](#variables), being notified via asynchronous callback whenever the variable changes state. See the [standard inspector](https://github.com/observablehq/inspector) for a reference implementation.
 
-#### observer.pending()
+#### *observer*.pending()
 
 Called shortly before the variable is computed. For a generator variable, this occurs before the generator is constructed, but not before each subsequent value is pulled from the generator.
 
-#### observer.fulfilled(value)
+#### *observer*.fulfilled(*value*)
 
 Called shortly after the variable is fulfilled with a new *value*.
 
-#### observer.rejected(error)
+#### *observer*.rejected(*error*)
 
 Called shortly after the variable is rejected with the given *error*.
