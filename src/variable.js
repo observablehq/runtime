@@ -9,6 +9,7 @@ export const TYPE_IMPLICIT = 2; // created on reference
 export const TYPE_DUPLICATE = 3; // created on duplicate definition
 
 export const no_observer = Symbol("no-observer");
+export const no_value = Promise.resolve();
 
 export function Variable(type, module, observer, options) {
   if (!observer) observer = no_observer;
@@ -23,7 +24,7 @@ export function Variable(type, module, observer, options) {
     _module: {value: module},
     _name: {value: null, writable: true},
     _outputs: {value: new Set, writable: true},
-    _promise: {value: Promise.resolve(undefined), writable: true},
+    _promise: {value: no_value, writable: true},
     _reachable: {value: observer !== no_observer, writable: true}, // Is this variable transitively visible?
     _rejector: {value: variable_rejector(this)},
     _shadow: {value: initShadow(module, options)},
