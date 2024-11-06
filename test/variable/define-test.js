@@ -1,6 +1,6 @@
 import {Runtime} from "@observablehq/runtime";
 import assert from "assert";
-import {valueof} from "./valueof.js";
+import {sleep, valueof} from "./valueof.js";
 
 it("variable.define(name, inputs, definition) can define a variable", async () => {
   const runtime = new Runtime();
@@ -531,4 +531,107 @@ it("variable.define does not report stale rejections", async () => {
   assert.deepStrictEqual(await valueof(variable), {error: "error2"});
   assert.deepStrictEqual(values, []);
   assert.deepStrictEqual(errors, ["error2"]);
+});
+
+it("variable.define waits for the previous value to settle before computing", async () => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const log = [];
+  let resolve1;
+  let resolve2;
+  const promise1 = new Promise((r) => (resolve1 = r));
+  const promise2 = new Promise((r) => (resolve2 = r));
+  const foo = main.variable(true);
+  foo.define("foo", [], () => {
+    log.push("1 start");
+    promise1.then(() => log.push("1 end"));
+    return promise1;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start"]);
+  foo.define("foo", [], () => {
+    log.push("2 start");
+    promise2.then(() => log.push("2 end"));
+    return promise2;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start"]);
+  resolve1();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "1 end", "2 start"]);
+  resolve2();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "1 end", "2 start", "2 end"]);
+});
+
+it("variable.define does not wait for other variables", async () => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const log = [];
+  let resolve1;
+  let resolve2;
+  const promise1 = new Promise((r) => (resolve1 = r));
+  const promise2 = new Promise((r) => (resolve2 = r));
+  const foo = main.variable(true);
+  foo.define("foo", [], () => {
+    log.push("1 start");
+    promise1.then(() => log.push("1 end"));
+    return promise1;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start"]);
+  const bar = main.variable(true);
+  foo.delete();
+  bar.define("foo", [], () => {
+    log.push("2 start");
+    promise2.then(() => log.push("2 end"));
+    return promise2;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "2 start"]);
+  resolve1();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "2 start", "1 end"]);
+  resolve2();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "2 start", "1 end", "2 end"]);
+});
+
+it("variable.define skips stale definitions", async () => {
+  const runtime = new Runtime();
+  const main = runtime.module();
+  const log = [];
+  let resolve1;
+  let resolve2;
+  let resolve3;
+  const promise1 = new Promise((r) => (resolve1 = r));
+  const promise2 = new Promise((r) => (resolve2 = r));
+  const promise3 = new Promise((r) => (resolve3 = r));
+  const foo = main.variable(true);
+  foo.define("foo", [], () => {
+    log.push("1 start");
+    promise1.then(() => log.push("1 end"));
+    return promise1;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start"]);
+  foo.define("foo", [], () => {
+    log.push("2 start");
+    promise2.then(() => log.push("2 end"));
+    return promise2;
+  });
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start"]);
+  foo.define("foo", [], () => {
+    log.push("3 start");
+    promise3.then(() => log.push("3 end"));
+    return promise3;
+  });
+  resolve1();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "1 end", "3 start"]);
+  resolve2();
+  resolve3();
+  await sleep();
+  assert.deepStrictEqual(log, ["1 start", "1 end", "3 start", "3 end"]);
 });

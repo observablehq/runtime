@@ -1,6 +1,6 @@
 {
   "name": "@observablehq/runtime",
-  "version": "5.9.9",
+  "version": "6.0.0",
   "author": {
     "name": "Observable, Inc.",
     "url": "https://observablehq.com"
@@ -9,10 +9,7 @@
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",
-  "jsdelivr": "dist/runtime.umd.js",
-  "unpkg": "dist/runtime.umd.js",
   "exports": {
-    "umd": "./dist/runtime.umd.js",
     "default": "./src/index.js"
   },
   "repository": {
@@ -20,27 +17,17 @@
     "url": "https://github.com/observablehq/runtime.git"
   },
   "files": [
-    "dist/**/*.js",
     "src/**/*.js"
   ],
   "scripts": {
-    "test": "mocha 'test/**/*-test.js' && eslint src test",
-    "prepublishOnly": "rm -rf dist && rollup -c",
-    "postpublish": "git push && git push --tags"
+    "test": "mocha 'test/**/*-test.js' && eslint src test"
   },
   "_moduleAliases": {
     "@observablehq/runtime": "./src/index.js"
   },
-  "dependencies": {
-    "@observablehq/inspector": "^5.0.0",
-    "@observablehq/stdlib": "^5.0.0"
-  },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.0.1",
     "eslint": "^8.27.0",
     "mocha": "^10.1.0",
-    "module-alias": "^2.2.2",
-    "rollup": "^3.2.5",
-    "rollup-plugin-terser": "^7.0.2"
+    "module-alias": "^2.2.2"
   }
 }
