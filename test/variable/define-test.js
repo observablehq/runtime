@@ -118,7 +118,7 @@ it("variable.define correctly detects reachability for unreachable cycles", asyn
   const bar = module.define("bar", ["baz"], baz => `bar-${baz}`);
   const baz = module.define("baz", ["quux"], quux => `baz-${quux}`);
   const quux = module.define("quux", ["zapp"], function*(zapp) { try { while (true) yield `quux-${zapp}`; } finally { returned = true; }});
-  const zapp = module.define("zapp", ["bar"], bar => `zaap-${bar}`);
+  const zapp = module.define("zapp", ["bar"], bar => `zapp-${bar}`);
   await runtime._compute();
   assert.strictEqual(bar._reachable, false);
   assert.strictEqual(baz._reachable, false);
