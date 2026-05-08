@@ -1,6 +1,6 @@
 # @observablehq/runtime
 
-The **Observable Runtime** implements reactivity in both [Observable Framework](https://observablehq.com/framework/) and [Observable notebooks](https://observablehq.com/documentation/notebooks/).
+The **Observable Runtime** implements reactivity in [Observable Notebooks](https://observablehq.com/).
 
 ## API Reference
 
