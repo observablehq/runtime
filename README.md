@@ -210,7 +210,11 @@ module1.variable().import("foo", "bar", module0);
 
 #### *variable*.delete()
 
-[Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Deletes this variable’s current definition and name, if any. Any variable in this module that references this variable as an input will subsequently throw a ReferenceError. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
+[Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Deletes this variable’s current definition and name, if any. Any variable that references this variable as an input will subsequently throw a ReferenceError, unless the variable is subsequently redefined. If exactly one other variable defined this variable’s previous name, such that that variable throws a ReferenceError due to its duplicate definition, that variable’s original definition is restored.
+
+#### *variable*.dispose()
+
+[Source](https://github.com/observablehq/runtime/blob/main/src/variable.js) · Invalidates this variable’s current value and prevents future computation and observation. The variable should no longer be used after being disposed. You may also want to delete the variable to invalidate references to the now-disposed variable.
 
 ### Observers
 
