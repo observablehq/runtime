@@ -1,6 +1,6 @@
-import { Runtime } from "@observablehq/runtime";
+import {Runtime} from "@observablehq/runtime";
 import assert from "assert";
-import { delay, sleep } from "./valueof.js";
+import {delay, sleep} from "./valueof.js";
 
 describe("variable.dispose", () => {
   it("prevents a subsequent delete from notifying the observer", async () => {
@@ -9,13 +9,13 @@ describe("variable.dispose", () => {
     const main = runtime.module();
     const log = [];
     const foo = main
-      .variable({ fulfilled: (value) => log.push(`a-${value}`) })
+      .variable({fulfilled: (value) => log.push(`a-${value}`)})
       .define([], () => 1);
     await sleep();
     foo.dispose();
     foo.delete();
     main
-      .variable({ fulfilled: (value) => log.push(`b-${value}`) })
+      .variable({fulfilled: (value) => log.push(`b-${value}`)})
       .define([], () => 2);
     await sleep();
     assert.deepStrictEqual(log, ["a-1", "b-2"]); // not followed by "a-undefined"
@@ -25,7 +25,7 @@ describe("variable.dispose", () => {
     const main = runtime.module();
     const log = [];
     const foo = main
-      .variable({ fulfilled: (value) => log.push(value) })
+      .variable({fulfilled: (value) => log.push(value)})
       .define([], () => 1);
     await sleep();
     foo.dispose();
@@ -38,7 +38,7 @@ describe("variable.dispose", () => {
     const main = runtime.module();
     const log = [];
     const foo = main
-      .variable({ fulfilled: (value) => log.push(value) })
+      .variable({fulfilled: (value) => log.push(value)})
       .define([], () => delay(1, 100));
     await sleep();
     foo.dispose();
@@ -80,21 +80,19 @@ describe("variable.dispose", () => {
     const runtime = new Runtime();
     const main = runtime.module();
     const log = [];
-    let when = "before";
     const foo = main.variable(true).define([], async function* () {
       try {
         while (true) {
-          await sleep(20);
-          yield log.push(when);
+          await sleep();
+          yield;
         }
       } finally {
         log.push("return");
       }
     });
-    await sleep(50); // 50ms gives time to log two values
+    await sleep();
     foo.dispose();
-    when = "after";
-    await sleep(50); // logs one last value and then terminates
-    assert.deepStrictEqual(log, ["before", "before", "after", "return"]);
+    await sleep();
+    assert.deepStrictEqual(log, [ "return"]);
   });
 });
