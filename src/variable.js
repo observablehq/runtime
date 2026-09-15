@@ -62,7 +62,7 @@ function variable_detach(variable) {
   variable._outputs.delete(this);
 }
 
-function variable_undefined() {
+export function variable_undefined() {
   throw variable_undefined;
 }
 
