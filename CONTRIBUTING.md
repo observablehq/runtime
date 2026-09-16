@@ -2,14 +2,14 @@ The Observable runtime is open source and released under the [ISC License](https
 
 ## Development
 
-We use Yarn 1.x (Classic). To install dependencies:
+We use pnpm. To install dependencies:
 
 ```
-yarn
+pnpm i
 ```
 
 To run tests with Mocha:
 
 ```
-yarn test
+pnpm run test
 ```
