@@ -2,7 +2,7 @@ import {RuntimeError} from "./errors.js";
 import {generatorish} from "./generatorish.js";
 import {Module, variable_variable, variable_invalidation, variable_visibility} from "./module.js";
 import {noop} from "./noop.js";
-import {Variable, TYPE_IMPLICIT, no_observer, variable_stale} from "./variable.js";
+import {Variable, TYPE_IMPLICIT, no_observer, variable_stale, variable_undefined} from "./variable.js";
 
 const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame
   : typeof setImmediate === "function" ? setImmediate
@@ -362,5 +362,6 @@ function variable_reachable(variable) {
 }
 
 function window_global(name) {
-  return globalThis[name];
+  if (name in globalThis) return globalThis[name];
+  throw variable_undefined;
 }

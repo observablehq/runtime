@@ -1,7 +1,6 @@
 import {constant} from "./constant.js";
 import {RuntimeError} from "./errors.js";
 import {identity} from "./identity.js";
-import {rethrow} from "./rethrow.js";
 import {Variable, TYPE_DUPLICATE, TYPE_IMPLICIT, TYPE_NORMAL, no_observer, variable_stale} from "./variable.js";
 
 export const variable_variable = Symbol("variable");
@@ -140,7 +139,7 @@ function module_derive(injects, injectModule) {
 }
 
 function module_resolve(name) {
-  let variable = this._scope.get(name), value;
+  let variable = this._scope.get(name);
   if (!variable) {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._builtins.has(name)) {
@@ -148,16 +147,7 @@ function module_resolve(name) {
     } else if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
     } else {
-      try {
-        value = this._runtime._global(name);
-      } catch (error) {
-        return variable.define(name, rethrow(error));
-      }
-      if (value === undefined) {
-        this._scope.set(variable._name = name, variable);
-      } else {
-        variable.define(name, constant(value));
-      }
+      variable.define(name, () => this._runtime._global(name));
     }
   }
   return variable;
