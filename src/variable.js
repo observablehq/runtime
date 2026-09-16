@@ -41,6 +41,7 @@ Object.defineProperties(Variable.prototype, {
   _resolve: {value: variable_resolve, writable: true, configurable: true},
   define: {value: variable_define, writable: true, configurable: true},
   delete: {value: variable_delete, writable: true, configurable: true},
+  dispose: {value: variable_dispose, writable: true, configurable: true},
   import: {value: variable_import, writable: true, configurable: true}
 });
 
@@ -200,6 +201,11 @@ function variable_defineImpl(name, inputs, definition) {
 function variable_import(remote, name, module) {
   if (arguments.length < 3) module = name, name = remote;
   return variable_defineImpl.call(this, String(name), [module._resolve(String(remote))], identity);
+}
+
+function variable_dispose() {
+  this._invalidate();
+  this._version = NaN;
 }
 
 function variable_delete() {
