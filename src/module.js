@@ -7,16 +7,17 @@ export const variable_variable = Symbol("variable");
 export const variable_invalidation = Symbol("invalidation");
 export const variable_visibility = Symbol("visibility");
 
-export function Module(runtime, builtins = []) {
+const specials = [
+  ["@variable", [variable_variable]],
+  ["invalidation", [variable_invalidation]],
+  ["visibility", [variable_visibility]]
+];
+
+export function Module(runtime, builtins = specials) {
   Object.defineProperties(this, {
     _runtime: {value: runtime},
     _scope: {value: new Map},
-    _builtins: {value: new Map([
-      ["@variable", variable_variable],
-      ["invalidation", variable_invalidation],
-      ["visibility", variable_visibility],
-      ...builtins
-    ])},
+    _builtins: {value: new Map(builtins)},
     _source: {value: null, writable: true}
   });
 }
@@ -143,7 +144,7 @@ function module_resolve(name) {
   if (!variable) {
     variable = new Variable(TYPE_IMPLICIT, this);
     if (this._builtins.has(name)) {
-      variable.define(name, constant(this._builtins.get(name)));
+      variable.define(name, ...this._builtins.get(name));
     } else if (this._runtime._builtin._scope.has(name)) {
       variable.import(name, this._runtime._builtin);
     } else {
@@ -153,8 +154,8 @@ function module_resolve(name) {
   return variable;
 }
 
-function module_builtin(name, value) {
-  this._builtins.set(name, value);
+function module_builtin(name, ...value) {
+  this._builtins.set(name, value.length < 2 ? [constant(value[0])] : value);
 }
 
 function variable_name(variable) {
