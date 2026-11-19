@@ -63,6 +63,18 @@ function variable_detach(variable) {
   variable._outputs.delete(this);
 }
 
+// If the given implicit variable is no longer referenced, delete it. Implicit
+// variables in the runtime’s builtin module are never deleted.
+function variable_prune(variable) {
+  const module = variable._module;
+  if (variable._type === TYPE_IMPLICIT
+      && !variable._outputs.size
+      && module !== module._runtime._builtin
+      && module._scope.get(variable._name) === variable) {
+    variable_delete.call(variable);
+  }
+}
+
 export function variable_undefined() {
   throw variable_undefined;
 }
@@ -113,8 +125,10 @@ function variable_resolve(name) {
 function variable_defineImpl(name, inputs, definition) {
   const scope = this._module._scope, runtime = this._module._runtime;
 
-  this._inputs.forEach(variable_detach, this);
+  const previousInputs = this._inputs;
+  previousInputs.forEach(variable_detach, this);
   inputs.forEach(variable_attach, this);
+  previousInputs.forEach(variable_prune); // after attach, in case inputs are reused
   this._inputs = inputs;
   this._definition = definition;
   this._value = undefined;
